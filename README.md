@@ -18,4 +18,4 @@ Install
 4. Enable and configure Cardknox in Magento Admin under Stores/Configuration/Payment Methods/Cardknox
 
 Copyright © 2018 Cardknox Development Inc. All rights reserved.
-See COPYING.txt for license details.
+See LICENSE for license details.
