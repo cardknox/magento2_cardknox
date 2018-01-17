@@ -5,7 +5,7 @@
 var config = {
     urlArgs: "v=" + (new Date()).getTime(),
     paths: {
-        ifields: 'https://testcdn.cardknox.com/ifields/ifields.min'
+        ifields: 'https://cdn.cardknox.com/ifields/ifields.min'
 
     },
 
