@@ -1,0 +1,27 @@
+<?php
+/**
+ * Copyright © 2018 Cardknox Development Inc. All rights reserved.
+ * See LICENSE for license details.
+ */
+
+/** @var CardknoxDevelopment\Cardknox\Block\Payment $block */
+
+$code = $block->escapeHtml($block->getCode());
+
+?>
+<script>
+    //<![CDATA[
+    require(
+        [
+            'jquery',
+            'CardknoxDevelopment_Cardknox/cardknox',
+            'ifields'
+        ], function($, Cardknox) {
+            var config = <?php /* @noEscape */ echo $block->getPaymentConfig(); ?>,
+                payment,
+                form =  $('#payment_form_<?php /* @noEscape */ echo $code; ?>');
+            config.active = form.length > 0 && !form.is(':hidden');
+            payment = new Cardknox(config);         
+        });
+    //]]>
+</script>

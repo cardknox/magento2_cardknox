@@ -1,0 +1,316 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2018 Cardknox Development Inc. All rights reserved.
+ * See LICENSE for license details.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="CardknoxFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">CardknoxDevelopment\Cardknox\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">CardknoxDevelopment\Cardknox\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">CardknoxValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">CardknoxCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Vault Method Facade configuration -->
+    <virtualType name="CardknoxCreditCardVaultFacade" type="Magento\Vault\Model\Method\Vault">
+        <arguments>
+            <argument name="code" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider::CC_VAULT_CODE</argument>
+            <argument name="config" xsi:type="object">CardknoxVaultPaymentConfig</argument>
+            <argument name="valueHandlerPool" xsi:type="object">CardknoxVaultPaymentValueHandlerPool</argument>
+            <!--<argument name="valueHandlerPool" xsi:type="object">CardknoxValueHandlerPool</argument>-->
+            <argument name="vaultProvider" xsi:type="object">CardknoxFacade</argument>
+            <argument name="commandManagerPool" xsi:type="object">CardknoxCcVaultCommandManagerPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CardknoxVaultPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider::CC_VAULT_CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CardknoxVaultPaymentValueHandler" type="VaultPaymentDefaultValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">CardknoxVaultPaymentConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CardknoxVaultPaymentValueHandlerPool" type="VaultPaymentValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">CardknoxVaultPaymentValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CardknoxCcVaultCommandManagerPool" type="Magento\Payment\Gateway\Command\CommandManagerPool">
+        <arguments>
+            <argument name="executors" xsi:type="array">
+                <item name="cardknox" xsi:type="string">CardknoxCommandManager</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!--<type name="Magento\Payment\Gateway\Command\CommandManagerPool">-->
+        <!--<arguments>-->
+            <!--<argument name="executors" xsi:type="array">-->
+                <!--<item name="cardknox" xsi:type="string">CardknoxCommandManager</item>-->
+            <!--</argument>-->
+        <!--</arguments>-->
+    <!--</type>-->
+    <!--comment out the below when using version 2.0 > 2.1.3-->
+    <type name="CardknoxDevelopment\Cardknox\Gateway\Response\TxnIdHandler">
+        <arguments>
+            <argument name="paymentTokenFactory" xsi:type="object">Magento\Vault\Model\CreditCardTokenFactory</argument>
+        </arguments>
+    </type>
+    <!-- END Configuration for Vault payments -->
+    <!-- Command managers section for Vault -->
+    <virtualType name="CardknoxCommandManager" type="Magento\Payment\Gateway\Command\CommandManager">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">CardknoxCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- END command managers section for Vault -->
+
+
+    <!-- Configuration reader -->
+    <type name="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider::CODE</argument>
+        </arguments>
+    </type>
+
+    <!-- Logger, initialized with CardknoxConfig -->
+    <virtualType name="CardknoxLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+
+
+    <type name="CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client">
+        <arguments>
+            <argument name="logger" xsi:type="object">CardknoxLogger</argument>
+        </arguments>
+    </type>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="CardknoxCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">CardknoxAuthorizeCommand</item>
+                <item name="vault_authorize" xsi:type="string">CardknoxVaultAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">CardknoxCaptureCommand</item>
+                <item name="vault_sale" xsi:type="string">CardknoxVaultSaleCommand</item>
+                <item name="void" xsi:type="string">CardknoxVoidCommand</item>
+                <item name="refund" xsi:type="string">CardknoxRefundCommand</item>
+                <item name="cancel" xsi:type="string">CardknoxCancelCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Vault Authorize command -->
+    <virtualType name="CardknoxVaultAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxVaultAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!--Vault Authorization Request -->
+    <virtualType name="CardknoxVaultAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\VaultAuthorizeRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Vault Sale command -->
+    <virtualType name="CardknoxVaultSaleCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxVaultSaleRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!--Vault Sale Request -->
+    <virtualType name="CardknoxVaultSaleRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\VaultSaleRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize command -->
+    <virtualType name="CardknoxAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorization Request -->
+    <virtualType name="CardknoxAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\AuthorizationRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\Config</argument>
+        </arguments>
+    </type>
+
+    <!-- Capture command -->
+    <virtualType name="CardknoxCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxCaptureRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Response\TxnIdHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Request -->
+    <virtualType name="CardknoxCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\CaptureRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Void command -->
+    <virtualType name="CardknoxVoidCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxVoidRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Response\VoidHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Void Request -->
+    <virtualType name="CardknoxVoidRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\VoidRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund command -->
+    <virtualType name="CardknoxRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxRefundRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Response\RefundHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund Request -->
+    <virtualType name="CardknoxRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\RefundRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cancel command -->
+    <virtualType name="CardknoxCancelCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxCancelRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Response\VoidHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cancel Request -->
+    <virtualType name="CardknoxCancelRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\CancelRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+      <!-- Response handlers -->
+    <virtualType name="CardknoxResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="txnid" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Response\TxnIdHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="CardknoxValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">CardknoxConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CardknoxConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Payment\Block\Info\Cc">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Payment\Block\Form\Cc">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
+
+

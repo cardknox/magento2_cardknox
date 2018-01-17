@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2018 Cardknox Development Inc. All rights reserved.
+ * See LICENSE for license details.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <cardknox>
+                <debug>1</debug>
+                <active>0</active>
+                <model>CardknoxFacade</model>
+                <cardknox_transaction_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <cardknox_token_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <order_status>pending_payment</order_status>
+                <payment_action>authorize</payment_action>
+                <title>Credit Card</title>
+                <currency>USD</currency>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_cancel>1</can_cancel>
+                <can_cancel_invoice>1</can_cancel_invoice>
+                <can_use_internal>1</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize_vault>1</can_authorize_vault>
+                <can_capture_vault>1</can_capture_vault>
+                <is_gateway>1</is_gateway>
+                <cgi_url>https://x1.cardknox.com/gateway</cgi_url>
+                <usecvv>1</usecvv>
+                <cctypes_cardknox_mapper><![CDATA[{"Amex":"AE","Visa":"VI","MasterCard":"MC","Discover":"DI","JCB":"JCB","CUP":"CUP","Diners":"DN","MI":"MI"}]]></cctypes_cardknox_mapper>
+                <privateInfoKeys>xAvsResult,xCvvResult,xRefNum,xAuthCode,xBatch,xExp</privateInfoKeys>
+                <paymentInfoKeys>xCardType,xMaskedCardNumber,xAuthAmount,xAuthCode,xBatch,xAvsResult,xCvvResult,xExp,xRefNum</paymentInfoKeys>
+                <debugReplaceKeys>xKey,xCardNum,xCvv</debugReplaceKeys>
+            </cardknox>
+            <cardknox_cc_vault>
+                <model>CardknoxCreditCardVaultFacade</model>
+                <title>Stored Cards</title>
+                <can_use_internal>1</can_use_internal>
+            </cardknox_cc_vault>
+        </payment>
+    </default>
+</config>
+

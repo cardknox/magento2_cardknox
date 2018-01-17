@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2018 Cardknox Development Inc. All rights reserved.
+ * See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="CardknoxDevelopment\Cardknox\Block\Payment">
+        <arguments>
+            <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider</argument>
+        </arguments>
+    </type>
+    <type name="CardknoxDevelopment\Cardknox\Block\Info">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">0</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Vault\Model\Ui\Adminhtml\TokensConfigProvider">
+        <arguments>
+            <argument name="tokenUiComponentProviders" xsi:type="array">
+                <item name="cardknox" xsi:type="object">CardknoxDevelopment\Cardknox\Model\Ui\Adminhtml\TokenUiComponentProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>

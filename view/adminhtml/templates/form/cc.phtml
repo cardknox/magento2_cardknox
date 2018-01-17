@@ -1,0 +1,74 @@
+<?php
+/**
+ * Copyright © 2018 Cardknox Development Inc. All rights reserved.
+ * See LICENSE for license details.
+ */
+// @codingStandardsIgnoreFile
+/**
+ * @var \Magento\Payment\Block\Adminhtml\Transparent\Form $block
+ */
+$code = $block->escapeHtml($block->getMethodCode());
+$ccExpMonth = $block->getInfoData('cc_exp_month');
+$ccExpYear = $block->getInfoData('cc_exp_year');
+
+?>
+
+<fieldset class="admin__fieldset payment-method"
+          id="payment_form_<?php /* @noEscape */
+          echo $code; ?>"
+          style="display:none"         
+         >
+    <div class="field-number admin__field _required">
+        <label class="admin__field-label" for="<?php /* @noEscape */
+        echo $code; ?>_cc_number">
+            <span><?php echo $block->escapeHtml(__('Credit Card Number')); ?></span>
+        </label>
+        <div class="admin__field-control">
+            <iframe data-ifields-id="card-number" data-ifields-placeholder="Card Number"
+                    src="https://testcdn.cardknox.com/ifields/ifield.htm" frameBorder="0" width="100%"
+                    height="33"></iframe>
+            <input data-ifields-id="card-number-token" name="payment[xCardNum]" type="hidden"/>
+        </div>
+    </div>
+    <div class="field-date admin__field _required">
+        <label class="admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_expiration">
+            <span><?php echo $block->escapeHtml(__('Expiration Date')); ?></span>
+        </label>
+        <div class="admin__field-control">
+            <select id="<?php /* @noEscape */ echo $code ?>_expiration" name="payment[cc_exp_month]"
+                    class="admin__control-select admin__control-select-month validate-cc-exp required-entry">
+                <?php foreach ($block->getCcMonths() as $k => $v): ?>
+                    <option value="<?php echo $block->escapeHtml($k); ?>"
+                            <?php if ($k == $ccExpMonth): ?>selected="selected"<?php endif ?>>
+                        <?php echo $block->escapeHtml($v); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <select id="<?php /* @noEscape */ echo $code ?>_expiration_yr" name="payment[cc_exp_year]"
+                    class="admin__control-select admin__control-select-year required-entry">
+                <?php foreach ($block->getCcYears() as $k => $v): ?>
+                    <option value="<?php /* @noEscape */ echo $k ? $block->escapeHtml($k) : '' ?>"
+                            <?php if ($k == $ccExpYear): ?>selected="selected"<?php endif ?>>
+                        <?php echo $block->escapeHtml($v); ?>
+                    </option>
+                <?php endforeach ?>
+            </select>
+        </div>
+    </div>
+
+    <?php if ($block->hasVerification()): ?>
+        <div class="field-number required admin__field _required">
+            <label class="admin__field-label" for="<?php /* @noEscape */
+            echo $code; ?>_cc_cid">
+                <span><?php echo $block->escapeHtml(__('Card Verification Number')); ?></span>
+            </label>
+            <div class="admin__field-control">
+                <iframe data-ifields-id="cvv" data-ifields-placeholder="CVV"
+                        src="https://testcdn.cardknox.com/ifields/ifield.htm" frameBorder="0" width="100%"
+                        height="33"></iframe>
+                <input data-ifields-id="cvv-token" name="payment[xCVV]" type="hidden"/>
+                <label id="ifieldsError" data-ifields-id="card-data-error"></label>
+            </div>
+        </div>
+    <?php endif; ?>
+</fieldset>
