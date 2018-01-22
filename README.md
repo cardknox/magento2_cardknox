@@ -1,7 +1,7 @@
 magento2-Cardknox
 ======================
 
-Cardknox payment gateway Magento2 extension
+Magento2 extension to allow payments using the [Cardknox](https://www.cardknox.com) payment gateway.
 
 
 Install
