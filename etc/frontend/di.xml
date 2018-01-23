@@ -31,12 +31,5 @@
         </arguments>
     </type>
 
-    <type name="Magento\Vault\Model\Ui\TokensConfigProvider">
-        <arguments>
-            <argument name="tokenUiComponentProviders" xsi:type="array">
-                <item name="cardknox" xsi:type="object">CardknoxDevelopment\Cardknox\Model\Ui\TokenUiComponentProvider</item>
-            </argument>
-        </arguments>
-    </type>
 
 </config>

@@ -12,10 +12,9 @@ define(
         'ifields',
         'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Checkout/js/action/place-order',
-        'Magento_Ui/js/model/messageList',
-        'Magento_Vault/js/view/payment/vault-enabler'
+        'Magento_Ui/js/model/messageList'
     ],
-    function (Component, $, v, i,fullScreenLoader,placeOrderAction,messageList,VaultEnabler) {
+    function (Component, $, v, i,fullScreenLoader,placeOrderAction,messageList) {
         'use strict';
 
         return Component.extend({
@@ -24,9 +23,6 @@ define(
              */
             initialize: function () {
                 this._super();
-
-                this.vaultEnabler = new VaultEnabler();
-                this.vaultEnabler.setPaymentCode(this.getVaultCode());
                 return this;
             },
 
@@ -59,7 +55,6 @@ define(
                     }
                 };
                 data['additional_data'] = _.extend(data['additional_data'], this.additionalData);
-                this.vaultEnabler.visitAdditionalData(data);
                 return data;
             },
 
@@ -137,19 +132,6 @@ define(
                 messageList.addErrorMessage({
                     message: errorMessage
                 });
-            },
-              /**
-               * @returns {Bool}
-               */
-            isVaultEnabled: function () {
-                return this.vaultEnabler.isVaultEnabled();
-            },
-
-            /**
-             * @returns {String}
-             */
-            getVaultCode: function () {
-                return window.checkoutConfig.payment[this.getCode()].ccVaultCode;
             }
         });
     }

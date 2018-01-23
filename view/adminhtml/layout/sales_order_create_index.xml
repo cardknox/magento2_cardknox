@@ -17,12 +17,6 @@
                 <argument name="template" xsi:type="string">CardknoxDevelopment_Cardknox::form/cc.phtml</argument>
             </action>
         </referenceBlock>
-        <referenceBlock name="order_create_billing_form">
-            <action method="setMethodFormTemplate">
-                <argument name="method" xsi:type="string">cardknox_cc_vault</argument>
-                <argument name="template" xsi:type="string">Magento_Vault::form/vault.phtml</argument>
-            </action>
-        </referenceBlock>
         <referenceBlock name="content">
             <block name="cardknox_payment_script"
                    as="cardknox_payment_script"

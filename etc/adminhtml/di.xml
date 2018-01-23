@@ -19,12 +19,4 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Vault\Model\Ui\Adminhtml\TokensConfigProvider">
-        <arguments>
-            <argument name="tokenUiComponentProviders" xsi:type="array">
-                <item name="cardknox" xsi:type="object">CardknoxDevelopment\Cardknox\Model\Ui\Adminhtml\TokenUiComponentProvider</item>
-            </argument>
-        </arguments>
-    </type>
-
 </config>

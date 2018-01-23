@@ -16,7 +16,6 @@ use Magento\Framework\Locale\ResolverInterface;
 final class ConfigProvider implements ConfigProviderInterface
 {
     const CODE = 'cardknox';
-    const CC_VAULT_CODE = 'cardknox_cc_vault';
     private $config;
 
     public function __construct(
@@ -34,8 +33,7 @@ final class ConfigProvider implements ConfigProviderInterface
             'payment' => [
                 self::CODE => [
                     'isActive' => $this->config->isActive(),
-                    'tokenKey' => $this->config->GetTokenKey(),
-                    'ccVaultCode' => self::CC_VAULT_CODE
+                    'tokenKey' => $this->config->GetTokenKey()
                 ]
             ]
         ];

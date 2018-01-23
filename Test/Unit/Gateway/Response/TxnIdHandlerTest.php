@@ -9,9 +9,8 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Response;
 use CardknoxDevelopment\Cardknox\Gateway\Response\TxnIdHandler;
 use Magento\Sales\Api\Data\OrderPaymentExtensionInterface;
 use Magento\Sales\Api\Data\OrderPaymentExtensionInterfaceFactory;
-use Magento\Vault\Api\Data\PaymentTokenInterface;
+
 use Magento\Sales\Model\Order\Payment;
-use Magento\Vault\Model\CreditCardTokenFactory;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Payment\Gateway\Data\PaymentDataObject;
 
@@ -42,25 +41,9 @@ class TxnIdHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUP()
     {
-        $this->paymentToken = $this->getMock(PaymentTokenInterface::class);
-        $this->paymentTokenFactory = $this->getMockBuilder(CreditCardTokenFactory::class)
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->paymentTokenFactory->expects(self::once())
-            ->method('create')
-            ->willReturn($this->paymentToken);
-        $this->paymentExtension = $this->getMockBuilder(OrderPaymentExtensionInterface::class)
-            ->setMethods(['setVaultPaymentToken', 'getVaultPaymentToken'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->paymentExtensionFactory = $this->getMockBuilder(OrderPaymentExtensionInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $this->paymentExtensionFactory->expects(self::once())
-            ->method('create')
-            ->willReturn($this->paymentExtension);
+
+
+
         $this->payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->setMethods(['__wakeup'])
@@ -107,19 +90,12 @@ class TxnIdHandlerTest extends \PHPUnit_Framework_TestCase
             TxnIdHandler::xExp => '0122'
         ];
 
-        $this->paymentExtension->expects(self::once())
-            ->method('setVaultPaymentToken')
-            ->with($this->paymentToken);
+
 
         $paymentData = $this->getPaymentDataObjectMock();
         $subject = ['payment' => $paymentData];
 
-        $this->paymentToken->expects(static::once())
-            ->method('setGatewayToken')
-            ->with('rh3gd4');
-        $this->paymentToken->expects(static::once())
-            ->method('setExpiresAt')
-            ->with('2022-01-01 00:00:00');
+
 
         $this->request->handle($subject, $response);
     }
@@ -136,6 +112,7 @@ class TxnIdHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $mock->expects($this->once())
+            ->method('getPayment')
             ->method('getPayment')
             ->willReturn($this->payment);
 
