@@ -30,9 +30,7 @@ class TxnIdHandler implements HandlerInterface
     const xStatus = 'xStatus';
     const xError = 'xError';
     const xExp = 'xExp';
-
-
-
+    
     /**
      * @var CreditCardTokenFactory
      */
@@ -94,11 +92,20 @@ class TxnIdHandler implements HandlerInterface
 
         $payment = $paymentDO->getPayment();
 
+        $xExp = "";
+        if (isset($response[$this::xExp])) {
+            $xExp = $response[$this::xExp];
+        } elseif ($payment->getAdditionalInformation("cc_exp_month") != "") {
+            $xExp = sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2));
+        }
+
          // add vault payment token entity to extension attributes
-         $paymentToken = $this->getVaultPaymentToken($response);
-        if (null !== $paymentToken) {
-            $extensionAttributes = $this->getExtensionAttributes($payment);
-            $extensionAttributes->setVaultPaymentToken($paymentToken);
+        if ($xExp) {
+            $paymentToken = $this->getVaultPaymentToken($response, $xExp);
+            if (null !== $paymentToken) {
+                $extensionAttributes = $this->getExtensionAttributes($payment);
+                $extensionAttributes->setVaultPaymentToken($paymentToken);
+            }
         }
         /** @var $payment \Magento\Sales\Model\Order\Payment */
         $payment->setTransactionId($response[$this::xRefNum]);
@@ -122,7 +129,7 @@ class TxnIdHandler implements HandlerInterface
      * @param  array
      * @return PaymentTokenInterface|null
      */
-    private function getVaultPaymentToken(array $response)
+    private function getVaultPaymentToken(array $response, string $xExp)
     {
         // Check token existing in gateway response
         $token = $response[$this::xToken];
@@ -134,11 +141,11 @@ class TxnIdHandler implements HandlerInterface
         /** @var PaymentTokenInterface $paymentToken */
         $paymentToken = $this->paymentTokenFactory->create();
         $paymentToken->setGatewayToken($token);
-        $paymentToken->setExpiresAt($this->getExpirationDate($response[$this::xExp]));
+        $paymentToken->setExpiresAt($this->getExpirationDate($xExp));
         $paymentToken->setTokenDetails($this->convertDetailsToJSON([
             'type' => $this->getCreditCardType($response[$this::xCardType]),
             'maskedCC' => $response[$this::xMaskedCardNumber],
-            'expirationDate' => $response[$this::xExp]
+            'expirationDate' => $xExp
         ]));
 
         return $paymentToken;
@@ -150,7 +157,7 @@ class TxnIdHandler implements HandlerInterface
      */
     private function getExpirationDate(string $xExp)
     {
-        $expDate = new \DateTime(
+         $expDate = new \DateTime(
             '20' . substr($xExp, -2)
             . '-'
             . substr($xExp, 0, 2)
