@@ -24,7 +24,7 @@ define(
              */
             initialize: function () {
                 this._super();
-
+                this.initCardknox();
                 this.vaultEnabler = new VaultEnabler();
                 this.vaultEnabler.setPaymentCode(this.getVaultCode());
                 return this;
@@ -54,8 +54,8 @@ define(
                     'additional_data': {
                         'cc_exp_year': this.creditCardExpYear(),
                         'cc_exp_month': this.creditCardExpMonth(),
-                        'xCVV': $("input[name=xCVV]").val(),
-                        'xCardNum': $("input[name=xCardNum]").val()
+                        'xCVV': document.getElementsByName("xCVV")[0].value,
+                        'xCardNum': document.getElementsByName("xCardNum")[0].value
                     }
                 };
                 data['additional_data'] = _.extend(data['additional_data'], this.additionalData);
@@ -102,12 +102,12 @@ define(
                         function () {
                             //onSuccess
                             //perform your own validation here...
-                            if ($("input[name=xCardNum]").val() === '') {
+                            if (document.getElementsByName("xCardNum")[0].value === '') {
                             self.showError("Card Number Required");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
-                            if ($("input[name=xCVV]").val() === '') {
+                            if (document.getElementsByName("xCVV")[0].value === '') {
                             self.showError("CVV Required");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
