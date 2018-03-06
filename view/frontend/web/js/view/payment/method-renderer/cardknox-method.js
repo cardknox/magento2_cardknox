@@ -21,15 +21,15 @@ define(
             /**
              * @returns {exports.initialize}
              */
-            initialize: function () {
-                this._super();
-                return this;
-            },
-
             defaults: {
                 template: 'CardknoxDevelopment_Cardknox/payment/cardknox-form'
             },
 
+            initialize: function () {
+                this._super();
+                this.initCardknox();
+                return this;
+            },
             /** Returns send check to info */
             getMailingAddress: function () {
                 return window.checkoutConfig.payment.checkmo.mailingAddress;
@@ -50,8 +50,8 @@ define(
                     'additional_data': {
                         'cc_exp_year': this.creditCardExpYear(),
                         'cc_exp_month': this.creditCardExpMonth(),
-                        'xCVV': $("input[name=xCVV]").val(),
-                        'xCardNum': $("input[name=xCardNum]").val()
+                        'xCVV': document.getElementsByName("xCVV")[0].value,
+                        'xCardNum': document.getElementsByName("xCardNum")[0].value
                     }
                 };
                 data['additional_data'] = _.extend(data['additional_data'], this.additionalData);
@@ -92,18 +92,18 @@ define(
                 }
                 var self = this;
                 if (this.validate()) {
-                self.isPlaceOrderActionAllowed(false);
+                    self.isPlaceOrderActionAllowed(false);
                     getTokens(
                         function () {
                             //onSuccess
                             //perform your own validation here...
-                            if ($("input[name=xCardNum]").val() === '') {
-                            self.showError("Card Number Required");
+                            if (document.getElementsByName("xCardNum")[0].value === '') {
+                                self.showError("Card Number Required");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
-                            if ($("input[name=xCVV]").val() === '') {
-                            self.showError("CVV Required");
+                            if (document.getElementsByName("xCVV")[0].value === '') {
+                                self.showError("CVV Required");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
@@ -118,10 +118,8 @@ define(
                         //5 second timeout
                         5000
                     );
-                    return false
                 } else {
-                    return false
-                };
+                }
             },
 
             /**
