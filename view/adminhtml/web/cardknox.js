@@ -20,34 +20,31 @@ define([
             $selector: null,
             selector: 'edit_form',
             container: 'payment_form_cardknox',
-            active: false,
-            scriptLoaded: false,
-            imports: {
-                onActiveChange: 'active'
-            }
+            active: false
         },
 
         /**
          * Set list of observable attributes
          * @returns {exports.initObservable}
          */
+        initialize: function () {
+            console.log("initialize");
+            this._super();
+            this.initCardknox();
+            return this;
+        },
+
         initObservable: function () {
+            console.log("initObservable");
             var self = this;
             self.$selector = $('#' + self.selector);
             this._super()
                 .observe([
-                    'active',
-                    'scriptLoaded'
+                    'active'
                 ]);
             // re-init payment method events
             self.$selector.off('changePaymentMethod.' + this.code)
                 .on('changePaymentMethod.' + this.code, this.changePaymentMethod.bind(this));
-            // listen block changes
-            domObserver.get('#' + self.container, function () {
-                if (!self.scriptLoaded()) {
-                    self.loadScript();
-                }
-            });
             self.enableEventListeners();
             return this;
         },
@@ -59,34 +56,11 @@ define([
          * @returns {exports.changePaymentMethod}
          */
         changePaymentMethod: function (event, method) {
+            console.log("changePaymentMethod");
             this.active(method === this.code);
             return this;
         },
 
-        /**
-         * Triggered when payment changed
-         * @param {Boolean} isActive
-         */
-        onActiveChange: function (isActive) {
-            if (!isActive) {
-                return;
-            }
-            if (!this.scriptLoaded()) {
-                this.initCardknox()
-            }
-        },
-
-        /**
-         * Load external Cardknox SDK
-         */
-        loadScript: function () {
-            var self = this;
-            self.initCardknox();
-        },
-
-        /**
-         * Setup Cardknox SDK
-         */
         initCardknox: function () {
             var self = this;
             try {
@@ -113,9 +87,11 @@ define([
          * @param {String} message
          */
         error: function (message) {
-            alert({
-                content: message
-            });
+            if (message) {
+                alert({
+                    content: message
+                });
+            }
         },
 
         /**
@@ -149,7 +125,7 @@ define([
                     self.placeOrder();
                 },
                 function () {
-                //onError
+                    //onError
                     self.error(document.getElementById('ifieldsError').textContent);
                     $('body').trigger('processStop');
                 },
@@ -174,5 +150,3 @@ define([
         }
     });
 });
-
-
