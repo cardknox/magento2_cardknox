@@ -75,9 +75,9 @@ class TxnIdHandler implements HandlerInterface
         /** @var $payment \Magento\Sales\Model\Order\Payment */
 
         $payment->setIsTransactionClosed(false);
+        $payment->setTransactionId($response[$this::xRefNum]);
         //if its a transaction from the front end
         if ($payment->getLastTransId() == '') {
-            $payment->setTransactionId($response[$this::xRefNum]);
             $payment->setCcLast4(substr($response[$this::xMaskedCardNumber], - 4));
             $payment->setCcAvsStatus($response[$this::xAvsResult]);
             $payment->setCcCidStatus($response[$this::xCvvResult]);
