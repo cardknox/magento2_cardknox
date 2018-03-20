@@ -67,20 +67,26 @@ class TxnIdHandler implements HandlerInterface
         $paymentDO = $handlingSubject['payment'];
 
         $payment = $paymentDO->getPayment();
-
         /** @var $payment \Magento\Sales\Model\Order\Payment */
-        $payment->setTransactionId($response[$this::xRefNum]);
-        $payment->setCcLast4(substr($response[$this::xMaskedCardNumber], - 4));
-        $payment->setCcAvsStatus($response[$this::xAvsResult]);
-        $payment->setCcCidStatus($response[$this::xCvvResult]);
-        $payment->setCcType($this->getCreditCardType($response[$this::xCardType]));
-        $payment->setIsTransactionClosed(false);
 
-        foreach ($this->additionalInformationMapping as $item) {
-            if (!isset($response[$item])) {
-                continue;
+        $payment->setIsTransactionClosed(false);
+        if ($payment->getLastTransId() == '') {
+            $payment->setTransactionId($response[$this::xRefNum]);
+            $payment->setCcLast4(substr($response[$this::xMaskedCardNumber], - 4));
+            $payment->setCcAvsStatus($response[$this::xAvsResult]);
+            $payment->setCcCidStatus($response[$this::xCvvResult]);
+            $payment->setCcType($this->getCreditCardType($response[$this::xCardType]));
+            foreach ($this->additionalInformationMapping as $item) {
+                if (!isset($response[$item])) {
+                    continue;
+                }
+                $payment->setAdditionalInformation($item, $response[$item]);
             }
-            $payment->setAdditionalInformation($item, $response[$item]);
+        } else {
+            if (isset($response[self::xBatch])) {
+                //batch only gets added after capturing
+                $payment->setAdditionalInformation(self::xBatch, $response[self::xBatch]);
+            }
         }
     }
     
