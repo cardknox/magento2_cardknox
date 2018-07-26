@@ -124,7 +124,6 @@ define([
         enableEventListeners: function () {
             var self = this;
             AdminOrder.prototype.submit = function () {
-                $('body').trigger('processStart');
                 // validate parent form
                 self.$selector.validate().form();
                 self.$selector.trigger('afterValidate.beforeSubmit');
@@ -132,6 +131,7 @@ define([
                     return false;
                 }
                 if (window.order.paymentMethod == "cardknox") {
+                    $('body').trigger('processStart');
                     self.submitOrder();
                 } else {
                     self.placeOrder();
