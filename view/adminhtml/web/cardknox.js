@@ -91,6 +91,7 @@ define([
             var self = this;
             try {
                 //setAccount(this.saveOnlyKey, "Magento2", "0.1.2");
+                enableLogging();
                 setAccount(this.tokenKey, "Magento2", "0.1.2");
                 var style = {
                     border: '1px solid #adadad',

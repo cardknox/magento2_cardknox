@@ -74,6 +74,7 @@ define(
 
             initCardknox: function () {
                 var self = this;
+                enableLogging();
                 setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "0.1.2");
                 var style = {
                     border: '1px solid #adadad',
@@ -120,8 +121,8 @@ define(
                             self.showError(document.getElementById('ifieldsError').textContent);
                             self.isPlaceOrderActionAllowed(true);
                         },
-                        //5 second timeout
-                        5000
+                        //30 second timeout
+                        30000
                     );
                     return false
                 } else {
