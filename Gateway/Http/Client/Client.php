@@ -20,7 +20,7 @@ class Client implements ClientInterface
     private $clientFactory;
 
     /**
-     * @var ConverterInterface | null
+     * @var Converter | null
      */
     private $converter;
 
@@ -31,8 +31,8 @@ class Client implements ClientInterface
 
     /**
      * @param ZendClientFactory $clientFactory
+     * @param Converter null $converter
      * @param Logger $logger
-     * @param ConverterInterface | null $converter
      */
     public function __construct(
         ZendClientFactory $clientFactory,

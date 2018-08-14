@@ -80,7 +80,7 @@ define([
          * Load external Cardknox SDK
          */
         loadScript: function () {
-            var self = this
+            var self = this;
             self.initCardknox();
         },
 
