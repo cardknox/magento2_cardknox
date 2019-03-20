@@ -98,18 +98,18 @@ define(
                 }
                 var self = this;
                 if (this.validate()) {
-                self.isPlaceOrderActionAllowed(false);
+                    self.isPlaceOrderActionAllowed(false);
                     getTokens(
                         function () {
                             //onSuccess
                             //perform your own validation here...
                             if (document.getElementsByName("xCardNum")[0].value === '') {
-                            self.showError("Card Number Required");
+                                self.showError("Card Number Required");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
                             if (document.getElementsByName("xCVV")[0].value === '') {
-                            self.showError("CVV Required");
+                                self.showError("CVV Required");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
@@ -127,7 +127,7 @@ define(
                     return false
                 } else {
                     return false
-                };
+                }
             },
 
             /**
@@ -139,9 +139,9 @@ define(
                     message: errorMessage
                 });
             },
-              /**
-               * @returns {Bool}
-               */
+            /**
+             * @returns {Bool}
+             */
             isVaultEnabled: function () {
                 return this.vaultEnabler.isVaultEnabled();
             },
