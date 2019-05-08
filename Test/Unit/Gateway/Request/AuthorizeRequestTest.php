@@ -11,7 +11,7 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
 
-class AuthorizeRequestTest extends \PHPUnit_Framework_TestCase
+class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
 {
 
     private $payment;
@@ -25,7 +25,7 @@ class AuthorizeRequestTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentDO = $this->getMock(PaymentDataObjectInterface::class);
+        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
         $this->payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -39,7 +39,7 @@ class AuthorizeRequestTest extends \PHPUnit_Framework_TestCase
     {
         $invoiceId = 1001;
         $currencyCode = 'USD';
-        $amount = 10.00;
+        $amount = "10.00";
 
         $additionalData = [
             [
@@ -65,7 +65,8 @@ class AuthorizeRequestTest extends \PHPUnit_Framework_TestCase
             'xExp' => sprintf('%02d%02d', self::cc_exp_month, substr(self::cc_exp_year, -2)),
             'xCVV' => self::xCVV,
             'xCardNum' => self::xCardNum,
-            'xAmount' => $amount
+            'xAmount' => $amount,
+            'xIgnoreInvoice' => true
         ];
 
         $buildSubject = [

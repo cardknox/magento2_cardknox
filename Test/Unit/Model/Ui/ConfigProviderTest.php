@@ -10,7 +10,7 @@ use CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Framework\Locale\ResolverInterface;
 
-class ConfigProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
 
     private $config;

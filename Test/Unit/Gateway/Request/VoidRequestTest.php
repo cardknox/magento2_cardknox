@@ -11,7 +11,7 @@ use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class VoidRequestTest extends \PHPUnit_Framework_TestCase
+class VoidRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {
@@ -24,9 +24,9 @@ class VoidRequestTest extends \PHPUnit_Framework_TestCase
             'xRefNum' => $txnId,
         ];
 
-        $configMock = $this->getMock(ConfigInterface::class);
-        $orderMock = $this->getMock(OrderAdapterInterface::class);
-        $paymentDO = $this->getMock(PaymentDataObjectInterface::class);
+        $configMock = $this->createMock(ConfigInterface::class);
+        $orderMock = $this->createMock(OrderAdapterInterface::class);
+        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -10,7 +10,7 @@ use CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 
-class ResponseCodeValidatorTest extends \PHPUnit_Framework_TestCase
+class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ResultInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -30,7 +30,7 @@ class ResponseCodeValidatorTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultMock = $this->getMock(ResultInterface::class);
+        $this->resultMock = $this->createMock(ResultInterface::class);
     }
 
     /**

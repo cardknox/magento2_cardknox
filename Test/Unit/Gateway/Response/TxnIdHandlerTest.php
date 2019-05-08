@@ -15,7 +15,7 @@ use Magento\Vault\Model\CreditCardTokenFactory;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Payment\Gateway\Data\PaymentDataObject;
 
-class TxnIdHandlerTest extends \PHPUnit_Framework_TestCase
+class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
 {
 
 
@@ -42,7 +42,7 @@ class TxnIdHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUP()
     {
-        $this->paymentToken = $this->getMock(PaymentTokenInterface::class);
+        $this->paymentToken = $this->createMock(PaymentTokenInterface::class);
 //        $this->paymentTokenFactory = $this->getMockBuilder(CreditCardTokenFactory::class)
 //            ->setMethods(['create'])
 //            ->disableOriginalConstructor()
@@ -93,7 +93,7 @@ class TxnIdHandlerTest extends \PHPUnit_Framework_TestCase
         $response = [
             TxnIdHandler::xRefNum => 'fcd7f001e9274fdefb14bff91c799306',
             TxnIdHandler::xMaskedCardNumber => '4xxxxx4444',
-            TxnIdHandler::xAvsResult => 'Street Match',
+//            TxnIdHandler::xAvsResult => 'Street Match',
             TxnIdHandler::xCvvResult => 'Match',
             TxnIdHandler::xCardType => 'Visa',
             TxnIdHandler::xToken => 'rh3gd4',

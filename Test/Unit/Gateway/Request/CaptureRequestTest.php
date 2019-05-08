@@ -12,24 +12,25 @@ use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class CaptureRequestTest extends \PHPUnit_Framework_TestCase
+class CaptureRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {
 
-        $amount = 1;
+        $amount = "1.00";
         $storeId = 1;
         $refnum = '23443535';
 
         $expectation = [
             'xCommand' => 'cc:capture',
             'xAmount' => $amount,
-            'xRefNum' => $refnum
+            'xRefNum' => $refnum,
+            'xIgnoreInvoice' => true
         ];
 
-        $configMock = $this->getMock(ConfigInterface::class);
-        $orderMock = $this->getMock(OrderAdapterInterface::class);
-        $paymentDO = $this->getMock(PaymentDataObjectInterface::class);
+        $configMock = $this->createMock(ConfigInterface::class);
+        $orderMock = $this->createMock(OrderAdapterInterface::class);
+        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();

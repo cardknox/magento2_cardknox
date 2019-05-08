@@ -7,7 +7,7 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Model\Adminhtml\Source;
 
 use CardknoxDevelopment\Cardknox\Model\Adminhtml\Source\PaymentAction;
 
-class PaymentActionTest extends \PHPUnit_Framework_TestCase
+class PaymentActionTest extends \PHPUnit\Framework\TestCase
 {
     public function testToOptionArray()
     {

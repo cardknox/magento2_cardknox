@@ -42,7 +42,8 @@ class AuthorizationRequest implements BuilderInterface
 //			'xToken' => $payment->getAdditionalInformation("xToken"),
             'xInvoice' => $order->getOrderIncrementId(),
             'xCurrency' => $order->getCurrencyCode(),
-            'xCardNum' => $payment->getAdditionalInformation("xCardNum")
+            'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
+            'xIgnoreInvoice' => true
         ];
     }
 }

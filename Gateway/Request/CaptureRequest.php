@@ -49,14 +49,16 @@ class CaptureRequest implements BuilderInterface
                 'xCVV' => $payment->getAdditionalInformation("xCVV"),
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
-                'xCardNum' => $payment->getAdditionalInformation("xCardNum")
+                'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
+                'xIgnoreInvoice' => true
             ];
         }
 
         return [
             'xCommand' => 'cc:capture',
             'xAmount'   => $amount,
-            'xRefNum' => $payment->getLastTransId()
+            'xRefNum' => $payment->getLastTransId(),
+            'xIgnoreInvoice' => true
         ];
     }
 }

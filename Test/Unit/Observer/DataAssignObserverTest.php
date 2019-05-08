@@ -13,7 +13,7 @@ use Magento\Payment\Observer\AbstractDataAssignObserver;
 use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
 use Magento\Quote\Api\Data\PaymentInterface;
 
-class DataAssignObserverTest extends \PHPUnit_Framework_TestCase
+class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
 {
 
     const xCardNum = '4444333322221111';
@@ -30,7 +30,7 @@ class DataAssignObserverTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $paymentInfoModel = $this->getMock(InfoInterface::class);
+        $paymentInfoModel = $this->createMock(InfoInterface::class);
         $dataObject = new DataObject(
             [
                 PaymentInterface::KEY_ADDITIONAL_DATA => [

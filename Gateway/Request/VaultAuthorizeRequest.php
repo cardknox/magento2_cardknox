@@ -42,6 +42,7 @@ class VaultAuthorizeRequest implements BuilderInterface
             'xCommand' => 'cc:authonly',
             'xInvoice' => $order->getOrderIncrementId(),
             'xCurrency' => $order->getCurrencyCode(),
+            'xIgnoreInvoice' => true
         ];
     }
 }

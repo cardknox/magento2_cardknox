@@ -10,7 +10,7 @@ use Magento\Payment\Gateway\Http\TransferBuilder;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
-class TransferFactoryTest extends \PHPUnit_Framework_TestCase
+class TransferFactoryTest extends \PHPUnit\Framework\TestCase
 {
 
     private $transferFactory;
@@ -19,12 +19,12 @@ class TransferFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->transferBuilder = $this->getMock(TransferBuilder::class);
+        $this->transferBuilder = $this->createMock(TransferBuilder::class);
         $this->config = $this->getMockBuilder(Config::class)
         ->disableOriginalConstructor()
         ->getMock();
 
-        $this->transferMock = $this->getMock(TransferInterface::class);
+        $this->transferMock = $this->createMock(TransferInterface::class);
 
         $this->transferFactory = new TransferFactory(
             $this->transferBuilder,

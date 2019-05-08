@@ -50,14 +50,16 @@ class VaultSaleRequest implements BuilderInterface
                 'xAmount'   => $amount,
                 'xToken' => $paymentToken->getGatewayToken(),
                 'xInvoice' => $order->getOrderIncrementId(),
-                'xCurrency' => $order->getCurrencyCode()
+                'xCurrency' => $order->getCurrencyCode(),
+                'xIgnoreInvoice' => true
             ];
         }
 
         return [
             'xCommand' => 'cc:capture',
             'xAmount'   => $amount,
-            'xRefNum' => $payment->getLastTransId()
+            'xRefNum' => $payment->getLastTransId(),
+            'xIgnoreInvoice' => true
         ];
     }
 }
