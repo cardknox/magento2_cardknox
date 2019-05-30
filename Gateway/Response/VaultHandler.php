@@ -97,12 +97,16 @@ class VaultHandler implements HandlerInterface
     private function getVaultPaymentToken(array $response, string $xExp)
     {
         // Check token existing in gateway response
-        $token = $response[$this::xToken];
-
-        if (empty($token)) {
+        if (isset($response[$this::xToken])){
+            $token = $response[$this::xToken];
+            if (empty($token)) {
+                return null;
+            }
+        } else {
             return null;
         }
 
+     
         /** @var PaymentTokenInterface $paymentToken */
         $paymentToken = $this->paymentTokenFactory->create();
         $paymentToken->setGatewayToken($token);

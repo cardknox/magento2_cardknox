@@ -37,5 +37,10 @@ class VoidHandler implements HandlerInterface
         $payment->setIsTransactionClosed(true);
         $payment->setCcStatusDescription("voided");
         $payment->setShouldCloseParentTransaction(true);
+
+        if (isset($response['xError']) && $response['xError'] != "") {
+            $payment->getOrder()->addStatusHistoryComment($response['xError']);
+            $payment->getOrder()->addRelatedObject($comment);
+        }
     }
 }

@@ -11,10 +11,27 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Payment\Helper\Formatter;
 use Magento\Sales\Model\Order\Payment;
+use Magento\Payment\Model\Method\Logger;
 
 class RefundRequest implements BuilderInterface
 {
     use Formatter;
+
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * @param Logger $logger
+     */
+
+    public function __construct(
+        Logger $logger
+    ) {
+        $this->logger = $logger;
+    }
+
     /**
      * Builds ENV request
      *
@@ -46,6 +63,9 @@ class RefundRequest implements BuilderInterface
         if ($amount != $order->getGrandTotalAmount()) {
             $command = "cc:refund";
         }
+        $log['GrandTotalAmount'] = $order->getGrandTotalAmount();
+        $log['command'] = $command;
+        $this->logger->debug($log);
 
         return [
             'xCommand' => $command,

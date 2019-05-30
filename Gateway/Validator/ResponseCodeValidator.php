@@ -9,9 +9,29 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Validator;
 use CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client;
 use Magento\Payment\Gateway\Validator\AbstractValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
+use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
+use Magento\Payment\Model\Method\Logger;
 
 class ResponseCodeValidator extends AbstractValidator
 {
+       
+    // /**
+    //  * @var Logger
+    //  */
+    private $logger;
+
+    // /**
+    //  * @param Logger $logger
+    //  */
+
+    public function __construct(
+        Logger $logger,
+        ResultInterfaceFactory $resultFactory
+    ) {
+        parent::__construct($resultFactory);
+        $this->logger = $logger;
+    }
+
     const RESULT_CODE = 'xResult';
     const DECLINE = 'D';
     const ERROR = 'E';
@@ -29,12 +49,10 @@ class ResponseCodeValidator extends AbstractValidator
         }
 
         $response = $validationSubject['response'];
-
+        $log['Successful Transaction'] = $this->isSuccessfulTransaction($response);
+        $this->logger->debug($log);
         if ($this->isSuccessfulTransaction($response)) {
-            return $this->createResult(
-                true,
-                []
-            );
+            return $this->createResult(true);
         } else {
             return $this->createResult(
                 false,

@@ -71,7 +71,6 @@ class Client implements ClientInterface
         $client->setHeaders($transferObject->getHeaders());
         $client->setUrlEncodeBody($transferObject->shouldEncode());
         $client->setUri($transferObject->getUri());
-
         try {
             $response = $client->request();
             parse_str($response->getBody(), $result); 

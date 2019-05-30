@@ -97,6 +97,18 @@
         </arguments>
     </type>
 
+    <type name="CardknoxDevelopment\Cardknox\Gateway\Request\RefundRequest">
+        <arguments>
+            <argument name="logger" xsi:type="object">CardknoxLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator">
+        <arguments>
+            <argument name="logger" xsi:type="object">CardknoxLogger</argument>
+        </arguments>
+    </type>
+
     <!-- Commands infrastructure -->
     <virtualType name="CardknoxCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>

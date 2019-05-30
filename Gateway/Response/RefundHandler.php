@@ -36,5 +36,10 @@ class RefundHandler implements HandlerInterface
         $payment->setTransactionId($response['xRefNum']);
         $payment->setIsTransactionClosed(true);
         $payment->setShouldCloseParentTransaction(true);
+
+        if (isset($response['xError']) && $response['xError'] != "" ) {
+            $comment = $payment->getOrder()->addStatusHistoryComment($response['xError']);
+            $payment->getOrder()->addRelatedObject($comment);
+        }
     }
 }
