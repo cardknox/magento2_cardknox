@@ -54,8 +54,8 @@ class RefundHandler implements HandlerInterface
         $log['setTransactionId'] = $response['xRefNum'];
         $payment->setIsTransactionClosed(true);
         $log['setIsTransactionClosed'] = true;
-        $payment->setShouldCloseParentTransaction(true);
-        $log['setShouldCloseParentTransaction'] = true;
+        $payment->setShouldCloseParentTransaction(!(bool)$payment->getCreditmemo()->getInvoice()->canRefund());
+        $log['setShouldCloseParentTransaction'] = !(bool)$payment->getCreditmemo()->getInvoice()->canRefund();;
         $this->logger->debug($log);
         if (isset($response['xError']) && $response['xError'] != "" ) {
             $comment = $payment->getOrder()->addStatusHistoryComment($response['xError']);
