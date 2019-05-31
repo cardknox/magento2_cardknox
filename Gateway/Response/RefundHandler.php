@@ -8,9 +8,26 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Response;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Payment\Model\Method\Logger;
 
 class RefundHandler implements HandlerInterface
 {
+
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * @param Logger $logger
+     */
+
+    public function __construct(
+        Logger $logger
+    ) {
+        $this->logger = $logger;
+    }
+
     const REFNUM = 'xRefNum';
 
     /**
@@ -34,9 +51,12 @@ class RefundHandler implements HandlerInterface
 
         /** @var $payment \Magento\Sales\Model\Order\Payment */
         $payment->setTransactionId($response['xRefNum']);
+        $log['setTransactionId'] = $response['xRefNum'];
         $payment->setIsTransactionClosed(true);
+        $log['setIsTransactionClosed'] = true;
         $payment->setShouldCloseParentTransaction(true);
-
+        $log['setShouldCloseParentTransaction'] = true;
+        $this->logger->debug($log);
         if (isset($response['xError']) && $response['xError'] != "" ) {
             $comment = $payment->getOrder()->addStatusHistoryComment($response['xError']);
             $payment->getOrder()->addRelatedObject($comment);
