@@ -31,16 +31,8 @@ class VoidHandler implements HandlerInterface
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $handlingSubject['payment'];
         $payment = $paymentDO->getPayment();
-
         /** @var $payment \Magento\Sales\Model\Order\Payment */
-        $payment->setTransactionId($response['xRefNum']);
         $payment->setIsTransactionClosed(true);
-        $payment->setCcStatusDescription("voided");
         $payment->setShouldCloseParentTransaction(true);
-
-        if (isset($response['xError']) && $response['xError'] != "") {
-            $payment->getOrder()->addStatusHistoryComment($response['xError']);
-            $payment->getOrder()->addRelatedObject($comment);
-        }
     }
 }
