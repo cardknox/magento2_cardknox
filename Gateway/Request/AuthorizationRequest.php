@@ -39,7 +39,6 @@ class AuthorizationRequest implements BuilderInterface
             'xExp' => sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2)),
             'xCVV' => $payment->getAdditionalInformation("xCVV"),
             'xCommand' => 'cc:authonly',
-//			'xToken' => $payment->getAdditionalInformation("xToken"),
             'xInvoice' => $order->getOrderIncrementId(),
             'xCurrency' => $order->getCurrencyCode(),
             'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
