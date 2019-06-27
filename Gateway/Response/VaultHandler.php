@@ -15,6 +15,7 @@ use Magento\Vault\Api\Data\PaymentTokenInterfaceFactory;
 //use Magento\Vault\Model\CreditCardTokenFactory;
 use Magento\Payment\Model\InfoInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use Magento\Payment\Model\Method\Logger;
 
 class VaultHandler implements HandlerInterface
 {
@@ -26,7 +27,7 @@ class VaultHandler implements HandlerInterface
     /**
      * @var CreditCardTokenFactory
      */
-//    protected $creditCardTokenFactory;
+    //    protected $creditCardTokenFactory;
 
     protected $paymentTokenFactory;
     /**
@@ -35,6 +36,16 @@ class VaultHandler implements HandlerInterface
     protected $paymentExtensionFactory;
 
     protected $config;
+
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * @param Logger $logger
+     */
+
     /**
      * Constructor
      *
@@ -44,11 +55,13 @@ class VaultHandler implements HandlerInterface
     public function __construct(
         PaymentTokenInterfaceFactory $paymentTokenFactory,
         OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory,
-        Config $config
+        Config $config,
+        Logger $logger
     ) {
         $this->paymentTokenFactory = $paymentTokenFactory;
         $this->paymentExtensionFactory = $paymentExtensionFactory;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -60,7 +73,8 @@ class VaultHandler implements HandlerInterface
      */
     public function handle(array $handlingSubject, array $response)
     {
-        if (!isset($handlingSubject['payment'])
+        if (
+            !isset($handlingSubject['payment'])
             || !$handlingSubject['payment'] instanceof PaymentDataObjectInterface
         ) {
             throw new \InvalidArgumentException('Payment data object should be provided');
@@ -70,6 +84,12 @@ class VaultHandler implements HandlerInterface
         $paymentDO = $handlingSubject['payment'];
 
         $payment = $paymentDO->getPayment();
+
+        if ($payment->getAdditionalInformation("is_active_payment_token_enabler") == "") {
+            return;
+        }
+
+        $log['VaultHandler save card'] = true;
 
         $xExp = "";
         if (isset($response[$this::xExp])) {
@@ -86,6 +106,8 @@ class VaultHandler implements HandlerInterface
                 $extensionAttributes->setVaultPaymentToken($paymentToken);
             }
         }
+
+        $this->logger->debug($log);
     }
 
     /**
@@ -97,7 +119,7 @@ class VaultHandler implements HandlerInterface
     private function getVaultPaymentToken(array $response, string $xExp)
     {
         // Check token existing in gateway response
-        if (isset($response[$this::xToken])){
+        if (isset($response[$this::xToken])) {
             $token = $response[$this::xToken];
             if (empty($token)) {
                 return null;
@@ -106,7 +128,6 @@ class VaultHandler implements HandlerInterface
             return null;
         }
 
-     
         /** @var PaymentTokenInterface $paymentToken */
         $paymentToken = $this->paymentTokenFactory->create();
         $paymentToken->setGatewayToken($token);
@@ -128,15 +149,14 @@ class VaultHandler implements HandlerInterface
     {
         $expDate = new \DateTime(
             '20' . substr($xExp, -2)
-            . '-'
-            . substr($xExp, 0, 2)
-            . '-'
-            . '01'
-            . ' '
-            . '00:00:00',
+                . '-'
+                . substr($xExp, 0, 2)
+                . '-'
+                . '01'
+                . ' '
+                . '00:00:00',
             new \DateTimeZone('UTC')
         );
-//		$expDate->add(new \DateInterval('P1M'));
         return $expDate->format('Y-m-d 00:00:00');
     }
     /**
@@ -158,7 +178,6 @@ class VaultHandler implements HandlerInterface
      */
     private function getCreditCardType($type)
     {
-//		$replaced = str_replace(' ', '-', strtolower($type));
         $mapper = $this->config->getCctypesMapper();
         return $mapper[$type];
     }

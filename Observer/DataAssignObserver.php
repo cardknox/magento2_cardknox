@@ -32,8 +32,8 @@ class DataAssignObserver extends AbstractDataAssignObserver
         self::xCardNum,
         self::xCVV,
         self::cc_exp_month,
-        self::cc_exp_year
-
+        self::cc_exp_year,
+        "is_active_payment_token_enabler"
     ];
 
     public function execute(Observer $observer)

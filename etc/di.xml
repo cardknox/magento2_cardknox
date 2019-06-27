@@ -115,6 +115,12 @@
         </arguments>
     </type>
 
+    <type name="CardknoxDevelopment\Cardknox\Gateway\Response\VaultHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">CardknoxLogger</argument>
+        </arguments>
+    </type>
+
     <!-- Commands infrastructure -->
     <virtualType name="CardknoxCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
