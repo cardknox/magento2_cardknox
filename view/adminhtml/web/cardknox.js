@@ -147,6 +147,16 @@ define([
             var self = this;
             getTokens(
                 function () {
+                    if (document.getElementsByName("payment[xCardNum]")[0].value === '') {
+                        self.error("Card Number Required");
+                        $('body').trigger('processStop');
+                        return false
+                    }
+                    if (document.getElementsByName("payment[xCVV]")[0].value === '') {
+                        self.error("CVV Required");
+                        $('body').trigger('processStop');
+                        return false
+                    }
                     self.placeOrder();
                 },
                 function () {
