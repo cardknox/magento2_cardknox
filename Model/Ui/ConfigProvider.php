@@ -13,7 +13,7 @@ use Magento\Framework\Locale\ResolverInterface;
 /**
  * Class ConfigProvider
  */
-final class ConfigProvider implements ConfigProviderInterface
+class ConfigProvider implements ConfigProviderInterface
 {
     const CODE = 'cardknox';
     const CC_VAULT_CODE = 'cardknox_cc_vault';
