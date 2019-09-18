@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © 2018 Cardknox Development Inc. All rights reserved.
  * See LICENSE for license details.
@@ -9,6 +10,7 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Validator;
 use CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
+use Magento\Payment\Model\Method\Logger;
 
 class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,6 +33,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->resultMock = $this->createMock(ResultInterface::class);
+        $this->mockLogger = $this->createMock(Logger::class);
     }
 
     /**
@@ -47,7 +50,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 $expectationToResultCreation
             )
             ->willReturn($this->resultMock);
-        $validator = new ResponseCodeValidator($this->resultFactory);
+        $validator = new ResponseCodeValidator($this->mockLogger, $this->resultFactory);
         static::assertInstanceOf(
             ResultInterface::class,
             $validator->validate(['response' => $response])
@@ -62,6 +65,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectationToResultCreation' => [
                     'isValid' => false,
                     'failsDescription' => [__('Gateway rejected the transaction.')],
+                    'errorCodes' => array()
                 ],
             ],
             'fail_2' => [
@@ -69,6 +73,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectationToResultCreation' => [
                     'isValid' => false,
                     'failsDescription' => [__('Gateway rejected the transaction.')],
+                    'errorCodes' => array()
                 ],
             ],
             'success' => [
@@ -76,6 +81,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectationToResultCreation' => [
                     'isValid' => true,
                     'failsDescription' => [],
+                    'errorCodes' => array()
                 ],
             ],
         ];
