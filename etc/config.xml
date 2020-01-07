@@ -35,8 +35,8 @@
                 <cgi_url>https://x1.cardknox.com/gateway</cgi_url>
                 <usecvv>1</usecvv>
                 <cctypes_cardknox_mapper><![CDATA[{"Amex":"AE","Visa":"VI","MasterCard":"MC","Discover":"DI","JCB":"JCB","CUP":"CUP","Diners":"DN","MI":"MI"}]]></cctypes_cardknox_mapper>
-                <privateInfoKeys>xAvsResult,xCvvResult,xRefNum,xAuthCode,xBatch,xExp</privateInfoKeys>
-                <paymentInfoKeys>xCardType,xMaskedCardNumber,xAuthAmount,xAuthCode,xBatch,xAvsResult,xCvvResult,xExp,xRefNum</paymentInfoKeys>
+                <privateInfoKeys>xAvsResult,xAvsResultCode,xCvvResult,xCvvResultCode,xRefNum,xAuthCode,xBatch,xExp</privateInfoKeys>
+                <paymentInfoKeys>xCardType,xMaskedCardNumber,xAuthAmount,xAuthCode,xBatch,xAvsResult,xAvsResultCode,xCvvResult,xCvvResultCode,xExp,xRefNum</paymentInfoKeys>
                 <debugReplaceKeys>xKey,xCardNum,xCvv</debugReplaceKeys>
             </cardknox>
             <cardknox_cc_vault>
