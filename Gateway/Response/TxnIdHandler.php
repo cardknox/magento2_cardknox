@@ -23,6 +23,8 @@ class TxnIdHandler implements HandlerInterface
     const xStatus = 'xStatus';
     const xError = 'xError';
     const xExp = 'xExp';
+    const xCvvResultCode = 'xCvvResultCode';
+    const xAvsResultCode = 'xAvsResultCode';
 
     protected $config;
     /**
@@ -44,6 +46,8 @@ class TxnIdHandler implements HandlerInterface
         self::xBatch,
         self::xRefNum,
         self::xAuthCode,
+        self::xAvsResultCode,
+        self::xCvvResultCode,
         self::xAuthAmount
     ];
 

@@ -95,6 +95,7 @@ class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
             TxnIdHandler::xMaskedCardNumber => '4xxxxx4444',
 //            TxnIdHandler::xAvsResult => 'Street Match',
             TxnIdHandler::xCvvResult => 'Match',
+            TxnIdHandler::xCvvResultCode => 'M',
             TxnIdHandler::xCardType => 'Visa',
             TxnIdHandler::xToken => 'rh3gd4',
             TxnIdHandler::xAuthCode => 'xAuthCode',
