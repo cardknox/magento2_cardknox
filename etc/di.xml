@@ -299,11 +299,11 @@
     <!-- Value handlers infrastructure -->
 
     <!--comment out the below when using version 2.1.0 > 2.1.3-->
-    <type name="CardknoxDevelopment\Cardknox\Gateway\Response\VaultHandler">
+    <!-- <type name="CardknoxDevelopment\Cardknox\Gateway\Response\VaultHandler">
         <arguments>
             <argument name="paymentTokenFactory" xsi:type="object">Magento\Vault\Model\CreditCardTokenFactory</argument>
         </arguments>
-    </type>
+    </type> -->
 
     <virtualType name="CardknoxConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
         <arguments>
