@@ -43,6 +43,7 @@ class TransferFactory implements TransferFactoryInterface
         return $this->transferBuilder
             ->setBody($request)
             ->setMethod('POST')
+            ->setClientConfig(['timeout' => 60])
             ->setUri($this->config->GetGatewayUrl())
             ->shouldEncode(true)
             ->build();
