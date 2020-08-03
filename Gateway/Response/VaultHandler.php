@@ -5,6 +5,7 @@
  */
 namespace CardknoxDevelopment\Cardknox\Gateway\Response;
 
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Sales\Api\Data\OrderPaymentExtensionInterface;
@@ -23,6 +24,11 @@ class VaultHandler implements HandlerInterface
     const xCardType = 'xCardType';
     const xToken = 'xToken';
     const xExp = 'xExp';
+
+    /**
+     * @var EncryptorInterface
+     */
+    protected $encryptor;
 
     /**
      * @var CreditCardTokenFactory
@@ -51,17 +57,20 @@ class VaultHandler implements HandlerInterface
      *
      * @param CreditCardTokenFactory $creditCardTokenFactory
      * @param OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory
+     * @param EncryptorInterface $encryptor
      */
     public function __construct(
         PaymentTokenInterfaceFactory $paymentTokenFactory,
         OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory,
         Config $config,
-        Logger $logger
+        Logger $logger,
+        EncryptorInterface $encryptor
     ) {
         $this->paymentTokenFactory = $paymentTokenFactory;
         $this->paymentExtensionFactory = $paymentExtensionFactory;
         $this->config = $config;
         $this->logger = $logger;
+        $this->encryptor = $encryptor;
     }
 
     /**
@@ -132,6 +141,7 @@ class VaultHandler implements HandlerInterface
         $paymentToken = $this->paymentTokenFactory->create();
         $paymentToken->setGatewayToken($token);
         $paymentToken->setExpiresAt($this->getExpirationDate($xExp));
+        $paymentToken->setPublicHash($this->generatePublicHash($paymentToken));
         $paymentToken->setTokenDetails($this->convertDetailsToJSON([
             'type' => $this->getCreditCardType($response[$this::xCardType]),
             'maskedCC' => $response[$this::X_MASKED_CARD_NUMBER],
@@ -139,6 +149,26 @@ class VaultHandler implements HandlerInterface
         ]));
 
         return $paymentToken;
+    }
+
+    /**
+     * Generate vault payment public hash
+     *
+     * @param PaymentTokenInterface $paymentToken
+     * @return string
+     */
+    protected function generatePublicHash(PaymentTokenInterface $paymentToken)
+    {
+        $hashKey = $paymentToken->getGatewayToken();
+        if ($paymentToken->getCustomerId()) {
+            $hashKey = $paymentToken->getCustomerId();
+        }
+
+        $hashKey .= $paymentToken->getPaymentMethodCode()
+            . $paymentToken->getType()
+            . $paymentToken->getTokenDetails();
+
+        return $this->encryptor->getHash($hashKey);
     }
 
     /**
