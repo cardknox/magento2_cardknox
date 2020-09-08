@@ -54,6 +54,10 @@ class TransferFactoryTest extends \PHPUnit\Framework\TestCase
             ->with($this->config->GetGatewayUrl())
             ->willReturnSelf();
         $this->transferBuilder->expects($this::once())
+            ->method('setClientConfig')
+            ->with(['timeout' => 60])
+            ->willReturnSelf();
+        $this->transferBuilder->expects($this::once())
             ->method('build')
             ->willReturn($this->transferMock);
         $this->assertEquals($this->transferMock, $this->transferFactory->create($request));
