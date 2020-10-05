@@ -157,7 +157,7 @@ class VaultHandler implements HandlerInterface
      * @param PaymentTokenInterface $paymentToken
      * @return string
      */
-    protected function generatePublicHash(PaymentTokenInterface $paymentToken)
+    public function generatePublicHash(PaymentTokenInterface $paymentToken)
     {
         $hashKey = $paymentToken->getGatewayToken();
         if ($paymentToken->getCustomerId()) {
