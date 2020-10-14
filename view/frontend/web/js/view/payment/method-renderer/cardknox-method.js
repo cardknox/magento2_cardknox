@@ -13,12 +13,16 @@ define(
         'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Checkout/js/action/place-order',
         'Magento_Ui/js/model/messageList',
-        'Magento_Vault/js/view/payment/vault-enabler'
+        'Magento_Vault/js/view/payment/vault-enabler',
+        'ko',
     ],
-    function (Component, $, v, i,fullScreenLoader,placeOrderAction,messageList,VaultEnabler) {
+    function (Component, $, v, i,fullScreenLoader,placeOrderAction,messageList,VaultEnabler, ko) {
         'use strict';
 
         return Component.extend({
+            cardNumberIsValid: ko.observable(false),
+            cvvIsValid:  ko.observable(false),
+
             /**
              * @returns {exports.initialize}
              */
@@ -68,24 +72,81 @@ define(
             },
 
             validate: function () {
-                var $form = $('#' + this.getCode() + '-form');
+                var self = this;
+                var $form = $('#' + self.getCode() + '-form');
                 return $form.validation() && $form.validation('isValid');
+            },
+
+            defaultStyle: {
+                border: '1px solid #adadad',
+                'font-size': '14px',
+                padding: '3px',
+                width: '145px',
+                height: '25px'
+            },
+
+            validStyle: {
+                border: '2px solid green',
+                'font-size': '14px',
+                padding: '3px',
+                width: '145px',
+                height: '25px'
+            },
+
+            invalidStyle: {
+                border: '2px solid red',
+                'font-size': '14px',
+                padding: '3px',
+                width: '145px',
+                height: '25px'
+            },
+
+            validateCardIfPresent: function(data) {
+                return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;            
+            },
+
+            validateCVVIfPresent: function(data) {
+               return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;     
+            },
+
+            validateCVVLengthIfPresent: function(data) {
+                if (data.issuer === 'unknown' || data.cvvLength <= 0) {
+                    return true;
+                } else if (data.issuer === 'amex'){
+                    return data.cvvLength === 4 ? true : false;
+                } else {
+                    return data.cvvLength === 3 ? true : false;
+                }
             },
 
             initCardknox: function () {
                 var self = this;
                 enableLogging();
+                enableAutoFormatting();
                 setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "0.1.2");
-                var style = {
-                    border: '1px solid #adadad',
-                    'font-size': '14px',
-                    padding: '3px',
-                    width: '145px',
-                    height: '25px'
-                };
-                //
-                setIfieldStyle('card-number', style);
-                setIfieldStyle('cvv', style);
+                setIfieldStyle('card-number', self.defaultStyle);
+                setIfieldStyle('cvv', self.defaultStyle);
+
+                addIfieldCallback('input', function(data) {
+                    console.log(self.cardNumberIsValid())
+                    if (data.ifieldValueChanged) {
+                        self.cardNumberIsValid(self.validateCardIfPresent(data));
+                        setIfieldStyle('card-number', data.cardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
+                        if (data.lastIfieldChanged === 'cvv'){
+                            self.cvvIsValid(self.validateCVVIfPresent(data));
+                            setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
+                        } else if (data.lastIfieldChanged === 'card-number') {
+                            self.cvvIsValid(self.validateCVVLengthIfPresent(data));
+                            if (data.issuer === 'unknown' || data.cvvLength <= 0) {
+                                setIfieldStyle('cvv', self.defaultStyle);
+                            } else if (data.issuer === 'amex'){
+                                setIfieldStyle('cvv', data.cvvLength === 4 ? self.validStyle : self.invalidStyle);
+                            } else {
+                                setIfieldStyle('cvv', data.cvvLength === 3 ? self.validStyle : self.invalidStyle);
+                            }
+                        }
+                    }
+                });
             },
 
             /**
@@ -97,8 +158,14 @@ define(
                     event.preventDefault();
                 }
                 var self = this;
-                if (this.validate()) {
+                if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
+                    if (!self.cardNumberIsValid() || !self.cvvIsValid()) {
+                        self.showError(!this.cardNumberIsValid() ? "Invalid card" : "Invalid CVV");  
+                        self.isPlaceOrderActionAllowed(true); 
+                        return false;
+                    }
+
                     getTokens(
                         function () {
                             //onSuccess
@@ -135,9 +202,10 @@ define(
              * @param {String} errorMessage
              */
             showError: function (errorMessage) {
-                messageList.addErrorMessage({
-                    message: errorMessage
-                });
+                let statusElement = document.getElementById('transaction-status');
+                statusElement.innerHTML = errorMessage;
+                statusElement.style.color = "red";
+                statusElement.focus();
             },
             /**
              * @returns {Bool}
