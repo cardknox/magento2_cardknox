@@ -33,10 +33,12 @@
                     <label data-bind="attr: {for: getCode() + '_number'}" class="label">
                         <span><!-- ko i18n: 'Card  Number'--><!-- /ko --></span>
                     </label>
-                    <iframe data-ifields-id="card-number" data-ifields-placeholder="Card Number"
-                            src="https://cdn.cardknox.com/ifields/2.5.1905.0801/ifield.htm" frameBorder="0" width="100%"
-                            height="33"></iframe>
-                    <input data-ifields-id="card-number-token" name="xCardNum" type="hidden"/>
+                    <div class="control">
+                        <iframe data-ifields-id="card-number" data-ifields-placeholder="Card Number"
+                                src="https://cdn.cardknox.com/ifields/2.6.2006.0102/ifield.htm" frameBorder="0"
+                                height="35"></iframe>
+                        <input data-ifields-id="card-number-token" name="xCardNum" type="hidden"/>
+                    </div>
                 </div>
                 <div class="field date required" data-bind="attr: {id: getCode() + '_cc_type_exp_div'}">
                     <label data-bind="attr: {for: getCode() + '_expiration'}" class="label">
@@ -79,14 +81,28 @@
                     <label data-bind="attr: {for: getCode() + '_cvv'}" class="label">    
                         <span><!-- ko i18n: 'Card Verification Number'--><!-- /ko --></span>
                     </label>
-                    <iframe data-ifields-id="cvv" data-ifields-placeholder="CVV"
-                            src="https://cdn.cardknox.com/ifields/2.5.1905.0801/ifield.htm" frameBorder="0" width="100%"
-                            height="33"></iframe>
+                    <div class="control _with-tooltip">
+                        <iframe data-ifields-id="cvv" data-ifields-placeholder="CVV"
+                        src="https://cdn.cardknox.com/ifields/2.6.2006.0102/ifield.htm" frameBorder="0"
+                        height="35"></iframe>
+                        <div class="field-tooltip toggle">
+                            <span class="field-tooltip-action action-cvv"
+                                    tabindex="0"
+                                    data-toggle="dropdown"
+                                    data-bind="attr: {title: $t('What is this?')}, mageInit: {'dropdown':{'activeClass': '_active'}}">
+                                <span><!-- ko i18n: 'What is this?'--><!-- /ko --></span>
+                            </span>
+                            <div class="field-tooltip-content"
+                                    data-target="dropdown"
+                                    data-bind="html: getCvvImageHtml()"></div>
+                        </div>
+                    </div>      
                     <input data-ifields-id="cvv-token" name="xCVV" type="hidden"/>
                     <label data-ifields-id="card-data-error" id="ifieldsError"></label>
                 </div>
-                 <!--ko if: (isVaultEnabled())-->
-                 <div class="field choice">
+                <label id="transaction-status" class="label"></label>
+                <!-- ko if: (isVaultEnabled()) -->
+                <div class="field choice">
                     <input type="checkbox"
                         name="vault[is_enabled]"
                         class="checkbox"

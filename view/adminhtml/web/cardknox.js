@@ -84,6 +84,30 @@ define([
             self.initCardknox();
         },
 
+        defaultStyle: {
+            border: '1px solid #adadad',
+            'font-size': '14px',
+            padding: '3px',
+            width: '145px',
+            height: '25px'
+        },
+
+        validStyle: {
+            border: '2px solid green',
+            'font-size': '14px',
+            padding: '3px',
+            width: '145px',
+            height: '25px'
+        },
+
+        invalidStyle: {
+            border: '2px solid red',
+            'font-size': '14px',
+            padding: '3px',
+            width: '145px',
+            height: '25px'
+        },
+
         /**
          * Setup Cardknox SDK
          */
@@ -93,15 +117,26 @@ define([
                 //setAccount(this.saveOnlyKey, "Magento2", "0.1.2");
                 enableLogging();
                 setAccount(this.tokenKey, "Magento2", "0.1.2");
-                var style = {
-                    border: '1px solid #adadad',
-                    'font-size': '14px',
-                    padding: '3px',
-                    width: '145px',
-                    height: '25px'
-                };
-                setIfieldStyle('card-number', style);
-                setIfieldStyle('cvv', style);
+                enableAutoFormatting();
+                setIfieldStyle('card-number', self.defaultStyle);
+                setIfieldStyle('cvv', self.defaultStyle);
+                addIfieldCallback('input', function(data) {
+
+                    if (data.ifieldValueChanged) {
+                        setIfieldStyle('card-number', data.cardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
+                        if (data.lastIfieldChanged === 'cvv'){
+                            setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
+                        } else if (data.lastIfieldChanged === 'card-number') {
+                            if (data.issuer === 'unknown' || data.cvvLength <= 0) {
+                                setIfieldStyle('cvv', self.defaultStyle);
+                            } else if (data.issuer === 'amex'){
+                                setIfieldStyle('cvv', data.cvvLength === 4 ? self.validStyle : self.invalidStyle);
+                            } else {
+                                setIfieldStyle('cvv', data.cvvLength === 3 ? self.validStyle : self.invalidStyle);
+                            }
+                        }
+                    }
+                });
             } catch (e) {
                 $('body').trigger('processStop');
                 self.error(e.message);
