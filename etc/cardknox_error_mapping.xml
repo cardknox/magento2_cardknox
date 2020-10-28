@@ -1,0 +1,92 @@
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/error_mapping.xsd">
+    <message_list>
+        <message code="01010" translate="true">Unable to verify card ID number.</message>
+        <message code="01011" translate="true">Customer Name Required</message>
+        <message code="01013" translate="true">AVS Error</message>
+        <message code="01016" translate="true">CVV Required</message>
+        <message code="01017" translate="true">Invalid Street</message>
+        <message code="01023" translate="true">Refund not permitted</message>
+        <message code="01026" translate="true">Unmatched Return Not Allowed</message>
+        <message code="01027" translate="true">Void Rejected</message>
+        <message code="01043" translate="true">No Original</message>
+        <message code="01044" translate="true">A capture requires that the existing transaction be an auth</message>
+        <message code="01045" translate="true">The original transaction cannot have this operation performed on it at this time</message>
+        <message code="01060" translate="true">Partial Refund Not Allowed</message>
+        <message code="01063" translate="true">Original Transaction Not Approved</message>
+        <message code="01070" translate="true">Transaction type is not voidable. Issue refund instead.</message>
+        <message code="01076" translate="true">AVS CVV Declined</message>
+        <message code="01094" translate="true">Invalid CC Account Number</message>
+        <message code="01100" translate="true">Transaction Not Found</message>
+        <message code="01119" translate="true">Transaction is in a state that cannot be refunded</message>
+        <message code="01120" translate="true">Transaction already refunded</message>
+        <message code="01121" translate="true">Transaction not eligible for refund.</message>
+        <message code="01135" translate="true">Unable to retrieve expiration date</message>
+        <message code="01137" translate="true">CVV error.</message>
+        <message code="01140" translate="true">Name On Account Required.</message>
+        <message code="01151" translate="true">Refunds cannot be performed until the transaction has settled</message>
+        <message code="01170" translate="true">Phone Field Required</message>
+        <message code="01171" translate="true">Country Field Required</message>
+        <message code="01172" translate="true">Email Field Required</message>
+        <message code="01194" translate="true">Amount exceeds original transaction amount.</message>
+        <message code="01196" translate="true">Zip Required for Keyed Transaction</message>
+        <message code="01201" translate="true">Refund amount exceeds sale amount</message>
+        <message code="01204" translate="true">Invalid Token</message>
+        <message code="01205" translate="true">Invalid Zip</message>
+        <message code="01223" translate="true">Card Number was not between 13 and 16 digits</message>
+        <message code="01235" translate="true">Missing CVV</message>
+        <message code="01251" translate="true">Card Expired</message>
+        <message code="01271" translate="true">Billing Information Required</message>
+        <message code="01280" translate="true">Cardnumber Mismatch</message>
+        <message code="01286" translate="true">No Phone Number Provided</message>
+        <message code="01287" translate="true">Invalid CVV</message>
+        <message code="01291" translate="true">Invalid Email</message>
+        <message code="01294" translate="true">Invalid Exp Length</message>
+        <message code="01295" translate="true">Expiration Date Must Be In Future</message>
+        <message code="01327" translate="true">Duplicate Return</message>
+        <message code="01328" translate="true">Unmatched card expiry date</message>
+        <message code="01332" translate="true">Duplicate Transaction</message>    
+        <message code="01333" translate="true">CCV failed</message>
+        <message code="01334" translate="true">Decline</message>
+        <message code="01337" translate="true">Invalid account number</message>
+        <message code="01338" translate="true">Invalid Card Account</message>
+        <message code="01347" translate="true">Expired card</message>
+        <message code="01385" translate="true">CVV Declined</message>
+        <message code="01411" translate="true">Insufficent_Funds</message>
+        <message code="01462" translate="true">Transaction Previously Voided</message>
+        <message code="01463" translate="true">Invalid_RefNum</message>
+        <message code="01464" translate="true">Invalid Credit Card</message>
+        <message code="01469" translate="true">Transaction amount exceeded for test account</message>
+        <message code="01470" translate="true">Invalid EXP</message>
+        <message code="01477" translate="true">Expiration Date Required</message>
+        <message code="01479" translate="true">Invalid Card</message>
+        <message code="01481" translate="true">Timeout</message>
+        <message code="01482" translate="true">Billing Address Mismatch</message>
+        <message code="01489" translate="true">Invalid CVV Length</message>
+        <message code="01490" translate="true">Card Number Error</message>
+        <message code="01491" translate="true">Invalid_CardNumber</message>
+        <message code="01494" translate="true">Use VOID to refund an unsettled transaction</message>
+        <message code="01502" translate="true">Name exceeds max length</message>
+        <message code="01514" translate="true">Invalid Bill Street</message>
+        <message code="01515" translate="true">Invalid Bill First Name</message>
+        <message code="01516" translate="true">Invalid Bill Last Name</message>
+        <message code="01517" translate="true">Invalid Ship Street</message>
+        <message code="01518" translate="true">Invalid Ship First Name</message>
+        <message code="01519" translate="true">Invalid Ship Last Name</message>
+        <message code="01538" translate="true">CVV Error</message>
+        <message code="01540" translate="true">Name Required</message>
+        <message code="01541" translate="true">Street exceeds max length</message>
+        <message code="01546" translate="true">Invalid Name</message>
+        <message code="01633" translate="true">Mailing address invalid</message>
+        <message code="01660" translate="true">Invalid Void After Refund</message>
+        <message code="01661" translate="true">Refund on a refund not allowed</message>
+        <message code="01664" translate="true">CVV Response Code is required</message>
+        <message code="01678" translate="true">Refund not permitted, amount exceeds original sale</message>
+        <message code="01681" translate="true">AVS Street Required</message>
+        <message code="01689" translate="true">Capture not allowed on voided auth</message>
+        <message code="01698" translate="true">Invalid billing address</message>
+        <message code="01699" translate="true">Incorrect CVV</message>
+        <message code="01704" translate="true">Refund not allowed; issue void</message>
+        <message code="01721" translate="true">Transaction can no longer be voided</message>
+        <message code="01758" translate="true">Transaction already settled, issue refund (P)</message>
+    </message_list>
+</mapping>

@@ -123,12 +123,11 @@ define(
                 var self = this;
                 enableLogging();
                 enableAutoFormatting();
-                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "0.1.2");
+                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.12");
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);
 
                 addIfieldCallback('input', function(data) {
-                    console.log(self.cardNumberIsValid())
                     if (data.ifieldValueChanged) {
                         self.cardNumberIsValid(self.validateCardIfPresent(data));
                         setIfieldStyle('card-number', data.cardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);

@@ -43,7 +43,8 @@ class AuthorizationRequest implements BuilderInterface
             'xCurrency' => $order->getCurrencyCode(),
             'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
             // always true; order number is incremented on every attempt so invoice is always different
-            'xIgnoreInvoice' => true
+            'xIgnoreInvoice' => true,
+            'xTimeoutSeconds' => 55
         ];
     }
 }
