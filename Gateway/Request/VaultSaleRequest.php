@@ -51,7 +51,8 @@ class VaultSaleRequest implements BuilderInterface
                 'xToken' => $paymentToken->getGatewayToken(),
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
-                'xIgnoreInvoice' => true
+                'xIgnoreInvoice' => true,
+                'xTimeoutSeconds' => 55
             ];
         }
 
