@@ -50,7 +50,8 @@ class CaptureRequest implements BuilderInterface
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
-                'xIgnoreInvoice' => true
+                'xIgnoreInvoice' => true,
+                'xTimeoutSeconds' => 55
             ];
         }
 
