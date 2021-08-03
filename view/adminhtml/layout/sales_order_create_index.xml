@@ -11,6 +11,13 @@
         <!--<script src='https://cdn.cardknox.com/ifields/ifields.min.js' src_type="url"/>-->
     <!--</head>-->
     <body>
+        <referenceContainer name="after.body.start">
+            <block class="Magento\Framework\View\Element\Template" 
+                   name="custom.file" 
+                   before="-" 
+                   template="CardknoxDevelopment_Cardknox::cardtrigger.phtml"
+            />
+        </referenceContainer>  
         <referenceBlock name="order_create_billing_form">
             <action method="setMethodFormTemplate">
                 <argument name="method" xsi:type="string">cardknox</argument>
