@@ -95,8 +95,8 @@
                         </div>
                     </div>      
                     <input data-ifields-id="cvv-token" name="xCVV" type="hidden"/>
+                    <label data-ifields-id="card-data-error" id="ifieldsError"></label>
                 </div>
-                <label data-ifields-id="card-data-error" id="ifieldsError"></label>
                 <label id="transaction-status" class="label"></label>
                 <!-- ko if: (isVaultEnabled()) -->
                 <div class="field choice">
@@ -108,6 +108,11 @@
                         <span><!-- ko i18n: 'Save for later use.'--><!-- /ko --></span>
                     </label>
                 </div>
+                <!-- /ko -->
+
+                <!-- ko if: (isEnabledReCaptcha())-->
+                    <div class="g-recaptcha" id="cardknox_recaptcha"></div>
+                    <span class="recaptcha-error" style="color:red;display: none;">Please verify reCAPTCHA.</span>
                 <!-- /ko -->
             </fieldset>
         </form>

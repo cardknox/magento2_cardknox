@@ -46,6 +46,30 @@
                 <field id="cgi_url" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Cardknox Gateway Endpoint</label>
                 </field>
+                <!-- <field id="limit_per_ip_address_in_hour" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Limit per IP address in hour</label>
+                    <config_path>payment/cardknox_cc_vault/limit_per_ip_address_in_hour</config_path>
+                    <validate>required-entry validate-digits validate-not-negative-number validate-digits-range digits-range-0-50</validate>
+                    <comment><![CDATA[Limit per IP address in hour between 0 to 50]]></comment>
+                </field> -->
+                <field id="recaptchaEnabled" translate="label comment" type="select" sortOrder="151" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Google reCAPTCHA V2 Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                     <comment><![CDATA[Visible Google Recaptcha enable]]></comment>
+                </field>
+                <field id="visible_api_key" translate="label comment" type="text" sortOrder="152" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Google API Key V2</label>
+                    <comment><![CDATA[Create app <a href="https://www.google.com/recaptcha/admin" target="_blank">here</a>.]]></comment>
+                    <depends>
+                        <field id="recaptchaEnabled">1</field>
+                    </depends>
+                </field>
+                <field id="visible_api_secret" translate="label comment" type="text" sortOrder="153" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Google API Secret Key V2</label>
+                    <depends>
+                        <field id="recaptchaEnabled">1</field>
+                    </depends>
+                </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="130" showInDefault="9"
                        showInWebsite="1" showInStore="0">
                     <label>Payment From Applicable Countries</label>

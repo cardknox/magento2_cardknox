@@ -14,7 +14,7 @@ define(
         'Magento_Checkout/js/action/place-order',
         'Magento_Ui/js/model/messageList',
         'Magento_Vault/js/view/payment/vault-enabler',
-        'ko',
+        'ko'
     ],
     function (Component, $, v, i,fullScreenLoader,placeOrderAction,messageList,VaultEnabler, ko) {
         'use strict';
@@ -22,28 +22,32 @@ define(
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
             cvvIsValid:  ko.observable(false),
-
+            
             /**
              * @returns {exports.initialize}
              */
             initialize: function () {
+                
                 this._super();
                 this.initCardknox();
                 this.vaultEnabler = new VaultEnabler();
                 this.vaultEnabler.setPaymentCode(this.getVaultCode());
+                
                 return this;
             },
-
+            
             defaults: {
                 template: 'CardknoxDevelopment_Cardknox/payment/cardknox-form'
             },
-
+            
+            
             /** Returns send check to info */
             getMailingAddress: function () {
                 return window.checkoutConfig.payment.checkmo.mailingAddress;
             },
 
             getCode: function () {
+                
                 return 'cardknox';
             },
 
@@ -119,6 +123,30 @@ define(
                 }
             },
 
+            isEnabledReCaptcha: function () {
+                if (window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == 1) {
+                    return true; 
+                } else {
+                    return false;
+                }
+            },
+
+            getSiteKeyV2: function () {
+                return window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey;
+            },
+
+            onloadCallback: function () {
+                var cardknox_recaptcha_widget;
+                setTimeout(function(){ 
+                    if($('#cardknox_recaptcha').length) {
+                        cardknox_recaptcha_widget = grecaptcha.render('cardknox_recaptcha', {
+                          'sitekey' : window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey
+                        });
+                    }
+                }, 2000);
+                return cardknox_recaptcha_widget;
+            },
+
             initCardknox: function () {
                 var self = this;
                 enableLogging();
@@ -126,6 +154,9 @@ define(
                 setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.12");
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);
+
+                this.onloadCallback();
+                require(['https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit']);
 
                 addIfieldCallback('input', function(data) {
                     if (data.ifieldValueChanged) {
@@ -147,7 +178,7 @@ define(
                     }
                 });
             },
-
+                        
             /**
              * Prepare data to place order
              * @param {Object} data
@@ -157,6 +188,18 @@ define(
                     event.preventDefault();
                 }
                 var self = this;
+
+                var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
+                if (isEnabledGoogleReCaptcha == true){
+                    var captchResponse = $('#g-recaptcha-response').val();
+                    if(captchResponse.length == 0 ){
+                        $(".recaptcha-error").show();
+                        return;
+                    } else {
+                        $(".recaptcha-error").hide();
+                    }
+                }
+                                
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
                     if (!self.cardNumberIsValid() || !self.cvvIsValid()) {
@@ -171,19 +214,22 @@ define(
                             //perform your own validation here...
                             if (document.getElementsByName("xCardNum")[0].value === '') {
                                 self.showError("Card Number Required");
+                                console.log("Card");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
                             if (document.getElementsByName("xCVV")[0].value === '') {
                                 self.showError("CVV Required");
+                                console.log("CVV");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
                             self.isPlaceOrderActionAllowed(true);
                             return self.placeOrder('parent');
                         },
-                        function () {
+                        function () { 
                             //onError
+                            console.log("isfield");
                             self.showError(document.getElementById('ifieldsError').textContent);
                             self.isPlaceOrderActionAllowed(true);
                         },
@@ -201,6 +247,7 @@ define(
              * @param {String} errorMessage
              */
             showError: function (errorMessage) {
+                console.log("transaction");
                 let statusElement = document.getElementById('transaction-status');
                 statusElement.innerHTML = errorMessage;
                 statusElement.style.color = "red";

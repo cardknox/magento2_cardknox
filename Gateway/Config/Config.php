@@ -16,6 +16,9 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     const CARDKNOX_TOKEN_KEY = 'cardknox_token_key';
     const GatewayURL = 'cgi_url';
     const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
+    const LIMIT_PER_IP_ADDRESS_IN_HOUR = "limit_per_ip_address_in_hour";
+    const IS_ENABLE_GOOGLE_REPCAPTCHA = "recaptchaEnabled";
+    const GOOGLE_REPCAPTCHA_SITE_KEY = "visible_api_key";
 
     public function isActive()
     {
@@ -45,5 +48,19 @@ class Config extends \Magento\Payment\Gateway\Config\Config
         );
 //        $result = $this->getValue(self::KEY_CC_TYPES_CARDKNOX_MAPPER);
         return is_array($result) ? $result : [];
+    }
+
+    public function GetLimitPerIpAddressInHour()
+    {
+        return $this->getValue(self::LIMIT_PER_IP_ADDRESS_IN_HOUR);
+    }
+
+    public function isEnabledReCaptcha()
+    {
+        return $this->getValue(self::IS_ENABLE_GOOGLE_REPCAPTCHA);
+    }
+    public function getGoogleRepCaptchaSiteKey()
+    {
+        return $this->getValue(self::GOOGLE_REPCAPTCHA_SITE_KEY);
     }
 }

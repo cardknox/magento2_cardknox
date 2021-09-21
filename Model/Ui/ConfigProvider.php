@@ -35,6 +35,9 @@ class ConfigProvider implements ConfigProviderInterface
                 self::CODE => [
                     'isActive' => $this->config->isActive(),
                     'tokenKey' => $this->config->GetTokenKey(),
+                    'isEnabledReCaptcha' => $this->config->isEnabledReCaptcha(),
+                    'googleReCaptchaSiteKey' => $this->config->getGoogleRepCaptchaSiteKey(),
+                    'limitPerIpAddressInHour' => $this->config->GetLimitPerIpAddressInHour(),
                     'ccVaultCode' => self::CC_VAULT_CODE
                 ]
             ]
