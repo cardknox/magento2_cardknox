@@ -38,6 +38,9 @@
                 <privateInfoKeys>xAvsResult,xAvsResultCode,xCvvResult,xCvvResultCode,xRefNum,xAuthCode,xBatch,xExp</privateInfoKeys>
                 <paymentInfoKeys>xCardType,xMaskedCardNumber,xAuthAmount,xAuthCode,xBatch,xAvsResult,xAvsResultCode,xCvvResult,xCvvResultCode,xExp,xRefNum</paymentInfoKeys>
                 <debugReplaceKeys>xKey,xCardNum,xCvv</debugReplaceKeys>
+                <recaptchaEnabled></recaptchaEnabled>
+                <visible_api_key></visible_api_key>
+                <visible_api_secret></visible_api_secret>
             </cardknox>
             <cardknox_cc_vault>
                 <model>CardknoxCreditCardVaultFacade</model>

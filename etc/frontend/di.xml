@@ -14,7 +14,6 @@
             </argument>
         </arguments>
     </type>
-
     <type name="Magento\Payment\Model\CcGenericConfigProvider">
         <arguments>
             <argument name="methodCodes" xsi:type="array">
@@ -22,7 +21,6 @@
             </argument>
         </arguments>
     </type>
-
     <type name="CardknoxDevelopment\Cardknox\Block\Info">
         <arguments>
             <argument name="data" xsi:type="array">
@@ -30,7 +28,6 @@
             </argument>
         </arguments>
     </type>
-
     <type name="Magento\Vault\Model\Ui\TokensConfigProvider">
         <arguments>
             <argument name="tokenUiComponentProviders" xsi:type="array">
@@ -38,5 +35,4 @@
             </argument>
         </arguments>
     </type>
-
 </config>

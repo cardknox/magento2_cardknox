@@ -27,7 +27,6 @@ class ConfigProvider implements ConfigProviderInterface
         $this->config = $config;
     }
 
-
     public function getConfig()
     {
         return [
@@ -37,7 +36,6 @@ class ConfigProvider implements ConfigProviderInterface
                     'tokenKey' => $this->config->GetTokenKey(),
                     'isEnabledReCaptcha' => $this->config->isEnabledReCaptcha(),
                     'googleReCaptchaSiteKey' => $this->config->getGoogleRepCaptchaSiteKey(),
-                    'limitPerIpAddressInHour' => $this->config->GetLimitPerIpAddressInHour(),
                     'ccVaultCode' => self::CC_VAULT_CODE
                 ]
             ]

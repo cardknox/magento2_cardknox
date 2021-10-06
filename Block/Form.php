@@ -5,7 +5,6 @@
  */
 namespace CardknoxDevelopment\Cardknox\Block;
 
-
 use Magento\Backend\Model\Session\Quote;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config as GatewayConfig;
 use CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider;
@@ -15,15 +14,14 @@ use Magento\Payment\Block\Form\Cc;
 use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\Config;
 use Magento\Vault\Model\VaultPaymentInterface;
+
 /**
  * Class Form
  */
 class Form extends Cc
 {
 
-
     protected $gatewayConfig;
-
 
     /**
      * @param Context $context
@@ -35,7 +33,6 @@ class Form extends Cc
         Context $context,
         Config $paymentConfig,
         GatewayConfig $gatewayConfig,
-
         array $data = []
     ) {
         parent::__construct($context, $paymentConfig, $data);
@@ -79,5 +76,4 @@ class Form extends Cc
 //        }
 //        return $this->paymentDataHelper;
 //    }
-
 }

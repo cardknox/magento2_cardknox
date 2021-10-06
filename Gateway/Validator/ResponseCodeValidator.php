@@ -16,14 +16,7 @@ use Magento\Payment\Gateway\Command\CommandException;
 class ResponseCodeValidator extends AbstractValidator
 {
        
-    // /**
-    //  * @var Logger
-    //  */
     private $logger;
-
-    // /**
-    //  * @param Logger $logger
-    //  */
 
     public function __construct(
         Logger $logger,
@@ -54,12 +47,12 @@ class ResponseCodeValidator extends AbstractValidator
         $this->logger->debug($log);
         if ($this->isSuccessfulTransaction($response)) {
             return $this->createResult(true);
-        } else { 
+        } else {
             return $this->createResult(
                 false,
-                $this->getFailedResponse($response), 
+                $this->getFailedResponse($response),
                 $this->getErrorCode($response)
-            );      
+            );
             // $errorMessage = $this->getFailedResponse($response);
             // $logError['Payment Error'] = $errorMessage;
             // $this->logger->debug([$logError]);
@@ -89,5 +82,4 @@ class ResponseCodeValidator extends AbstractValidator
         $errorCode = (isset($response['xErrorCode']) ? $response['xErrorCode'] : "");
         return [__($errorCode)];
     }
-
 }

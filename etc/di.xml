@@ -17,7 +17,6 @@
             <argument name="commandPool" xsi:type="object">CardknoxCommandPool</argument>
         </arguments>
     </virtualType>
-
     <!-- Vault Method Facade configuration -->
     <virtualType name="CardknoxCreditCardVaultFacade" type="Magento\Vault\Model\Method\Vault">
         <arguments>
@@ -29,7 +28,6 @@
             <argument name="commandManagerPool" xsi:type="object">CardknoxCcVaultCommandManagerPool</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="CardknoxVaultPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider::CC_VAULT_CODE</argument>
@@ -56,7 +54,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!--<type name="Magento\Payment\Gateway\Command\CommandManagerPool">-->
         <!--<arguments>-->
             <!--<argument name="executors" xsi:type="array">-->
@@ -72,55 +69,44 @@
             <argument name="commandPool" xsi:type="object">CardknoxCommandPool</argument>
         </arguments>
     </virtualType>
-
     <!-- END command managers section for Vault -->
-
-
     <!-- Configuration reader -->
     <type name="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider::CODE</argument>
         </arguments>
     </type>
-
     <!-- Logger, initialized with CardknoxConfig -->
     <virtualType name="CardknoxLogger" type="Magento\Payment\Model\Method\Logger">
         <arguments>
             <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\Config</argument>
         </arguments>
     </virtualType>
-
-
     <type name="CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client">
         <arguments>
             <argument name="logger" xsi:type="object">CardknoxLogger</argument>
         </arguments>
     </type>
-
     <type name="CardknoxDevelopment\Cardknox\Gateway\Request\RefundRequest">
         <arguments>
             <argument name="logger" xsi:type="object">CardknoxLogger</argument>
         </arguments>
     </type>
-
     <type name="CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator">
         <arguments>
             <argument name="logger" xsi:type="object">CardknoxLogger</argument>
         </arguments>
     </type>
-
     <type name="CardknoxDevelopment\Cardknox\Gateway\Response\RefundHandler">
         <arguments>
             <argument name="logger" xsi:type="object">CardknoxLogger</argument>
         </arguments>
     </type>
-
     <type name="CardknoxDevelopment\Cardknox\Gateway\Response\VaultHandler">
         <arguments>
             <argument name="logger" xsi:type="object">CardknoxLogger</argument>
         </arguments>
     </type>
-
     <!-- Commands infrastructure -->
     <virtualType name="CardknoxCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
@@ -135,7 +121,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- Vault Authorize command -->
     <virtualType name="CardknoxVaultAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -147,7 +132,6 @@
             <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
-
     <!--Vault Authorization Request -->
     <virtualType name="CardknoxVaultAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
@@ -158,7 +142,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- Vault Sale command -->
     <virtualType name="CardknoxVaultSaleCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -170,7 +153,6 @@
             <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
-
     <!--Vault Sale Request -->
     <virtualType name="CardknoxVaultSaleRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
@@ -181,7 +163,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- Authorize command -->
     <virtualType name="CardknoxAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -193,7 +174,6 @@
             <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
-
     <!-- Authorization Request -->
     <virtualType name="CardknoxAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
@@ -204,13 +184,11 @@
             </argument>
         </arguments>
     </virtualType>
-
     <type name="CardknoxDevelopment\Cardknox\Gateway\Request\BaseRequest">
         <arguments>
             <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\Config</argument>
         </arguments>
     </type>
-
     <!-- Capture command -->
     <virtualType name="CardknoxCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -222,7 +200,6 @@
             <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
-
     <!-- Capture Request -->
     <virtualType name="CardknoxCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
@@ -233,7 +210,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- Void command -->
     <virtualType name="CardknoxVoidCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -245,7 +221,6 @@
             <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
-
     <!-- Void Request -->
     <virtualType name="CardknoxVoidRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
@@ -255,7 +230,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- Refund command -->
     <virtualType name="CardknoxRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -267,7 +241,6 @@
             <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
-
     <!-- Refund Request -->
     <virtualType name="CardknoxRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
@@ -277,7 +250,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- Cancel command -->
     <virtualType name="CardknoxCancelCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -289,7 +261,6 @@
             <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument> 
         </arguments>
     </virtualType>
-
     <!-- Cancel Request -->
     <virtualType name="CardknoxCancelRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
@@ -299,14 +270,12 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- Error Mapping -->
     <virtualType name="CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualConfigReader" type="Magento\Payment\Gateway\ErrorMapper\VirtualConfigReader">
         <arguments>
             <argument name="fileName" xsi:type="string">cardknox_error_mapping.xml</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualMappingData" type="Magento\Payment\Gateway\ErrorMapper\MappingData">
         <arguments>
             <argument name="reader" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualConfigReader</argument>
@@ -319,25 +288,19 @@
             <argument name="messageMapping" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualMappingData</argument>
         </arguments>
     </virtualType>
-
     <!-- Response handlers -->
-
-
     <!-- Value handlers infrastructure -->
-
     <!--comment out the below when using version 2.1.0 > 2.1.3-->
     <type name="CardknoxDevelopment\Cardknox\Gateway\Response\VaultHandler">
         <arguments>
             <argument name="paymentTokenFactory" xsi:type="object">Magento\Vault\Model\CreditCardTokenFactory</argument>
         </arguments>
     </type>
-
     <virtualType name="CardknoxConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
         <arguments>
             <argument name="configInterface" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\Config</argument>
         </arguments>
     </virtualType>
-
     <virtualType name="CardknoxResponseHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
         <arguments>
             <argument name="handlers" xsi:type="array">
@@ -345,7 +308,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <virtualType name="CardknoxVaultResponseHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
         <arguments>
             <argument name="handlers" xsi:type="array">
@@ -354,7 +316,6 @@
             </argument>
         </arguments>
     </virtualType>
-
     <virtualType name="CardknoxValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
@@ -362,9 +323,7 @@
             </argument>
         </arguments>
     </virtualType>
-
     <!-- END Value handlers infrastructure -->
-
     <type name="Magento\Payment\Block\Info\Cc">
         <arguments>
             <argument name="data" xsi:type="array">
@@ -380,5 +339,3 @@
         </arguments>
     </type>
 </config>
-
-

@@ -24,4 +24,3 @@ define(
         return Component.extend({});
     }
 );
-

@@ -18,11 +18,9 @@ define(
     ],
     function (Component, $, v, i,fullScreenLoader,placeOrderAction,messageList,VaultEnabler, ko) {
         'use strict';
-
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
             cvvIsValid:  ko.observable(false),
-            
             /**
              * @returns {exports.initialize}
              */
@@ -32,25 +30,18 @@ define(
                 this.initCardknox();
                 this.vaultEnabler = new VaultEnabler();
                 this.vaultEnabler.setPaymentCode(this.getVaultCode());
-                
                 return this;
             },
-            
             defaults: {
                 template: 'CardknoxDevelopment_Cardknox/payment/cardknox-form'
             },
-            
-            
             /** Returns send check to info */
             getMailingAddress: function () {
                 return window.checkoutConfig.payment.checkmo.mailingAddress;
             },
-
             getCode: function () {
-                
                 return 'cardknox';
             },
-
             /**
              * Get data
              *
@@ -70,17 +61,14 @@ define(
                 this.vaultEnabler.visitAdditionalData(data);
                 return data;
             },
-
             isActive: function () {
                 return true;
             },
-
             validate: function () {
                 var self = this;
                 var $form = $('#' + self.getCode() + '-form');
                 return $form.validation() && $form.validation('isValid');
             },
-
             defaultStyle: {
                 border: '1px solid #adadad',
                 'font-size': '14px',
@@ -88,7 +76,6 @@ define(
                 width: '145px',
                 height: '25px'
             },
-
             validStyle: {
                 border: '2px solid green',
                 'font-size': '14px',
@@ -96,7 +83,6 @@ define(
                 width: '145px',
                 height: '25px'
             },
-
             invalidStyle: {
                 border: '2px solid red',
                 'font-size': '14px',
@@ -104,15 +90,12 @@ define(
                 width: '145px',
                 height: '25px'
             },
-
             validateCardIfPresent: function(data) {
                 return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;            
             },
-
             validateCVVIfPresent: function(data) {
                return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;     
             },
-
             validateCVVLengthIfPresent: function(data) {
                 if (data.issuer === 'unknown' || data.cvvLength <= 0) {
                     return true;
@@ -122,7 +105,6 @@ define(
                     return data.cvvLength === 3 ? true : false;
                 }
             },
-
             isEnabledReCaptcha: function () {
                 if (window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == 1) {
                     return true; 
@@ -130,11 +112,9 @@ define(
                     return false;
                 }
             },
-
             getSiteKeyV2: function () {
                 return window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey;
             },
-
             onloadCallback: function () {
                 var cardknox_recaptcha_widget;
                 setTimeout(function(){ 
@@ -146,7 +126,6 @@ define(
                 }, 2000);
                 return cardknox_recaptcha_widget;
             },
-
             initCardknox: function () {
                 var self = this;
                 enableLogging();
@@ -154,10 +133,8 @@ define(
                 setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.12");
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);
-
                 this.onloadCallback();
                 require(['https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit']);
-
                 addIfieldCallback('input', function(data) {
                     if (data.ifieldValueChanged) {
                         self.cardNumberIsValid(self.validateCardIfPresent(data));
@@ -178,7 +155,6 @@ define(
                     }
                 });
             },
-                        
             /**
              * Prepare data to place order
              * @param {Object} data
@@ -188,7 +164,6 @@ define(
                     event.preventDefault();
                 }
                 var self = this;
-
                 var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
                 if (isEnabledGoogleReCaptcha == true){
                     var captchResponse = $('#g-recaptcha-response').val();
@@ -199,7 +174,6 @@ define(
                         $(".recaptcha-error").hide();
                     }
                 }
-                                
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
                     if (!self.cardNumberIsValid() || !self.cvvIsValid()) {
@@ -207,20 +181,17 @@ define(
                         self.isPlaceOrderActionAllowed(true); 
                         return false;
                     }
-
                     getTokens(
                         function () {
                             //onSuccess
                             //perform your own validation here...
                             if (document.getElementsByName("xCardNum")[0].value === '') {
                                 self.showError("Card Number Required");
-                                console.log("Card");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
                             if (document.getElementsByName("xCVV")[0].value === '') {
                                 self.showError("CVV Required");
-                                console.log("CVV");
                                 self.isPlaceOrderActionAllowed(true);
                                 return false
                             }
@@ -229,7 +200,6 @@ define(
                         },
                         function () { 
                             //onError
-                            console.log("isfield");
                             self.showError(document.getElementById('ifieldsError').textContent);
                             self.isPlaceOrderActionAllowed(true);
                         },
@@ -241,13 +211,11 @@ define(
                     return false
                 }
             },
-
             /**
              * Show error message
              * @param {String} errorMessage
              */
             showError: function (errorMessage) {
-                console.log("transaction");
                 let statusElement = document.getElementById('transaction-status');
                 statusElement.innerHTML = errorMessage;
                 statusElement.style.color = "red";
@@ -259,7 +227,6 @@ define(
             isVaultEnabled: function () {
                 return this.vaultEnabler.isVaultEnabled();
             },
-
             /**
              * @returns {String}
              */

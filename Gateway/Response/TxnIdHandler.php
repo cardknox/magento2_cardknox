@@ -51,7 +51,6 @@ class TxnIdHandler implements HandlerInterface
         self::xAuthAmount
     ];
 
-
     /**
      * Handles transaction id
      *
@@ -101,5 +100,4 @@ class TxnIdHandler implements HandlerInterface
         $mapper = $this->config->getCctypesMapper();
         return $mapper[$type];
     }
-
 }
