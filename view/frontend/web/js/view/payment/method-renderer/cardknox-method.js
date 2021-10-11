@@ -106,11 +106,7 @@ define(
                 }
             },
             isEnabledReCaptcha: function () {
-                if (window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == 1) {
-                    return true; 
-                } else {
-                    return false;
-                }
+                return window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == 1;
             },
             getSiteKeyV2: function () {
                 return window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey;
