@@ -11,7 +11,6 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 class CancelRequest implements BuilderInterface
 {
 
-
     /**
      * Builds ENV request
      *

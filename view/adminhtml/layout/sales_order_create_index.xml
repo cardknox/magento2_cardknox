@@ -17,7 +17,8 @@
                    before="-" 
                    template="CardknoxDevelopment_Cardknox::cardtrigger.phtml"
             />
-        </referenceContainer>  
+        </referenceContainer>
+
         <referenceBlock name="order_create_billing_form">
             <action method="setMethodFormTemplate">
                 <argument name="method" xsi:type="string">cardknox</argument>

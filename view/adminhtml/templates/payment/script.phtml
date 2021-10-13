@@ -6,9 +6,7 @@
 
 /** @var CardknoxDevelopment\Cardknox\Block\Payment $block */
 
-$code = $block->escapeHtml($block->getCode());
-
-?>
+$code = $block->escapeHtml($block->getCode());?>
 <script>
     //<![CDATA[
     require(
@@ -17,9 +15,9 @@ $code = $block->escapeHtml($block->getCode());
             'CardknoxDevelopment_Cardknox/cardknox',
             'ifields'
         ], function($, Cardknox) {
-            var config = <?php /* @noEscape */ echo $block->getPaymentConfig(); ?>,
+            var config = <?= /* @noEscape */ $block->getPaymentConfig(); ?>,
                 payment,
-                form =  $('#payment_form_<?php /* @noEscape */ echo $code; ?>');
+                form =  $('#payment_form_<?= /* @noEscape */ $code; ?>');
             config.active = form.length > 0 && !form.is(':hidden');
             payment = new Cardknox(config);         
         });

@@ -1,22 +1,7 @@
 <script type="text/javascript">
-    require(['jquery', 'jquery/ui'], function($){	
-        $(document).ready(function () {
-            setTimeout(function() {
-                var public_hash_val = $("#cardknox_cc_vault_public_hash").val();
-                if($(public_hash_val).length==0){
-                    var public_hash = $("#dataPublicHash").val();
-                    $("#cardknox_cc_vault_public_hash").val(public_hash);
-                }
-            }, 1000);
-            $(document).on('click', '.admin__order-shipment-methods-options', function() {
-                $("#p_method_cardknox_cc_vault").trigger("click");
-                if($("#payment_form_cardknox_cc_vault input:first").length){
-                    $("#payment_form_cardknox_cc_vault input:first").trigger("click");
-                    var public_hash = $("#dataPublicHash").val();
-                    $("#cardknox_cc_vault_public_hash").val(public_hash);
-                }	  	
-            });
-        });  
-    });
+	require(['jquery', 'jquery/ui'], function($){
+		$(document).on('click', '.admin__order-shipment-methods-options', function() {
+			$("#p_method_cardknox_cc_vault").trigger("click");
+		});
+	});
 </script>
-

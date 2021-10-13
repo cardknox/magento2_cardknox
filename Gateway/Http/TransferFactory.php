@@ -31,7 +31,6 @@ class TransferFactory implements TransferFactoryInterface
         $this->config = $config;
     }
 
-
     /**
      * Builds gateway transfer object
      *

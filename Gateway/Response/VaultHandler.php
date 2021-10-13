@@ -21,9 +21,9 @@ use Magento\Payment\Model\Method\Logger;
 class VaultHandler implements HandlerInterface
 {
     const X_MASKED_CARD_NUMBER = 'xMaskedCardNumber';
-    const xCardType = 'xCardType';
-    const xToken = 'xToken';
-    const xExp = 'xExp';
+    const XCARDTYPE = 'xCardType';
+    const XTOKEN = 'xToken';
+    const XEXP = 'xExp';
 
     /**
      * @var EncryptorInterface
@@ -101,8 +101,8 @@ class VaultHandler implements HandlerInterface
         $log['VaultHandler save card'] = true;
 
         $xExp = "";
-        if (isset($response[$this::xExp])) {
-            $xExp = $response[$this::xExp];
+        if (isset($response[$this::XEXP])) {
+            $xExp = $response[$this::XEXP];
         } elseif ($payment->getAdditionalInformation("cc_exp_month") != "") {
             $xExp = sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2));
         }
@@ -128,8 +128,8 @@ class VaultHandler implements HandlerInterface
     private function getVaultPaymentToken(array $response, string $xExp)
     {
         // Check token existing in gateway response
-        if (isset($response[$this::xToken])) {
-            $token = $response[$this::xToken];
+        if (isset($response[$this::XTOKEN])) {
+            $token = $response[$this::XTOKEN];
             if (empty($token)) {
                 return null;
             }
@@ -143,7 +143,7 @@ class VaultHandler implements HandlerInterface
         $paymentToken->setExpiresAt($this->getExpirationDate($xExp));
         $paymentToken->setPublicHash($this->generatePublicHash($paymentToken));
         $paymentToken->setTokenDetails($this->convertDetailsToJSON([
-            'type' => $this->getCreditCardType($response[$this::xCardType]),
+            'type' => $this->getCreditCardType($response[$this::XCARDTYPE]),
             'maskedCC' => $response[$this::X_MASKED_CARD_NUMBER],
             'expirationDate' => $xExp
         ]));

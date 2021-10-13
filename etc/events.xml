@@ -5,7 +5,6 @@
  * See LICENSE for license details.
  */
 -->
-
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="payment_method_assign_data">
         <observer name="cardknox_data_assign" instance="CardknoxDevelopment\Cardknox\Observer\DataAssignObserver" />

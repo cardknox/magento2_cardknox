@@ -19,7 +19,6 @@ class Client implements ClientInterface
      */
     private $clientFactory;
 
-
     /**
      * @var Logger
      */
