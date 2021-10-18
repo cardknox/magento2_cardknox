@@ -40,7 +40,7 @@ class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
     protected $paymentToken;
 
 
-    protected function setUP()
+    protected function setUp(): void
     {
         $this->paymentToken = $this->createMock(PaymentTokenInterface::class);
 //        $this->paymentTokenFactory = $this->getMockBuilder(CreditCardTokenFactory::class)

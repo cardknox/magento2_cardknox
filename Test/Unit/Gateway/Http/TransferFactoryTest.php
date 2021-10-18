@@ -17,7 +17,7 @@ class TransferFactoryTest extends \PHPUnit\Framework\TestCase
     private $transferMock;
     private $config;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transferBuilder = $this->createMock(TransferBuilder::class);
         $this->config = $this->getMockBuilder(Config::class)

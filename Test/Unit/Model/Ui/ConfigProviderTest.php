@@ -17,7 +17,7 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
     private $resolverInterface;
     private $configProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
@@ -38,7 +38,9 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                     ConfigProvider::CODE => [
                         'isActive' => $this->config->isActive(),
                         'tokenKey' => $this->config->GetTokenKey(),
-                        'ccVaultCode' => 'cardknox_cc_vault'
+                        'ccVaultCode' => 'cardknox_cc_vault',
+                        'isEnabledReCaptcha' => null,
+                        'googleReCaptchaSiteKey' => null,
                     ],
                 ],
             ],

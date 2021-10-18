@@ -24,7 +24,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $resultMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->resultFactory = $this->getMockBuilder(
             'Magento\Payment\Gateway\Validator\ResultInterfaceFactory'
@@ -64,16 +64,16 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'response' => [],
                 'expectationToResultCreation' => [
                     'isValid' => false,
-                    'failsDescription' => [__('Gateway rejected the transaction.')],
-                    'errorCodes' => array()
+                    'failsDescription' => [new \Magento\Framework\Phrase(' ', [])],
+                    'errorCodes' => [new \Magento\Framework\Phrase('', [])]
                 ],
             ],
             'fail_2' => [
                 'response' => [ResponseCodeValidator::RESULT_CODE => ResponseCodeValidator::DECLINE],
                 'expectationToResultCreation' => [
                     'isValid' => false,
-                    'failsDescription' => [__('Gateway rejected the transaction.')],
-                    'errorCodes' => array()
+                    'failsDescription' => [new \Magento\Framework\Phrase(' ', [])],
+                    'errorCodes' => [new \Magento\Framework\Phrase('', [])]
                 ],
             ],
             'success' => [
