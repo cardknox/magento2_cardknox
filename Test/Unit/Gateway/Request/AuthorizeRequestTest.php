@@ -23,7 +23,7 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
     const cc_exp_month = 10;
     const cc_exp_year = 2018;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
         $this->payment = $this->getMockBuilder(Payment::class)
@@ -66,7 +66,8 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             'xCVV' => self::xCVV,
             'xCardNum' => self::xCardNum,
             'xAmount' => $amount,
-            'xIgnoreInvoice' => true
+            'xIgnoreInvoice' => true,
+            'xTimeoutSeconds' => 55
         ];
 
         $buildSubject = [
