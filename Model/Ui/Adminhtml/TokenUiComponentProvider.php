@@ -25,18 +25,25 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
      */
     private $componentFactory;
 
+    /**
+     * @var VaultHandler
+     */
     private $vaultHandler;
 
     /**
+     * TokenUiComponentProvider
+     *
      * @param TokenUiComponentInterfaceFactory $componentFactory
+     * @param VaultHandler $vaultHandler
      * @param UrlInterface $urlBuilder
      */
     public function __construct(
         TokenUiComponentInterfaceFactory $componentFactory,
-        VaultHandler $vaultHandler
+        VaultHandler $vaultHandler,
+        UrlInterface $urlBuilder
     ) {
         $this->componentFactory = $componentFactory;
-        $this->vaultHandler = $vaultHandler; 
+        $this->vaultHandler = $vaultHandler;
     }
 
     /**

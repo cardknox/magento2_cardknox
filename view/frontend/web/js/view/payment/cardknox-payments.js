@@ -18,6 +18,10 @@ define(
             {
                 type: 'cardknox',
                 component: 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/cardknox-method'
+            },
+            {
+                type: 'cardknox_google_pay',
+                component: 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/cardknox-google-pay-method'
             }
         );
         /** Add view logic here if needed */

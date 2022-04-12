@@ -338,4 +338,108 @@
             </argument>
         </arguments>
     </type>
+
+
+    <!-- Google Pay -->
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="CardknoxGooglePayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\GooglePayConfigProvider::CODE</argument>
+            <argument name="valueHandlerPool" xsi:type="object">CardknoxGpayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">CardknoxGpayCommandPool</argument>
+            <argument name="formBlockType" xsi:type="object">CardknoxDevelopment\GooglePay\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Configuration reader -->
+    <virtualType name="CardknoxGpayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\GooglePayConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+     <!-- Commands infrastructure -->
+     <virtualType name="CardknoxGpayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">CardknoxGpayAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">CardknoxGpayCaptureCommand</item>
+                <item name="void" xsi:type="string">CardknoxVoidCommand</item>
+                <item name="refund" xsi:type="string">CardknoxRefundCommand</item>
+                <item name="cancel" xsi:type="string">CardknoxCancelCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+     <!-- Authorize command -->
+    <virtualType name="CardknoxGpayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxGpayAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxGpayVaultResponseHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorization Request -->
+    <virtualType name="CardknoxGpayAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\GooglePayAuthorizationRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\GooglePayBaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture command -->
+    <virtualType name="CardknoxGpayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxGPayCaptureRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxVaultResponseHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+            <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+    <!-- Capture Request -->
+    <virtualType name="CardknoxGPayCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\CaptureRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\GooglePayBaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Response handlers -->
+    <virtualType name="CardknoxGpayVaultResponseHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="txnid" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Response\TxnIdHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+
+    <!-- Value handlers infrastructure -->
+
+    <virtualType name="CardknoxGpayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">CardknoxGpayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CardknoxGpayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">CardknoxGpayConfig</argument>
+        </arguments>
+    </virtualType>
 </config>

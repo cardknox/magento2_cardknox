@@ -37,7 +37,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * {inheritdoc}
+     * PlaceRequest function
+     *
+     * @param TransferInterface $transferObject
+     * @return void
      */
     public function placeRequest(TransferInterface $transferObject)
     {
@@ -72,7 +75,7 @@ class Client implements ClientInterface
         $client->setUri($transferObject->getUri());
         try {
             $response = $client->request();
-            parse_str($response->getBody(), $result); 
+            parse_str($response->getBody(), $result);
             $log['response'] = $result;
         } catch (\Zend_Http_Client_Exception $e) {
             throw new \Magento\Payment\Gateway\Http\ClientException(

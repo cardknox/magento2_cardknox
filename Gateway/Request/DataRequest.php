@@ -10,9 +10,9 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 
 class DataRequest implements BuilderInterface
 {
-    const AMOUNT = 'xAmount';
-    const INVOICE = 'xInvoice';
-    const CARDNUM = 'xCardNum';
+    public const AMOUNT = 'xAmount';
+    public const INVOICE = 'xInvoice';
+    public const CARDNUM = 'xCardNum';
 
     /**
      * Builds ENV request

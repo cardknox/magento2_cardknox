@@ -25,6 +25,7 @@ class BaseRequest implements BuilderInterface
 
     /**
      * @param ConfigInterface $config
+     * @param ProductMetadataInterface $productMetadata
      */
     public function __construct(
         ConfigInterface $config,

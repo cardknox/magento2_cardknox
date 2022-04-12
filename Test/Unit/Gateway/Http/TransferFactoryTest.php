@@ -51,7 +51,7 @@ class TransferFactoryTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $this->transferBuilder->expects($this::once())
             ->method('setUri')
-            ->with($this->config->GetGatewayUrl())
+            ->with($this->config->getGatewayUrl())
             ->willReturnSelf();
         $this->transferBuilder->expects($this::once())
             ->method('setClientConfig')

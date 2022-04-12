@@ -10,15 +10,24 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Framework\Locale\ResolverInterface;
 
-/**
- * Class ConfigProvider
- */
 class ConfigProvider implements ConfigProviderInterface
 {
-    const CODE = 'cardknox';
-    const CC_VAULT_CODE = 'cardknox_cc_vault';
+    public const CODE = 'cardknox';
+    public const CC_VAULT_CODE = 'cardknox_cc_vault';
+
+    /**
+     * Config variable
+     *
+     * @var Config
+     */
     private $config;
 
+    /**
+     * ConfigProvider function
+     *
+     * @param Config $config
+     * @param ResolverInterface $localeResolver
+     */
     public function __construct(
         Config $config,
         ResolverInterface $localeResolver
@@ -27,13 +36,18 @@ class ConfigProvider implements ConfigProviderInterface
         $this->config = $config;
     }
 
+    /**
+     * GetConfig function
+     *
+     * @return void
+     */
     public function getConfig()
     {
         return [
             'payment' => [
                 self::CODE => [
                     'isActive' => $this->config->isActive(),
-                    'tokenKey' => $this->config->GetTokenKey(),
+                    'tokenKey' => $this->config->getTokenKey(),
                     'isEnabledReCaptcha' => $this->config->isEnabledReCaptcha(),
                     'googleReCaptchaSiteKey' => $this->config->getGoogleRepCaptchaSiteKey(),
                     'ccVaultCode' => self::CC_VAULT_CODE

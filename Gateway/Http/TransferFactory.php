@@ -18,10 +18,15 @@ class TransferFactory implements TransferFactoryInterface
      */
     private $transferBuilder;
 
+    /**
+     *
+     * @var Config
+     */
     protected $config;
 
     /**
      * @param TransferBuilder $transferBuilder
+     * @param Config $config
      */
     public function __construct(
         TransferBuilder $transferBuilder,
@@ -43,7 +48,7 @@ class TransferFactory implements TransferFactoryInterface
             ->setBody($request)
             ->setMethod('POST')
             ->setClientConfig(['timeout' => 60])
-            ->setUri($this->config->GetGatewayUrl())
+            ->setUri($this->config->getGatewayUrl())
             ->shouldEncode(true)
             ->build();
     }

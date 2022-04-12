@@ -20,10 +20,10 @@ use Magento\Payment\Model\Method\Logger;
 
 class VaultHandler implements HandlerInterface
 {
-    const X_MASKED_CARD_NUMBER = 'xMaskedCardNumber';
-    const XCARDTYPE = 'xCardType';
-    const XTOKEN = 'xToken';
-    const XEXP = 'xExp';
+    public const X_MASKED_CARD_NUMBER = 'xMaskedCardNumber';
+    public const XCARDTYPE = 'xCardType';
+    public const XTOKEN = 'xToken';
+    public const XEXP = 'xExp';
 
     /**
      * @var EncryptorInterface
@@ -41,6 +41,11 @@ class VaultHandler implements HandlerInterface
      */
     protected $paymentExtensionFactory;
 
+    /**
+     * Config variable
+     *
+     * @var Config
+     */
     protected $config;
 
     /**
@@ -53,10 +58,12 @@ class VaultHandler implements HandlerInterface
      */
 
     /**
-     * Constructor
+     * Constructor function
      *
-     * @param CreditCardTokenFactory $creditCardTokenFactory
+     * @param PaymentTokenInterfaceFactory $paymentTokenFactory
      * @param OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory
+     * @param Config $config
+     * @param Logger $logger
      * @param EncryptorInterface $encryptor
      */
     public function __construct(
@@ -82,8 +89,7 @@ class VaultHandler implements HandlerInterface
      */
     public function handle(array $handlingSubject, array $response)
     {
-        if (
-            !isset($handlingSubject['payment'])
+        if (!isset($handlingSubject['payment'])
             || !$handlingSubject['payment'] instanceof PaymentDataObjectInterface
         ) {
             throw new \InvalidArgumentException('Payment data object should be provided');
@@ -120,10 +126,11 @@ class VaultHandler implements HandlerInterface
     }
 
     /**
-     * Get vault payment token entity
+     * Get vault payment token entity function
      *
-     * @param  array
-     * @return PaymentTokenInterface|null
+     * @param array $response
+     * @param string $xExp
+     * @return void
      */
     private function getVaultPaymentToken(array $response, string $xExp)
     {

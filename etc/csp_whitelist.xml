@@ -3,7 +3,7 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="cardknox-ifields-script" type="host">https://cdn.cardknox.com/ifields/2.6.2006.0102/ifields.min.js</value>
+                <value id="cardknox-ifields-script" type="host">https://cdn.cardknox.com/ifields/2.12.2201.2101/ifields.min.js</value>
                 <value id="fue-source" type="host">*.googleapis.com</value>
                 <value id="google-source" type="host">*.google.com</value>
                 <value id="gstatic-source" type="host">*.gstatic.com</value>

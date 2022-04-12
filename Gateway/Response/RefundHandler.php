@@ -28,7 +28,7 @@ class RefundHandler implements HandlerInterface
         $this->logger = $logger;
     }
 
-    const REFNUM = 'xRefNum';
+    public const REFNUM = 'xRefNum';
 
     /**
      * Handles transaction id

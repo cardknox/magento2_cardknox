@@ -11,9 +11,6 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
-/**
- * Class Payment
- */
 class Payment extends Template
 {
     /**
@@ -38,7 +35,9 @@ class Payment extends Template
     }
 
     /**
-     * @return string
+     * GetPaymentConfig function
+     *
+     * @return void
      */
     public function getPaymentConfig()
     {
@@ -49,7 +48,9 @@ class Payment extends Template
     }
 
     /**
-     * @return string
+     * GetCode function
+     *
+     * @return void
      */
     public function getCode()
     {

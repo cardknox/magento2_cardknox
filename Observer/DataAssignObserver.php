@@ -20,14 +20,16 @@ class DataAssignObserver extends AbstractDataAssignObserver
      * @param Observer $observer
      * @return void
      */
-    const xCardNum = 'xCardNum';
-    const xCVV = 'xCVV';
-    const cc_exp_month = 'cc_exp_month';
-    const cc_exp_year = 'cc_exp_year';
+    public const xCardNum = 'xCardNum';
+    public const xCVV = 'xCVV';
+    public const cc_exp_month = 'cc_exp_month';
+    public const cc_exp_year = 'cc_exp_year';
 
-    /**
-     * @var array
-     */
+   /**
+    * AdditionalInformationList variable
+    *
+    * @var array
+    */
     protected $additionalInformationList = [
         self::xCardNum,
         self::xCVV,
@@ -36,6 +38,12 @@ class DataAssignObserver extends AbstractDataAssignObserver
         "is_active_payment_token_enabler"
     ];
 
+    /**
+     * DataAssignObserver function
+     *
+     * @param Observer $observer
+     * @return void
+     */
     public function execute(Observer $observer)
     {
         $data = $this->readDataArgument($observer);
@@ -45,7 +53,7 @@ class DataAssignObserver extends AbstractDataAssignObserver
         if (!is_array($additionalData)) {
             return;
         }
-        // $additionalData = new DataObject($additionalData);
+        $additionalData = new DataObject($additionalData);
         // $paymentMethod = $this->readMethodArgument($observer);
 
         // $payment = $observer->getPaymentModel();
@@ -74,5 +82,6 @@ class DataAssignObserver extends AbstractDataAssignObserver
         // $paymentInfo->setCcExpMonth($additionalData->getData('cc_exp_month'));
         // $paymentInfo->setCcExpYear($additionalData->getData('cc_exp_year'));
         // $paymentInfo->setAdditionalInformation("xCardNum", $additionalData->getData('xCardNum'));
+        $paymentInfo->setAdditionalInformation("xAmount", $additionalData->getData('xAmount'));
     }
 }
