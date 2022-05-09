@@ -35,7 +35,6 @@ class GooglePayCaptureRequest implements BuilderInterface
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
 
-        // $amount = $this->formatPrice($buildSubject['amount']);
         $amount = $this->formatPrice($payment->getAdditionalInformation("xAmount"));
         
         if (!$payment instanceof OrderPaymentInterface) {

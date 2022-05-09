@@ -20,7 +20,6 @@ class GpayConfig
     public const KEY_CC_TYPES = ['VI', 'MC', 'AE', 'DI', 'JCB', 'MI', 'DN', 'CUP'];
     public const METHOD_CODE = 'cardknox_google_pay';
     public const CARDKNOX_TOKEN_KEY = 'cardknox_token_key';
-    //public const GATEWAYURL = 'cgi_url';
     public const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
 
     /**
@@ -53,7 +52,7 @@ class GpayConfig
     /**
      * GetMerchantName function
      *
-     * @return void
+     * @return string
      */
     public function getMerchantName()
     {
@@ -63,7 +62,7 @@ class GpayConfig
     /**
      * GetEnvironment function
      *
-     * @return void
+     * @return string
      */
     public function getEnvironment()
     {
@@ -73,7 +72,7 @@ class GpayConfig
     /**
      * GetButtonStyle function
      *
-     * @return void
+     * @return string
      */
     public function getButtonStyle()
     {
@@ -91,7 +90,6 @@ class GpayConfig
     public function getValue($field, $storeId = null)
     {
         return $this->scopeConfig->getValue(
-            // sprintf($this->pathPattern, self::METHOD_CODE, $field),
             $field,
             ScopeInterface::SCOPE_STORE,
             $storeId

@@ -30,7 +30,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     /**
      * GetTokenKey function
      *
-     * @return void
+     * @return string
      */
     public function getTokenKey()
     {
@@ -40,7 +40,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     /**
      * GetTokenKey function
      *
-     * @return void
+     * @return string
      */
     public function getTransactionKey()
     {
@@ -50,7 +50,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     /**
      * GetGatewayUrl function
      *
-     * @return void
+     * @return string
      */
     public function getGatewayUrl()
     {
@@ -68,7 +68,6 @@ class Config extends \Magento\Payment\Gateway\Config\Config
             $this->getValue(self::KEY_CC_TYPES_CARDKNOX_MAPPER),
             true
         );
-//        $result = $this->getValue(self::KEY_CC_TYPES_CARDKNOX_MAPPER);
         return is_array($result) ? $result : [];
     }
 
@@ -85,7 +84,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     /**
      * GetGoogleRepCaptchaSiteKey function
      *
-     * @return void
+     * @return string
      */
     public function getGoogleRepCaptchaSiteKey()
     {

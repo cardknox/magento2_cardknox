@@ -10,7 +10,6 @@
     // Google pay object
     window.gpRequest = {
         merchantInfo: {
-            // merchantId: gPayConfig.merchantId ? gPayConfig.merchantId : "123456789123456789", 
             merchantName: gPayConfig.merchantName
         },
         buttonOptions: {
@@ -20,20 +19,12 @@
         },
         
         billingParams: {
-            //phoneNumberRequired: true,
             emailRequired: true,
-            // allowedCardNetworks: ["VISA", "MASTERCARD"],
-            billingAddressRequired: false,
-        //     billingAddressFormat: GPBillingAddressFormat.full                        
+            billingAddressRequired: false                       
         },
         shippingParams: {
             shippingAddressRequired: false
         },
-        // shippingParams: {
-        //     allowedCountryCodes: gPayConfig.allowedCountryCodes ? gPayConfig.allowedCountryCodes : ['US'],
-        //     phoneNumberRequired: true,
-        //     emailRequired: true
-        // },
         onGetTransactionInfo: function () {
             let amt = getAmount();
             let countryCode = null;
@@ -93,8 +84,6 @@
         },
 
         onPaymentCanceled: function(respCanceled) {
-            //window.location.reload();
-            // setTimeout(function () { alert("Payment was canceled") }, 500);
             jQuery(".gpay-error").html("<div> Payment was canceled </div>").show();
             setTimeout(function () { 
                 jQuery(".gpay-error").html("").hide();
@@ -119,11 +108,6 @@
                 environment: this.getGPEnvironment(),
                 billingParameters: this.billingParams,
                 shippingParameters: this.shippingParams,
-                // shippingParameters: {
-                //     emailRequired: this.shippingParams.emailRequired,
-                //     onGetShippingCosts: "window.gpRequest.shippingParams.onGetShippingCosts",
-                //     onGetShippingOptions: "window.gpRequest.shippingParams.onGetShippingOptions"
-                // },
                 onGetTransactionInfo: "gpRequest.onGetTransactionInfo",
                 onBeforeProcessPayment: "gpRequest.onBeforeProcessPayment",
                 onProcessPayment: "gpRequest.onProcessPayment",
@@ -137,7 +121,6 @@
             if (resp.status === iStatus.success) {
                 showHide("divGpay", true);
             } else if (resp.reason) {
-                // alert(resp.reason);
                 jQuery(".gpay-error").html("<div>"+resp.reason+"</div>").show();
             }
         },
@@ -155,8 +138,6 @@
         var totals = quote.totals();
         var base_grand_total = (totals ? totals : quote)['base_grand_total'];
         return parseFloat(base_grand_total).toFixed(2);
-        // If amount field enabled
-        // return roundToNumber(document.getElementById("amount").value || "0", 2)
     }
     return {
         init: function (parent) {
@@ -169,8 +150,6 @@
                 jQuery(".gpay-error").html("<div>Please contact to store owner. Failed to initalized Google Pay button. </div>").show();
             } else {
                 jQuery('#igp').attr('data-ifields-oninit',"window.gpRequest.initGP");
-                // If amount field enabled
-                // ckGooglePay.enableGooglePay({amountField: 'amount'});
                 ckGooglePay.enableGooglePay();
             }
         }

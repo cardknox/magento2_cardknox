@@ -27,7 +27,7 @@ class CardRenderer extends AbstractCardRenderer
     /**
      * GetNumberLast4Digits function
      *
-     * @return void
+     * @return string
      */
     public function getNumberLast4Digits()
     {
@@ -37,7 +37,7 @@ class CardRenderer extends AbstractCardRenderer
     /**
      * GetExpDate function
      *
-     * @return void
+     * @return string
      */
     public function getExpDate()
     {
@@ -47,7 +47,7 @@ class CardRenderer extends AbstractCardRenderer
     /**
      * GetIconUrl function
      *
-     * @return void
+     * @return string
      */
     public function getIconUrl()
     {
@@ -57,7 +57,7 @@ class CardRenderer extends AbstractCardRenderer
     /**
      * GetIconHeight function
      *
-     * @return void
+     * @return int
      */
     public function getIconHeight()
     {
@@ -67,7 +67,7 @@ class CardRenderer extends AbstractCardRenderer
     /**
      * GetIconWidth function
      *
-     * @return void
+     * @return int
      */
     public function getIconWidth()
     {

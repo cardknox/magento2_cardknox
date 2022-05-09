@@ -8,7 +8,7 @@ namespace CardknoxDevelopment\Cardknox\Model\Adminhtml\Source;
 class PaymentAction implements \Magento\Framework\Option\ArrayInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toOptionArray()
     {

@@ -37,7 +37,7 @@ class Payment extends Template
     /**
      * GetPaymentConfig function
      *
-     * @return void
+     * @return string
      */
     public function getPaymentConfig()
     {
@@ -50,7 +50,7 @@ class Payment extends Template
     /**
      * GetCode function
      *
-     * @return void
+     * @return string
      */
     public function getCode()
     {

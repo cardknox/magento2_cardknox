@@ -38,16 +38,6 @@ define([
             return this;
         },
 
-        // If amount field enable
-        // getBaseGrandTotal: function () {
-        //     var totals = quote.totals();
-        //     var base_grand_total = (totals ? totals : quote)['base_grand_total'];
-        //     setTimeout(function(){
-        //         $('#amount[name="xAmount"]').trigger("focus");
-        //     },200);
-        //     return parseFloat(base_grand_total).toFixed(2);
-        // },
-        
         /**
          * Google pay place order method
          */

@@ -30,7 +30,6 @@ class GooglePayAuthorizationRequest implements BuilderInterface
         /** @var PaymentDataObjectInterface $payment */
 
         $paymentDO = $buildSubject['payment'];
-        // $amount = $this->formatPrice($buildSubject['amount']);
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
         $amount = $this->formatPrice($payment->getAdditionalInformation("xAmount"));
