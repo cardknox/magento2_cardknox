@@ -15,9 +15,19 @@ use Magento\Payment\Gateway\Command\CommandException;
 
 class ResponseCodeValidator extends AbstractValidator
 {
-       
+    /**
+     * Logger variable
+     *
+     * @var Logger
+     */
     private $logger;
 
+    /**
+     * ResponseCodeValidator function
+     *
+     * @param Logger $logger
+     * @param ResultInterfaceFactory $resultFactory
+     */
     public function __construct(
         Logger $logger,
         ResultInterfaceFactory $resultFactory
@@ -26,10 +36,10 @@ class ResponseCodeValidator extends AbstractValidator
         $this->logger = $logger;
     }
 
-    const RESULT_CODE = 'xResult';
-    const DECLINE = 'D';
-    const ERROR = 'E';
-    const SUCCESS = 'A';
+    public const RESULT_CODE = 'xResult';
+    public const DECLINE = 'D';
+    public const ERROR = 'E';
+    public const SUCCESS = 'A';
     /**
      * Performs validation of result code
      *
@@ -63,6 +73,8 @@ class ResponseCodeValidator extends AbstractValidator
     }
 
     /**
+     * IsSuccessfulTransaction
+     *
      * @param array $response
      * @return bool
      */
@@ -72,13 +84,27 @@ class ResponseCodeValidator extends AbstractValidator
         && $response[self::RESULT_CODE] == self::SUCCESS;
     }
 
-    private function getFailedResponse(array $response) {
+    /**
+     * GetFailedResponse function
+     *
+     * @param array $response
+     * @return void
+     */
+    private function getFailedResponse(array $response)
+    {
         $errorMessage = (isset($response['xError']) ? $response['xError'] : "");
         $refnum = (isset($response['xRefNum']) ? $response['xRefNum'] : "");
         return [__($errorMessage . " " . $refnum)];
     }
 
-    private function getErrorCode(array $response) {
+    /**
+     * GetErrorCode function
+     *
+     * @param array $response
+     * @return void
+     */
+    private function getErrorCode(array $response)
+    {
         $errorCode = (isset($response['xErrorCode']) ? $response['xErrorCode'] : "");
         return [__($errorCode)];
     }

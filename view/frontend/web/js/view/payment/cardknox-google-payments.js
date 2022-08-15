@@ -16,10 +16,6 @@ define(
         'use strict';
         rendererList.push(
             {
-                type: 'cardknox',
-                component: 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/cardknox-method'
-            },
-            {
                 type: 'cardknox_google_pay',
                 component: 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/cardknox-google-pay-method'
             }

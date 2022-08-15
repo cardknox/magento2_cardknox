@@ -11,7 +11,7 @@ use Magento\Payment\Gateway\Response\HandlerInterface;
 
 class VoidHandler implements HandlerInterface
 {
-    const REFNUM = 'xRefNum';
+    public const REFNUM = 'xRefNum';
 
     /**
      * Handles transaction id

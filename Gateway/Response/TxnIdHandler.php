@@ -11,25 +11,32 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class TxnIdHandler implements HandlerInterface
 {
-    const xRefNum = 'xRefNum';
-    const xMaskedCardNumber = 'xMaskedCardNumber';
-    const xAvsResult = 'xAvsResult';
-    const xCvvResult = 'xCvvResult';
-    const xCardType = 'xCardType';
-    const xToken = 'xToken';
-    const xAuthCode = 'xAuthCode';
-    const xBatch = 'xBatch';
-    const xAuthAmount = 'xAuthAmount';
-    const xStatus = 'xStatus';
-    const xError = 'xError';
-    const xExp = 'xExp';
-    const xCvvResultCode = 'xCvvResultCode';
-    const xAvsResultCode = 'xAvsResultCode';
+    public const xRefNum = 'xRefNum';
+    public const xMaskedCardNumber = 'xMaskedCardNumber';
+    public const xAvsResult = 'xAvsResult';
+    public const xCvvResult = 'xCvvResult';
+    public const xCardType = 'xCardType';
+    public const xToken = 'xToken';
+    public const xAuthCode = 'xAuthCode';
+    public const xBatch = 'xBatch';
+    public const xAuthAmount = 'xAuthAmount';
+    public const xStatus = 'xStatus';
+    public const xError = 'xError';
+    public const xExp = 'xExp';
+    public const xCvvResultCode = 'xCvvResultCode';
+    public const xAvsResultCode = 'xAvsResultCode';
 
-    protected $config;
     /**
-     * Constructor
+     * Config variable
      *
+     * @var Config
+     */
+    protected $config;
+
+    /**
+     * Constructor function
+     *
+     * @param Config $config
      */
     public function __construct(
         Config $config
@@ -37,6 +44,11 @@ class TxnIdHandler implements HandlerInterface
         $this->config = $config;
     }
 
+    /**
+     * AdditionalInformationMapping variable
+     *
+     * @var array
+     */
     protected $additionalInformationMapping = [
         self::xMaskedCardNumber,
         self::xAvsResult,
@@ -96,7 +108,6 @@ class TxnIdHandler implements HandlerInterface
      */
     private function getCreditCardType($type)
     {
-//		$replaced = str_replace(' ', '-', strtolower($type));
         $mapper = $this->config->getCctypesMapper();
         return $mapper[$type];
     }

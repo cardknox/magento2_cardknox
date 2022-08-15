@@ -7,14 +7,14 @@
 namespace CardknoxDevelopment\Cardknox\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
+use CardknoxDevelopment\Cardknox\Gateway\Config\GpayConfig;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Framework\Locale\ResolverInterface;
 
-class ConfigProvider implements ConfigProviderInterface
+class GooglePayConfigProvider implements ConfigProviderInterface
 {
-    public const CODE = 'cardknox';
-    public const CC_VAULT_CODE = 'cardknox_cc_vault';
-
+    public const CODE = 'cardknox_google_pay';
+    
     /**
      * Config variable
      *
@@ -23,16 +23,26 @@ class ConfigProvider implements ConfigProviderInterface
     private $config;
 
     /**
-     * ConfigProvider function
+     * GpayConfig variable
+     *
+     * @var GpayConfig
+     */
+    private $gpayConfig;
+
+    /**
+     * GooglePayConfigProvider function
      *
      * @param Config $config
+     * @param GpayConfig $gpayConfig
      * @param ResolverInterface $localeResolver
      */
     public function __construct(
         Config $config,
+        GpayConfig $gpayConfig,
         ResolverInterface $localeResolver
     ) {
     
+        $this->gpayConfig = $gpayConfig;
         $this->config = $config;
     }
 
@@ -46,11 +56,12 @@ class ConfigProvider implements ConfigProviderInterface
         return [
             'payment' => [
                 self::CODE => [
-                    'isActive' => $this->config->isActive(),
+                    'isActive' => $this->gpayConfig->isActive(),
+                    'merchantName' => $this->gpayConfig->getMerchantName(),
                     'tokenKey' => $this->config->getTokenKey(),
-                    'isEnabledReCaptcha' => $this->config->isEnabledReCaptcha(),
-                    'googleReCaptchaSiteKey' => $this->config->getGoogleRepCaptchaSiteKey(),
-                    'ccVaultCode' => self::CC_VAULT_CODE
+                    'xKey' => $this->config->getTransactionKey(),
+                    'button'  => $this->gpayConfig->getButtonStyle(),
+                    'GPEnvironment' => $this->gpayConfig->getEnvironment()
                 ]
             ]
         ];

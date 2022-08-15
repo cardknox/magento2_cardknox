@@ -18,13 +18,7 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
     private $componentFactory;
 
     /**
-     * @var \Magento\Framework\UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
      * @param TokenUiComponentInterfaceFactory $componentFactory
-     * @param UrlInterface $urlBuilder
      */
     public function __construct(
         TokenUiComponentInterfaceFactory $componentFactory
@@ -34,6 +28,7 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
 
     /**
      * Get UI component for token
+     *
      * @param PaymentTokenInterface $paymentToken
      * @return TokenUiComponentInterface
      */

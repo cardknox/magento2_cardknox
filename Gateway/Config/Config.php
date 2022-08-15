@@ -5,31 +5,54 @@
  */
 namespace CardknoxDevelopment\Cardknox\Gateway\Config;
 
-/**
- * Class Config
- */
 class Config extends \Magento\Payment\Gateway\Config\Config
 {
-    const KEY_ACTIVE = 'active';
-    const KEY_CC_TYPES = ['VI', 'MC', 'AE', 'DI', 'JCB', 'MI', 'DN', 'CUP'];
-    const METHOD_CODE = 'cardknox';
-    const CARDKNOX_TOKEN_KEY = 'cardknox_token_key';
-    const GATEWAYURL = 'cgi_url';
-    const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
-    const IS_ENABLE_GOOGLE_REPCAPTCHA = "recaptchaEnabled";
-    const GOOGLE_REPCAPTCHA_SITE_KEY = "visible_api_key";
+    public const KEY_ACTIVE = 'active';
+    public const KEY_CC_TYPES = ['VI', 'MC', 'AE', 'DI', 'JCB', 'MI', 'DN', 'CUP'];
+    public const METHOD_CODE = 'cardknox';
+    public const CARDKNOX_TOKEN_KEY = 'cardknox_token_key';
+    public const CARDKNOX_TRANSACTION_KEY = "cardknox_transaction_key";
+    public const GATEWAYURL = 'cgi_url';
+    public const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
+    public const IS_ENABLE_GOOGLE_REPCAPTCHA = "recaptchaEnabled";
+    public const GOOGLE_REPCAPTCHA_SITE_KEY = "visible_api_key";
 
+    /**
+     * IsActive function
+     *
+     * @return boolean
+     */
     public function isActive()
     {
         return (bool) $this->getValue(self::KEY_ACTIVE);
     }
 
-    public function GetTokenKey()
+    /**
+     * GetTokenKey function
+     *
+     * @return string
+     */
+    public function getTokenKey()
     {
         return $this->getValue(self::CARDKNOX_TOKEN_KEY);
     }
 
-    public function GetGatewayUrl()
+    /**
+     * GetTokenKey function
+     *
+     * @return string
+     */
+    public function getTransactionKey()
+    {
+        return $this->getValue(self::CARDKNOX_TRANSACTION_KEY);
+    }
+
+    /**
+     * GetGatewayUrl function
+     *
+     * @return string
+     */
+    public function getGatewayUrl()
     {
         return $this->getValue(self::GATEWAYURL);
     }
@@ -45,14 +68,24 @@ class Config extends \Magento\Payment\Gateway\Config\Config
             $this->getValue(self::KEY_CC_TYPES_CARDKNOX_MAPPER),
             true
         );
-//        $result = $this->getValue(self::KEY_CC_TYPES_CARDKNOX_MAPPER);
         return is_array($result) ? $result : [];
     }
 
+    /**
+     * IsEnabledReCaptcha function
+     *
+     * @return boolean
+     */
     public function isEnabledReCaptcha()
     {
         return $this->getValue(self::IS_ENABLE_GOOGLE_REPCAPTCHA);
     }
+
+    /**
+     * GetGoogleRepCaptchaSiteKey function
+     *
+     * @return string
+     */
     public function getGoogleRepCaptchaSiteKey()
     {
         return $this->getValue(self::GOOGLE_REPCAPTCHA_SITE_KEY);

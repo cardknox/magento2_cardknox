@@ -10,7 +10,7 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Helper\Formatter;
 
-class VaultAuthorizeRequest implements BuilderInterface
+class GooglePayAuthorizationRequest implements BuilderInterface
 {
     use Formatter;
     /**
@@ -30,20 +30,19 @@ class VaultAuthorizeRequest implements BuilderInterface
         /** @var PaymentDataObjectInterface $payment */
 
         $paymentDO = $buildSubject['payment'];
-        $amount = $this->formatPrice($buildSubject['amount']);
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
-        $extensionAttributes = $payment->getExtensionAttributes();
-        $paymentToken = $extensionAttributes->getVaultPaymentToken();
-
+        $amount = $this->formatPrice($payment->getAdditionalInformation("xAmount"));
         return [
             'xAmount' => $amount,
-            'xToken' => $paymentToken->getGatewayToken(),
             'xCommand' => 'cc:authonly',
             'xInvoice' => $order->getOrderIncrementId(),
             'xCurrency' => $order->getCurrencyCode(),
+            'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
+            // always true; order number is incremented on every attempt so invoice is always different
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55
+            'xTimeoutSeconds' => 55,
+            'xAllowDuplicate' => true
         ];
     }
 }

@@ -16,11 +16,10 @@ use Magento\Quote\Api\Data\PaymentInterface;
 class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
 {
 
-    const xCardNum = '4444333322221111';
-    const xCVV = '123';
-    const cc_exp_month = 10;
-    const cc_exp_year = 2018;
-
+    public const xCardNum = '4444333322221111';
+    public const xCVV = '123';
+    public const cc_exp_month = 10;
+    public const cc_exp_year = 2018;
 
     public function testExectute()
     {

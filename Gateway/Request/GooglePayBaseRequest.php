@@ -10,11 +10,12 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Framework\App\ProductMetadataInterface;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
-class BaseRequest implements BuilderInterface
+class GooglePayBaseRequest implements BuilderInterface
 {
     /**
-     * @var ConfigInterface
+     * @var Config
      */
     private $config;
 
@@ -24,15 +25,15 @@ class BaseRequest implements BuilderInterface
     private $productMetadata;
 
     /**
-     * @param ConfigInterface $config
      * @param ProductMetadataInterface $productMetadata
+     * @param Config $config
      */
     public function __construct(
-        ConfigInterface $config,
-        ProductMetadataInterface $productMetadata
+        ProductMetadataInterface $productMetadata,
+        Config $config
     ) {
-        $this->config = $config;
         $this->productMetadata = $productMetadata;
+        $this->config = $config;
     }
 
     /**
@@ -53,15 +54,17 @@ class BaseRequest implements BuilderInterface
         $paymentDO = $buildSubject['payment'];
 
         $order = $paymentDO->getOrder();
-
+        $xSoftwareName = 'Magento ' . $this->productMetadata->getEdition() . " ". $this->productMetadata->getVersion();
+        
         return [
             'xVersion' => '4.5.8',
-            'xSoftwareName' => 'Magento ' . $this->productMetadata->getEdition() . " ". $this->productMetadata->getVersion(),
+            'xSoftwareName' => $xSoftwareName,
             'xSoftwareVersion' => '1.0.12',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $order->getStoreId()
             ),
+            'xDigitalWalletType' => 'GooglePay',
             'xIP' => $order->getRemoteIp(),
         ];
     }

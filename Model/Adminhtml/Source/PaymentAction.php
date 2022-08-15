@@ -5,13 +5,10 @@
  */
 namespace CardknoxDevelopment\Cardknox\Model\Adminhtml\Source;
 
-/**
- * Class PaymentAction
- */
 class PaymentAction implements \Magento\Framework\Option\ArrayInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toOptionArray()
     {

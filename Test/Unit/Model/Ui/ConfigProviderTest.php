@@ -37,7 +37,7 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                 'payment' => [
                     ConfigProvider::CODE => [
                         'isActive' => $this->config->isActive(),
-                        'tokenKey' => $this->config->GetTokenKey(),
+                        'tokenKey' => $this->config->getTokenKey(),
                         'ccVaultCode' => 'cardknox_cc_vault',
                         'isEnabledReCaptcha' => null,
                         'googleReCaptchaSiteKey' => null,

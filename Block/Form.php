@@ -15,12 +15,13 @@ use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\Config;
 use Magento\Vault\Model\VaultPaymentInterface;
 
-/**
- * Class Form
- */
 class Form extends Cc
 {
-
+    /**
+     * GatewayConfig variable
+     *
+     * @var GatewayConfig
+     */
     protected $gatewayConfig;
 
     /**

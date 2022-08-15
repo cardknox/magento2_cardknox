@@ -81,7 +81,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectationToResultCreation' => [
                     'isValid' => true,
                     'failsDescription' => [],
-                    'errorCodes' => array()
+                    'errorCodes' => []
                 ],
             ],
         ];

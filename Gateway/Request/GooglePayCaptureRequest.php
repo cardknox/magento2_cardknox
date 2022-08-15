@@ -11,7 +11,7 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Payment\Helper\Formatter;
 
-class CaptureRequest implements BuilderInterface
+class GooglePayCaptureRequest implements BuilderInterface
 {
     use Formatter;
 
@@ -31,12 +31,12 @@ class CaptureRequest implements BuilderInterface
 
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $buildSubject['payment'];
-        $amount = $this->formatPrice($buildSubject['amount']);
-
+        
         $order = $paymentDO->getOrder();
-
         $payment = $paymentDO->getPayment();
 
+        $amount = $this->formatPrice($payment->getAdditionalInformation("xAmount"));
+        
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
         }
@@ -45,13 +45,12 @@ class CaptureRequest implements BuilderInterface
             return [
                 'xCommand' => 'cc:sale',
                 'xAmount'   => $amount,
-                'xExp' => sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2)),
-                'xCVV' => $payment->getAdditionalInformation("xCVV"),
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
                 'xIgnoreInvoice' => true,
-                'xTimeoutSeconds' => 55
+                'xTimeoutSeconds' => 55,
+                'xAllowDuplicate' => true
             ];
         }
 
@@ -59,7 +58,7 @@ class CaptureRequest implements BuilderInterface
             'xCommand' => 'cc:capture',
             'xAmount'   => $amount,
             'xRefNum' => $payment->getLastTransId(),
-            'xIgnoreInvoice' => true
+            'xIgnoreInvoice' => true,
         ];
     }
 }
