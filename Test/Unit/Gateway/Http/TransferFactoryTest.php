@@ -13,10 +13,26 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 class TransferFactoryTest extends \PHPUnit\Framework\TestCase
 {
 
+    /**
+     * @var TransferFactory
+     */
     private $transferFactory;
+
+    /**
+     * @var String
+     */
     private $transferMock;
+
+    /**
+     * @var Config
+     */
     private $config;
 
+    /**
+     * setUp function
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->transferBuilder = $this->createMock(TransferBuilder::class);
@@ -32,6 +48,11 @@ class TransferFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * testCreate function
+     *
+     * @return void
+     */
     public function testCreate()
     {
         $request = [

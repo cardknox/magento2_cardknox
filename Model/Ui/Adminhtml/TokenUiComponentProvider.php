@@ -10,6 +10,7 @@ use CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
+use Magento\Vault\Model\Ui\TokenUiComponentInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentInterfaceFactory;
 use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Response\VaultHandler;
@@ -19,7 +20,6 @@ use CardknoxDevelopment\Cardknox\Gateway\Response\VaultHandler;
  */
 class TokenUiComponentProvider implements TokenUiComponentProviderInterface
 {
-
     /**
      * @var TokenUiComponentInterfaceFactory
      */
@@ -47,9 +47,12 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * Get UI component for token
+     *
+     * @param PaymentTokenInterface $paymentToken
+     * @return TokenUiComponentInterface
      */
-    public function getComponentForToken(PaymentTokenInterface $paymentToken)
+    public function getComponentForToken(PaymentTokenInterface $paymentToken): TokenUiComponentInterface
     {
         $data = json_decode($paymentToken->getTokenDetails() ?: '{}', true);
         $hash = $paymentToken->getPublicHash();

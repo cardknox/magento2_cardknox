@@ -442,4 +442,11 @@
             <argument name="configInterface" xsi:type="object">CardknoxGpayConfig</argument>
         </arguments>
     </virtualType>
+
+    <!-- Update Shipping and Billing Address for guest order which is placed from the checkout/cart page -->
+    <type name="Magento\Sales\Api\OrderManagementInterface">
+        <plugin name="before_place_order_operation"
+            type="CardknoxDevelopment\Cardknox\Plugin\OrderManagement"
+            sortOrder="10"/>
+    </type>
 </config>

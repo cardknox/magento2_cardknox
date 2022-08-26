@@ -1,75 +1,76 @@
-@ipad: ~"only screen and (min-width: 768px) and (max-width: 1024px)";
-@mobile: ~"only screen and (max-width: 767px)";
-.payment-method {
-  .field {
-    label {
-      width: 100%;
-    }
-  }
-  #cardknox_cc_type_cvv_div {
-    .control._with-tooltip {
-      display: inline-block;
-      width: 200px;
-    }
-  }
-  label[data-ifields-id="card-data-error"] {
-    display: none;
-  }
-}
+@ipad: ~'only screen and (min-width: 768px) and (max-width: 1024px)';
+@mobile: ~'only screen and (max-width: 767px)';
 
+.payment-method {
+    .field {
+        label {
+            width: 100%;
+        }
+    }
+    #cardknox_cc_type_cvv_div {
+        .control._with-tooltip {
+            display: inline-block;
+            width: 200px;
+        }
+    }
+    label[data-ifields-id='card-data-error'] {
+        display: none;
+    }
+}
 .checkout-payment-method {
-  .messages {
-    display: block !important;
-  }
+    .messages {
+        display: block !important;
+    }
 }
 
 @media @ipad {
-  .field-tooltip {
-    .field-tooltip-content {
-      right: -96px !important;
-      top: 40px;
-      left: auto;
-      &:before,
-      &:after {
-        border: 10px solid transparent;
-        height: 0;
-        width: 0;
-        margin-top: -21px;
-        right: 100px !important;
-        left: auto;
-        top: 0;
-      }
+    .field-tooltip {
+        .field-tooltip-content {
+            left: auto;
+            right: -96px !important;
+            top: 40px;
+            &:before,
+            &:after {
+                border: 10px solid transparent;
+                height: 0;
+                left: auto;
+                margin-top: -21px;
+                right: 100px !important;
+                top: 0;
+                width: 0;
+            }
+        }
     }
-  }
 }
 
 @media @mobile {
-  .field-tooltip {
-    .field-tooltip-content {
-      right: -97px !important;
-      top: 40px;
-      left: auto;
-      &:before,
-      &:after {
-        border: 10px solid transparent;
-        height: 0;
-        width: 0;
-        margin-top: -21px;
-        right: 100px !important;
-        left: auto;
-        top: 0;
-      }
+    .field-tooltip {
+        .field-tooltip-content {
+            left: auto;
+            right: -97px !important;
+            top: 40px;
+
+            &:before,
+            &:after {
+                border: 10px solid transparent;
+                height: 0;
+                left: auto;
+                margin-top: -21px;
+                right: 100px !important;
+                top: 0;
+                width: 0;
+            }
+        }
     }
-  }
-  .payment-method #cardknox_cc_type_cvv_div .control._with-tooltip iframe {
-    position: relative;
-    z-index: 1;
-    width: 155px;
-  }
+    .payment-method #cardknox_cc_type_cvv_div .control._with-tooltip iframe {
+        position: relative;
+        width: 155px;
+        z-index: 1;
+    }
 }
 
 .gpay-logo {
-  background: url('@{baseDir}CardknoxDevelopment_Cardknox/images/google-pay-mark.png');
+    background: url('@{baseDir}CardknoxDevelopment_Cardknox/images/google-pay-mark.png');
     background-repeat: no-repeat, no-repeat, no-repeat;
     width: auto;
     padding-left: 10rem;
@@ -82,17 +83,17 @@
 }
 
 #cardknox_google_pay_container {
-	.actions-toolbar {
-		display: block;
+    .actions-toolbar {
+        display: block;
     text-align: center;
     .primary {
-      float: none !important;
+    float: none !important;
     }
-	}
+    }
 }
 
 #cardknox_google_pay_container {
-	.gpay-title {
-		display: none;
-	}
+    .gpay-title {
+        display: none;
+    }
 }

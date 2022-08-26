@@ -9,14 +9,11 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Payment\Helper\Formatter;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Payment\Model\Method\Logger;
 
 class RefundRequest implements BuilderInterface
 {
-    use Formatter;
-
     /**
      * @var Logger
      */
@@ -72,5 +69,17 @@ class RefundRequest implements BuilderInterface
             'xAmount'   => $amount,
             'xRefNum' => $payment->getParentTransactionId(),
         ];
+    }
+
+    /**
+     * Format price to 0.00 format
+     *
+     * @param mixed $price
+     * @return string
+     * @since 100.1.0
+     */
+    public function formatPrice($price)
+    {
+        return sprintf('%.2F', $price);
     }
 }

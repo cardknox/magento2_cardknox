@@ -9,12 +9,9 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Payment\Helper\Formatter;
 
 class CaptureRequest implements BuilderInterface
 {
-    use Formatter;
-
     /**
      * Builds ENV request
      *
@@ -40,18 +37,20 @@ class CaptureRequest implements BuilderInterface
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
         }
-
+        $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
+        $cc_exp_year = $payment->getAdditionalInformation("cc_exp_year");
         if ($payment->getLastTransId() == '') {
             return [
                 'xCommand' => 'cc:sale',
                 'xAmount'   => $amount,
-                'xExp' => sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2)),
+                'xExp' => sprintf('%02d%02d', $cc_exp_month, substr($cc_exp_year, -2)),
                 'xCVV' => $payment->getAdditionalInformation("xCVV"),
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
                 'xIgnoreInvoice' => true,
-                'xTimeoutSeconds' => 55
+                'xTimeoutSeconds' => 55,
+                'xAllowDuplicate' => true
             ];
         }
 
@@ -61,5 +60,17 @@ class CaptureRequest implements BuilderInterface
             'xRefNum' => $payment->getLastTransId(),
             'xIgnoreInvoice' => true
         ];
+    }
+
+    /**
+     * Format price to 0.00 format
+     *
+     * @param mixed $price
+     * @return string
+     * @since 100.1.0
+     */
+    public function formatPrice($price)
+    {
+        return sprintf('%.2F', $price);
     }
 }

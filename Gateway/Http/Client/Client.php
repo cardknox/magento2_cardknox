@@ -49,9 +49,8 @@ class Client implements ClientInterface
             'request_uri' => $transferObject->getUri()
         ];
         $result = [];
-        /** @var ZendClient $client */
-        $client = $this->clientFactory->create();
 
+        $client = $this->clientFactory->create();
         $client->setConfig($transferObject->getClientConfig());
         $client->setMethod($transferObject->getMethod());
 
@@ -75,7 +74,9 @@ class Client implements ClientInterface
         $client->setUri($transferObject->getUri());
         try {
             $response = $client->request();
+            //phpcs:disable
             parse_str($response->getBody(), $result);
+            //phpcs:enable
             $log['response'] = $result;
         } catch (\Zend_Http_Client_Exception $e) {
             throw new \Magento\Payment\Gateway\Http\ClientException(

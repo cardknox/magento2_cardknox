@@ -13,15 +13,31 @@ use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
 
 class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
 {
-
+    /**
+     * @var Payment
+     */
     private $payment;
+
+    /**
+     * @var PaymentDataObjectInterface
+     */
     private $paymentDO;
+
+    /**
+     *
+     * @var AuthorizationRequest
+     */
     private $authorizationRequest;
+
+    /**
+     * @var OrderAdapterInterface
+     */
     private $order;
-    const xCardNum = '4sdfssdfsdfdsf1111';
-    const xCVV = "ewerwre2345";
-    const cc_exp_month = 10;
-    const cc_exp_year = 2018;
+
+    public const XCARDNUM = '4sdfssdfsdfdsf1111';
+    public const XCVV = "ewerwre2345";
+    public const CC_EXP_MONTH = 10;
+    public const CC_EXP_YEAR = 2018;
 
     protected function setUp(): void
     {
@@ -43,18 +59,18 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
 
         $additionalData = [
             [
-                DataAssignObserver::xCardNum,
-                self::xCardNum
+                DataAssignObserver::XCARDNUM,
+                self::XCARDNUM
             ],
             [
-                DataAssignObserver::xCVV,
-                self::xCVV
+                DataAssignObserver::XCVV,
+                self::XCVV
             ],[
-                DataAssignObserver::cc_exp_month,
-                self::cc_exp_month,
+                DataAssignObserver::CC_EXP_MONTH,
+                self::CC_EXP_MONTH,
             ],[
-                DataAssignObserver::cc_exp_year,
-                self::cc_exp_year
+                DataAssignObserver::CC_EXP_YEAR,
+                self::CC_EXP_YEAR
             ],
         ];
 
@@ -62,12 +78,13 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             'xCommand' => 'cc:authonly',
             'xInvoice' => $invoiceId,
             'xCurrency' => $currencyCode,
-            'xExp' => sprintf('%02d%02d', self::cc_exp_month, substr(self::cc_exp_year, -2)),
-            'xCVV' => self::xCVV,
-            'xCardNum' => self::xCardNum,
+            'xExp' => sprintf('%02d%02d', self::CC_EXP_MONTH, substr(self::CC_EXP_YEAR, -2)),
+            'xCVV' => self::XCVV,
+            'xCardNum' => self::XCARDNUM,
             'xAmount' => $amount,
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55
+            'xTimeoutSeconds' => 55,
+            'xAllowDuplicate' => true
         ];
 
         $buildSubject = [
@@ -94,10 +111,6 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
         $this->paymentDO->expects(static::once())
             ->method('getOrder')
             ->willReturn($this->order);
-
-//        $this->order->expects(self::once())
-//            ->method('getGrandTotalAmount')
-//            ->willReturn($amount);
 
         static::assertEquals(
             $expectation,

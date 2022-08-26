@@ -17,11 +17,23 @@ use Magento\Payment\Gateway\Data\PaymentDataObject;
 
 class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
 {
-
-
+    /**
+     * @var string
+     */
     protected $paymentTokenFactory;
+
+    /**
+     * @var string
+     */
     protected $paymentExtensionFactory;
+    /**
+     * @var Config
+     */
     protected $config;
+
+    /**
+     * @var string
+     */
     protected $request;
 
     /**
@@ -38,7 +50,6 @@ class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
      * @var PaymentTokenInterface|MockObject
      */
     protected $paymentToken;
-
 
     protected function setUp(): void
     {
@@ -86,24 +97,28 @@ class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-
+    /**
+     * Test handle function
+     *
+     * @return void
+     */
     public function testHandle()
     {
 
         $response = [
-            TxnIdHandler::xRefNum => 'fcd7f001e9274fdefb14bff91c799306',
-            TxnIdHandler::xMaskedCardNumber => '4xxxxx4444',
-//            TxnIdHandler::xAvsResult => 'Street Match',
-            TxnIdHandler::xCvvResult => 'Match',
-            TxnIdHandler::xCvvResultCode => 'M',
-            TxnIdHandler::xCardType => 'Visa',
-            TxnIdHandler::xToken => 'rh3gd4',
-            TxnIdHandler::xAuthCode => 'xAuthCode',
-            TxnIdHandler::xBatch => 'xBatch',
-            TxnIdHandler::xAuthAmount => 'xAuthAmount',
-            TxnIdHandler::xStatus => 'xStatus',
-            TxnIdHandler::xError => 'xError',
-            TxnIdHandler::xExp => '0122'
+            TxnIdHandler::XREFNUM => 'fcd7f001e9274fdefb14bff91c799306',
+            TxnIdHandler::XMASKEDCARDNUMBER => '4xxxxx4444',
+//            TxnIdHandler::XAVSRESULT => 'Street Match',
+            TxnIdHandler::XCVVRESULT => 'Match',
+            TxnIdHandler::XCVVRESULTCODE => 'M',
+            TxnIdHandler::XCARDTYPE => 'Visa',
+            TxnIdHandler::XTOKEN => 'rh3gd4',
+            TxnIdHandler::XAUTHCODE => 'xAuthCode',
+            TxnIdHandler::XBATCH => 'xBatch',
+            TxnIdHandler::XAUTHAMOUNT => 'xAuthAmount',
+            TxnIdHandler::XSTATUS => 'xStatus',
+            TxnIdHandler::XERROR => 'xError',
+            TxnIdHandler::XEXP => '0122'
         ];
 
 //        $this->paymentExtension->expects(self::once())

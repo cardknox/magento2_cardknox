@@ -5,7 +5,7 @@
  */
 namespace CardknoxDevelopment\Cardknox\Model\Adminhtml\Source;
 
-class PaymentAction implements \Magento\Framework\Option\ArrayInterface
+class PaymentAction implements \Magento\Framework\Data\OptionSourceInterface
 {
     /**
      * @inheritdoc

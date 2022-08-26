@@ -10,11 +10,9 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Payment\Helper\Formatter;
 
 class VaultSaleRequest implements BuilderInterface
 {
-    use Formatter;
     /**
      * Builds ENV request
      *
@@ -52,7 +50,8 @@ class VaultSaleRequest implements BuilderInterface
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
                 'xIgnoreInvoice' => true,
-                'xTimeoutSeconds' => 55
+                'xTimeoutSeconds' => 55,
+                'xAllowDuplicate' => true
             ];
         }
 
@@ -62,5 +61,17 @@ class VaultSaleRequest implements BuilderInterface
             'xRefNum' => $payment->getLastTransId(),
             'xIgnoreInvoice' => true
         ];
+    }
+
+    /**
+     * Format price to 0.00 format
+     *
+     * @param mixed $price
+     * @return string
+     * @since 100.1.0
+     */
+    public function formatPrice($price)
+    {
+        return sprintf('%.2F', $price);
     }
 }

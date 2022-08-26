@@ -1,32 +1,36 @@
+@color-white: #fff;
+@color-light-grey: #adadad;
+@color-grey: #514943;
+
 .admin__control-radio {
     + script + .admin__field-label {
-        padding-left: 2.6rem;
         box-sizing: border-box;
-        position: relative;
         cursor: pointer;
+        padding-left: 2.6rem;
+        position: relative;
         &:before {
-            line-height: 140%;
-            background-color: #ffffff;
-            border: 1px solid #adadad;
+            background-color: @color-white;
+            border-radius: 1.6rem;
+            border: 1px solid @color-light-grey;
             color: transparent;
+            content: '';
             float: left;
             height: 1.6rem;
+            line-height: 140%;
+            margin: 1px 1rem 0 -2.6rem;
             text-align: center;
+            transition: border-color 0.1s linear, color 0.1s ease-in;
             vertical-align: top;
             width: 1.6rem;
-            border-radius: 1.6rem;
-            content: '';
-            transition: border-color 0.1s linear, color 0.1s ease-in;
-            margin: 1px 1rem 0 -2.6rem;
         }
     }
     &:checked {
         + script + .admin__field-label {
             &:before {
-                color: #514943;
+                color: @color-grey;
             }
             &:after {
-                background-color: #514943;
+                background-color: @color-grey;
                 border-radius: 50%;
                 content: '';
                 height: 10px;
@@ -37,4 +41,4 @@
             }
         }
     }
-} 
+}

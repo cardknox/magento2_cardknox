@@ -25,7 +25,6 @@ class CancelRequest implements BuilderInterface
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
 
-        /** @var PaymentDataObjectInterface $payment */
         $paymentDO = $buildSubject['payment'];
         $payment = $paymentDO->getPayment();
         $order = $paymentDO->getOrder();

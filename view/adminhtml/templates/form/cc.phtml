@@ -74,8 +74,9 @@ $ccExpYear = $block->getInfoData('cc_exp_year');?>
             <input type="checkbox"
                 name="payment[is_active_payment_token_enabler]"
                 value="1"
+                id="<?php /* @noEscape */ echo $code; ?>_enable_vault""
                 class="admin__control-checkbox"/>
-            <label class="admin__field-label" for="for <?php /* @noEscape */ echo $code; ?>_enable_vault">
+            <label class="admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_enable_vault">
                 <span><?php echo $block->escapeHtml(__('Save for later use.')); ?></span>
             </label>
         </div>

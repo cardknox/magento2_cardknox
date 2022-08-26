@@ -20,21 +20,21 @@ class DataAssignObserver extends AbstractDataAssignObserver
      * @param Observer $observer
      * @return void
      */
-    public const xCardNum = 'xCardNum';
-    public const xCVV = 'xCVV';
-    public const cc_exp_month = 'cc_exp_month';
-    public const cc_exp_year = 'cc_exp_year';
+    public const XCARDNUM = 'xCardNum';
+    public const XCVV = 'xCVV';
+    public const CC_EXP_MONTH = 'cc_exp_month';
+    public const CC_EXP_YEAR = 'cc_exp_year';
 
-   /**
-    * AdditionalInformationList variable
-    *
-    * @var array
-    */
+    /**
+     * AdditionalInformationList variable
+     *
+     * @var array
+     */
     protected $additionalInformationList = [
-        self::xCardNum,
-        self::xCVV,
-        self::cc_exp_month,
-        self::cc_exp_year,
+        self::XCARDNUM,
+        self::XCVV,
+        self::CC_EXP_MONTH,
+        self::CC_EXP_YEAR,
         "is_active_payment_token_enabler"
     ];
 
@@ -54,17 +54,6 @@ class DataAssignObserver extends AbstractDataAssignObserver
             return;
         }
         $additionalData = new DataObject($additionalData);
-        // $paymentMethod = $this->readMethodArgument($observer);
-
-        // $payment = $observer->getPaymentModel();
-        // if (!$payment instanceof InfoInterface) {
-        //     $payment = $paymentMethod->getInfoInstance();
-        // }
-
-        // if (!$payment instanceof InfoInterface) {
-        //     throw new LocalizedException(__('Payment model does not provided.'));
-        // }
-
         $paymentInfo = $this->readPaymentModelArgument($observer);
 
         foreach ($this->additionalInformationList as $additionalInformationKey) {
@@ -75,13 +64,10 @@ class DataAssignObserver extends AbstractDataAssignObserver
                 );
             }
         }
-
-        // $paymentInfo->setAdditionalInformation("xToken", $additionalData->getData("xToken"));
-        // $paymentInfo->setCcLast4(substr($additionalData->getData('cc_number'), -4));
-        // $paymentInfo->setCcType($additionalData->getData('cc_type'));
-        // $paymentInfo->setCcExpMonth($additionalData->getData('cc_exp_month'));
-        // $paymentInfo->setCcExpYear($additionalData->getData('cc_exp_year'));
-        // $paymentInfo->setAdditionalInformation("xCardNum", $additionalData->getData('xCardNum'));
         $paymentInfo->setAdditionalInformation("xAmount", $additionalData->getData('xAmount'));
+        $paymentInfo->setAdditionalInformation(
+            "shippingAddressFirstname",
+            $additionalData->getData('shipping_address_firstname')
+        );
     }
 }

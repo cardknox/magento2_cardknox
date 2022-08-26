@@ -9,7 +9,7 @@
         <input type="radio"
                name="payment[method]"
                class="radio"
-               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()">
         <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
     </div>
     <div class="payment-method-content">
@@ -34,7 +34,7 @@
                         <iframe data-ifields-id="card-number" data-ifields-placeholder="Card Number"
                                 src="https://cdn.cardknox.com/ifields/2.12.2201.2101/ifield.htm" frameBorder="0"
                                 height="35"></iframe>
-                        <input data-ifields-id="card-number-token" name="xCardNum" type="hidden"/>
+                        <input data-ifields-id="card-number-token" name="xCardNum" type="hidden">
                     </div>
                 </div>
                 <div class="field date required" data-bind="attr: {id: getCode() + '_cc_type_exp_div'}">
@@ -94,7 +94,7 @@
                                     data-bind="html: getCvvImageHtml()"></div>
                         </div>
                     </div>      
-                    <input data-ifields-id="cvv-token" name="xCVV" type="hidden"/>
+                    <input data-ifields-id="cvv-token" name="xCVV" type="hidden">
                     <label data-ifields-id="card-data-error" id="ifieldsError"></label>
                 </div>
                 <label id="transaction-status" class="label"></label>
@@ -103,7 +103,7 @@
                     <input type="checkbox"
                         name="vault[is_enabled]"
                         class="checkbox"
-                        data-bind="attr: {'id': getCode() + '_enable_vault'}, checked: vaultEnabler.isActivePaymentTokenEnabler"/>
+                        data-bind="attr: {'id': getCode() + '_enable_vault'}, checked: vaultEnabler.isActivePaymentTokenEnabler">
                     <label class="label" data-bind="attr: {'for': getCode() + '_enable_vault'}">
                         <span><!-- ko i18n: 'Save for later use.'--><!-- /ko --></span>
                     </label>

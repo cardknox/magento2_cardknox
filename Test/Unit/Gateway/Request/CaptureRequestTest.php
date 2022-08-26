@@ -50,11 +50,6 @@ class CaptureRequestTest extends \PHPUnit\Framework\TestCase
             ->method('getStoreId')
             ->willReturn($storeId);
 
-//        $orderMock->expects(self::once())
-//            ->method('getGrandTotalAmount')
-//            ->willReturn($amount);
-
-
         /** @var ConfigInterface $configMock */
         $request = new CaptureRequest($configMock);
 

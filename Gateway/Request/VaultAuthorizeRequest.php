@@ -8,11 +8,9 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Magento\Payment\Helper\Formatter;
 
 class VaultAuthorizeRequest implements BuilderInterface
 {
-    use Formatter;
     /**
      * Builds ENV request
      *
@@ -26,8 +24,6 @@ class VaultAuthorizeRequest implements BuilderInterface
         ) {
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
-
-        /** @var PaymentDataObjectInterface $payment */
 
         $paymentDO = $buildSubject['payment'];
         $amount = $this->formatPrice($buildSubject['amount']);
@@ -43,7 +39,20 @@ class VaultAuthorizeRequest implements BuilderInterface
             'xInvoice' => $order->getOrderIncrementId(),
             'xCurrency' => $order->getCurrencyCode(),
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55
+            'xTimeoutSeconds' => 55,
+            'xAllowDuplicate' => true
         ];
+    }
+
+    /**
+     * Format price to 0.00 format
+     *
+     * @param mixed $price
+     * @return string
+     * @since 100.1.0
+     */
+    public function formatPrice($price)
+    {
+        return sprintf('%.2F', $price);
     }
 }
