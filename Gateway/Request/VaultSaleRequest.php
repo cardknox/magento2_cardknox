@@ -10,9 +10,25 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class VaultSaleRequest implements BuilderInterface
 {
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Constructor
+     *
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * Builds ENV request
      *
@@ -30,7 +46,7 @@ class VaultSaleRequest implements BuilderInterface
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $buildSubject['payment'];
 
-        $amount = $this->formatPrice($buildSubject['amount']);
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
         $order = $paymentDO->getOrder();
 
         $payment = $paymentDO->getPayment();
@@ -61,17 +77,5 @@ class VaultSaleRequest implements BuilderInterface
             'xRefNum' => $payment->getLastTransId(),
             'xIgnoreInvoice' => true
         ];
-    }
-
-    /**
-     * Format price to 0.00 format
-     *
-     * @param mixed $price
-     * @return string
-     * @since 100.1.0
-     */
-    public function formatPrice($price)
-    {
-        return sprintf('%.2F', $price);
     }
 }

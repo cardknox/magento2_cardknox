@@ -9,10 +9,27 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Helper\Formatter;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class GooglePayAuthorizationRequest implements BuilderInterface
 {
     use Formatter;
+
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Constructor
+     *
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * Builds ENV request
      *
@@ -32,7 +49,7 @@ class GooglePayAuthorizationRequest implements BuilderInterface
         $paymentDO = $buildSubject['payment'];
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
-        $amount = $this->formatPrice($payment->getAdditionalInformation("xAmount"));
+        $amount = $this->helper->formatPrice($payment->getAdditionalInformation("xAmount"));
         return [
             'xAmount' => $amount,
             'xCommand' => 'cc:authonly',

@@ -8,9 +8,25 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class AuthorizationRequest implements BuilderInterface
 {
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Constructor
+     *
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * Builds ENV request
      *
@@ -26,7 +42,7 @@ class AuthorizationRequest implements BuilderInterface
         }
 
         $paymentDO = $buildSubject['payment'];
-        $amount = $this->formatPrice($buildSubject['amount']);
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
         $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
@@ -44,17 +60,5 @@ class AuthorizationRequest implements BuilderInterface
             'xTimeoutSeconds' => 55,
             'xAllowDuplicate' => true
         ];
-    }
-
-    /**
-     * Format price to 0.00 format
-     *
-     * @param mixed $price
-     * @return string
-     * @since 100.1.0
-     */
-    public function formatPrice($price)
-    {
-        return sprintf('%.2F', $price);
     }
 }

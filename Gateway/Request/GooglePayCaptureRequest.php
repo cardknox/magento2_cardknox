@@ -10,10 +10,26 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Payment\Helper\Formatter;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class GooglePayCaptureRequest implements BuilderInterface
 {
     use Formatter;
+
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Constructor
+     *
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
 
     /**
      * Builds ENV request
@@ -35,7 +51,7 @@ class GooglePayCaptureRequest implements BuilderInterface
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
 
-        $amount = $this->formatPrice($payment->getAdditionalInformation("xAmount"));
+        $amount = $this->helper->formatPrice($payment->getAdditionalInformation("xAmount"));
         
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
