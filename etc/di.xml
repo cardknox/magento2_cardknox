@@ -410,7 +410,7 @@
     <virtualType name="CardknoxGPayCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
             <argument name="builders" xsi:type="array">
-                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\CaptureRequest</item>
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\GooglePayCaptureRequest</item>
                 <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
                 <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\GooglePayBaseRequest</item>
             </argument>
