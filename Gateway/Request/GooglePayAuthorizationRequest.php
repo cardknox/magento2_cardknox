@@ -58,8 +58,7 @@ class GooglePayAuthorizationRequest implements BuilderInterface
             'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
             // always true; order number is incremented on every attempt so invoice is always different
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55,
-            'xAllowDuplicate' => true
+            'xTimeoutSeconds' => 55
         ];
     }
 }

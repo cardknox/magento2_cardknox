@@ -83,8 +83,7 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             'xCardNum' => self::XCARDNUM,
             'xAmount' => $amount,
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55,
-            'xAllowDuplicate' => true
+            'xTimeoutSeconds' => 55
         ];
 
         $buildSubject = [

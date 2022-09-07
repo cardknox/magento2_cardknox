@@ -65,8 +65,7 @@ class GooglePayCaptureRequest implements BuilderInterface
                 'xCurrency' => $order->getCurrencyCode(),
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
                 'xIgnoreInvoice' => true,
-                'xTimeoutSeconds' => 55,
-                'xAllowDuplicate' => true
+                'xTimeoutSeconds' => 55
             ];
         }
 

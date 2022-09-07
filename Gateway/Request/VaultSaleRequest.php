@@ -66,8 +66,7 @@ class VaultSaleRequest implements BuilderInterface
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
                 'xIgnoreInvoice' => true,
-                'xTimeoutSeconds' => 55,
-                'xAllowDuplicate' => true
+                'xTimeoutSeconds' => 55
             ];
         }
 
