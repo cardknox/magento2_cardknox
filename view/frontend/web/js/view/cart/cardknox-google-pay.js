@@ -63,7 +63,7 @@
                             window.ckGooglePay.updateAmount();
                             resolve(iStatus.success);
                         } else {
-                            var err = 'Please select any shipping method.';
+                            var err = 'Please select a shipping method.';
                             jQuery(".gpay-error").html("<div>"+err+" </div>").show();
                             setTimeout(function () { 
                                 jQuery(".gpay-error").html("").hide();

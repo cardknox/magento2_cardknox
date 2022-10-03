@@ -9,7 +9,7 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
      */
     protected $scopeConfig;
 
-    public const XPATH_FIELD_GOOGLEPAY_ENABLED = 'payment/cardknox_google_pay/active';
+    public const XPATH_FIELD_GOOGLEPAY_ENABLED = 'payment/cardknox_google_pay/cardknox_gpay_active';
 
     /**
      * __construct function

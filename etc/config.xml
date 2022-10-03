@@ -50,7 +50,7 @@
             <cardknox_google_pay>
                 <model>CardknoxGooglePayFacade</model>
                 <merchant_name></merchant_name>
-                <active>1</active>
+                <cardknox_gpay_active>1</cardknox_gpay_active>
                 <title>Google Pay</title>
                 <payment_action>authorize</payment_action>
                 <currency>USD</currency>

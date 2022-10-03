@@ -11,7 +11,7 @@ use Magento\Store\Model\ScopeInterface;
 class GpayConfig
 {
     public const DEFAULT_PATH_PATTERN = 'payment/%s/%s';
-    public const KEY_ACTIVE = 'payment/cardknox_google_pay/active';
+    public const KEY_ACTIVE = 'payment/cardknox_google_pay/cardknox_gpay_active';
     public const MERCHANT_ID = 'payment/cardknox_google_pay/merchant_id';
     public const MERCHANT_NAME = 'payment/cardknox_google_pay/merchant_name';
     public const ENVIRONMENT = 'payment/cardknox_google_pay/environment';
