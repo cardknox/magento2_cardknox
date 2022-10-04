@@ -161,7 +161,7 @@
             }
             gPay = parent;
             if (gPayConfig.merchantName == "" || gPayConfig.merchantName == null || gPayConfig.merchantName.length == 0) {
-                jQuery(".gpay-error").html("<div>Please contact to store owner. Failed to initalized Google Pay button. </div>").show();
+                jQuery(".gpay-error").html("<div>Please contact support. Failed to initialize Google Pay.</div>").show();
             } else {
                 jQuery('#igp').attr('data-ifields-oninit',"window.gpRequest.initGP");
                 ckGooglePay.enableGooglePay();
