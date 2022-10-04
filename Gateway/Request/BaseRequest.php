@@ -53,10 +53,11 @@ class BaseRequest implements BuilderInterface
         $paymentDO = $buildSubject['payment'];
 
         $order = $paymentDO->getOrder();
-
+        $edition = $this->productMetadata->getEdition();
+        $version = $this->productMetadata->getVersion();
         return [
             'xVersion' => '4.5.8',
-            'xSoftwareName' => 'Magento ' . $this->productMetadata->getEdition() . " ". $this->productMetadata->getVersion(),
+            'xSoftwareName' => 'Magento ' . $edition . " ". $version,
             'xSoftwareVersion' => '1.0.12',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',

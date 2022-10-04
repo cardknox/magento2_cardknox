@@ -16,7 +16,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
     public const IS_ENABLE_GOOGLE_REPCAPTCHA = "recaptchaEnabled";
     public const GOOGLE_REPCAPTCHA_SITE_KEY = "visible_api_key";
-
+    
     /**
      * IsActive function
      *
@@ -38,7 +38,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
-     * GetTokenKey function
+     * GetTransactionKey function
      *
      * @return string
      */

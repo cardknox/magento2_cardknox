@@ -34,16 +34,14 @@ class VaultHandler implements HandlerInterface
      * @var CreditCardTokenFactory
      */
     //    protected $creditCardTokenFactory;
-
     protected $paymentTokenFactory;
+
     /**
      * @var OrderPaymentExtensionInterfaceFactory
      */
     protected $paymentExtensionFactory;
 
     /**
-     * Config variable
-     *
      * @var Config
      */
     protected $config;
@@ -52,10 +50,6 @@ class VaultHandler implements HandlerInterface
      * @var Logger
      */
     private $logger;
-
-    /**
-     * @param Logger $logger
-     */
 
     /**
      * Constructor function
@@ -81,11 +75,7 @@ class VaultHandler implements HandlerInterface
     }
 
     /**
-     * Handles transaction id
-     *
-     * @param array $handlingSubject
-     * @param array $response
-     * @return void
+     * @inheritdoc
      */
     public function handle(array $handlingSubject, array $response)
     {
@@ -94,25 +84,20 @@ class VaultHandler implements HandlerInterface
         ) {
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
-
-        /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $handlingSubject['payment'];
-
         $payment = $paymentDO->getPayment();
-
         if ($payment->getAdditionalInformation("is_active_payment_token_enabler") == "") {
             return;
         }
-
         $log['VaultHandler save card'] = true;
-
         $xExp = "";
+        $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
+        $cc_exp_year = $payment->getAdditionalInformation("cc_exp_year");
         if (isset($response[$this::XEXP])) {
             $xExp = $response[$this::XEXP];
         } elseif ($payment->getAdditionalInformation("cc_exp_month") != "") {
-            $xExp = sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2));
+            $xExp = sprintf('%02d%02d', $cc_exp_month, substr($cc_exp_year, -2));
         }
-
         // add vault payment token entity to extension attributes
         if ($xExp) {
             $paymentToken = $this->getVaultPaymentToken($response, $xExp);
@@ -121,16 +106,15 @@ class VaultHandler implements HandlerInterface
                 $extensionAttributes->setVaultPaymentToken($paymentToken);
             }
         }
-
         $this->logger->debug($log);
     }
 
     /**
-     * Get vault payment token entity function
+     * Get vault payment token entity
      *
      * @param array $response
      * @param string $xExp
-     * @return void
+     * @return PaymentTokenInterface|null
      */
     private function getVaultPaymentToken(array $response, string $xExp)
     {
@@ -144,7 +128,6 @@ class VaultHandler implements HandlerInterface
             return null;
         }
 
-        /** @var PaymentTokenInterface $paymentToken */
         $paymentToken = $this->paymentTokenFactory->create();
         $paymentToken->setGatewayToken($token);
         $paymentToken->setExpiresAt($this->getExpirationDate($xExp));
@@ -179,6 +162,8 @@ class VaultHandler implements HandlerInterface
     }
 
     /**
+     * GetExpirationDate function
+     *
      * @param string $xExp
      * @return string
      */
@@ -198,6 +183,7 @@ class VaultHandler implements HandlerInterface
     }
     /**
      * Convert payment token details to JSON
+     *
      * @param array $details
      * @return string
      */
@@ -221,10 +207,11 @@ class VaultHandler implements HandlerInterface
 
     /**
      * Get payment extension attributes
+     *
      * @param InfoInterface $payment
      * @return OrderPaymentExtensionInterface
      */
-    private function getExtensionAttributes(InfoInterface $payment)
+    private function getExtensionAttributes(InfoInterface $payment): OrderPaymentExtensionInterface
     {
         $extensionAttributes = $payment->getExtensionAttributes();
         if (null === $extensionAttributes) {

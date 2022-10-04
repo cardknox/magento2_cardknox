@@ -48,10 +48,9 @@
                 <can_use_internal>1</can_use_internal>
             </cardknox_cc_vault>
             <cardknox_google_pay>
-                <!-- <model>CardknoxDevelopment\GooglePay\Model\Methods\GooglePayMethod</model> -->
                 <model>CardknoxGooglePayFacade</model>
                 <merchant_name></merchant_name>
-                <active>1</active>
+                <cardknox_gpay_active>1</cardknox_gpay_active>
                 <title>Google Pay</title>
                 <payment_action>authorize</payment_action>
                 <currency>USD</currency>

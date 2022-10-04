@@ -8,11 +8,25 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Magento\Payment\Helper\Formatter;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class VaultAuthorizeRequest implements BuilderInterface
 {
-    use Formatter;
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Constructor
+     *
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * Builds ENV request
      *
@@ -27,10 +41,8 @@ class VaultAuthorizeRequest implements BuilderInterface
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
 
-        /** @var PaymentDataObjectInterface $payment */
-
         $paymentDO = $buildSubject['payment'];
-        $amount = $this->formatPrice($buildSubject['amount']);
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
         $extensionAttributes = $payment->getExtensionAttributes();

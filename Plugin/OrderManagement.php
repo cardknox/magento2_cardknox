@@ -1,0 +1,207 @@
+<?php
+namespace CardknoxDevelopment\Cardknox\Plugin;
+
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderManagementInterface;
+
+class OrderManagement
+{
+    /**
+     * @var \Magento\Quote\Model\QuoteFactory
+     */
+    protected $quoteFactory;
+
+    /**
+     * __construct function
+     *
+     * @param \Magento\Quote\Model\QuoteFactory $quoteFactory
+     */
+    public function __construct(
+        \Magento\Quote\Model\QuoteFactory $quoteFactory
+    ) {
+        $this->quoteFactory = $quoteFactory;
+    }
+
+    /**
+     * OrderManagement
+     *
+     * @param OrderManagementInterface $subject
+     * @param OrderInterface           $order
+     *
+     * @return OrderInterface[]
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function beforePlace(
+        OrderManagementInterface $subject,
+        OrderInterface $order
+    ): array {
+        $quoteId = $order->getQuoteId();
+
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = $this->getQuote($quoteId);
+
+        $shippingAddress = $quote->getShippingAddress();
+        $billingAddress = $quote->getBillingAddress();
+        $paymentQuote = $quote->getPayment();
+        $method = $paymentQuote->getMethodInstance()->getCode();
+        
+        $shipping_address_firstname = $paymentQuote->getAdditionalInformation('shippingAddressFirstname');
+        if ($quoteId && $method == "cardknox_google_pay" && $shipping_address_firstname !== null) {
+            $this->modifyShippingAddress($shippingAddress, $shipping_address_firstname);
+        }
+        
+        if ($quoteId && $method == "cardknox_google_pay") {
+            $this->updateQuoteAddress($shippingAddress, $billingAddress);
+            $this->updateTelephone($shippingAddress, $billingAddress);
+        }
+        return [$order];
+    }
+
+    /**
+     * _afterPlace function
+     *
+     * @param OrderManagementInterface $subject
+     * @param OrderInterface $result
+     * @return OrderInterface
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function afterPlace(
+        OrderManagementInterface $subject,
+        OrderInterface $result
+    ) {
+        $orderId = $result->getIncrementId();
+        if ($orderId) {
+            $shippingAddress = $result->getShippingAddress();
+            $billingAddress = $result->getBillingAddress();
+            $payment = $result->getPayment();
+            $method = $payment->getMethodInstance()->getCode();
+            
+            $shipping_address_firstname = $payment->getAdditionalInformation('shippingAddressFirstname');
+            if ($method == "cardknox_google_pay" && $shipping_address_firstname !== null) {
+                $this->modifyShippingAddress($shippingAddress, $shipping_address_firstname);
+            }
+            
+            if ($method == "cardknox_google_pay") {
+                $this->updateQuoteAddress($shippingAddress, $billingAddress);
+                $this->updateTelephone($shippingAddress, $billingAddress);
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * GetQuote function
+     *
+     * @param int $quoteId
+     * @return void
+     */
+    public function getQuote($quoteId)
+    {
+        return $this->quoteFactory->create()->load($quoteId);
+    }
+    /**
+     * _modifyShippingAddress function
+     *
+     * @param mixed $shippingAddress
+     * @param mixed $shippingAddressFirstname
+     * @return void
+     */
+    protected function modifyShippingAddress($shippingAddress, $shippingAddressFirstname)
+    {
+        if (!empty($shippingAddressFirstname) &&
+            !$shippingAddress->getFirstname() &&
+            !empty($shippingAddressFirstname)
+        ) {
+            $shippingAddress->setFirstname($shippingAddressFirstname);
+            $shippingAddress->save();
+        }
+    }
+    /**
+     * _updateQuoteAddress function
+     *
+     * @param mixed $shippingAddress
+     * @param mixed $billingAddress
+     * @return void
+     */
+    protected function updateQuoteAddress($shippingAddress, $billingAddress)
+    {
+        if (!empty($shippingAddress) &&
+            !empty($shippingAddress->getFirstname()) &&
+            empty($shippingAddress->getLastname())
+        ) {
+            $this->updateShippingAddressNameData($shippingAddress, $shippingAddress->getFirstname());
+        }
+        if (!empty($billingAddress) &&
+            !empty($billingAddress->getFirstname()) &&
+            empty($billingAddress->getLastname())
+        ) {
+            $this->updateBillingAddressNameData($billingAddress, $billingAddress->getFirstname());
+        }
+    }
+    /**
+     * Update shipping address name function
+     *
+     * @param mixed $shippingAddress
+     * @param string $name
+     * @return void
+     */
+    protected function updateShippingAddressNameData($shippingAddress, $name)
+    {
+        // @codingStandardsIgnoreStart
+        $nameArray = explode(" ", $name, 3);
+
+        $shippingAddress->setFirstname($nameArray[0]);
+        if (sizeof($nameArray) == 2) {
+            $shippingAddress->setLastname($nameArray[1]);
+        } elseif (sizeof($nameArray) == 3) {
+            $shippingAddress->setMiddlename($nameArray[1]);
+            $shippingAddress->setLastname($nameArray[2]);
+        }
+        $shippingAddress->setSaveInAddressBook(false);
+        $shippingAddress->setSameAsBilling(false);
+        $shippingAddress->save();
+        // @codingStandardsIgnoreEnd
+    }
+    /**
+     * Update billing address name function
+     *
+     * @param mixed $billingAddress
+     * @param string $name
+     * @return void
+     */
+    protected function updateBillingAddressNameData($billingAddress, $name)
+    {
+        // @codingStandardsIgnoreStart
+        $nameArray = explode(" ", $name, 3);
+        $billingAddress->setFirstname($nameArray[0]);
+        if (sizeof($nameArray) == 2) {
+            $billingAddress->setLastname($nameArray[1]);
+        } elseif (sizeof($nameArray) == 3) {
+            $billingAddress->setMiddlename($nameArray[1]);
+            $billingAddress->setLastname($nameArray[2]);
+        }
+        $billingAddress->setSaveInAddressBook(false);
+        $billingAddress->save();
+        // @codingStandardsIgnoreEnd
+    }
+    /**
+     * _updateTelephone function
+     *
+     * @param mixed $shippingAddress
+     * @param mixed $billingAddress
+     * @return void
+     */
+    protected function updateTelephone($shippingAddress, $billingAddress)
+    {
+        $telephone = $billingAddress->getTelephone();
+        if (!empty($shippingAddress) &&
+            empty($shippingAddress->getTelephone())
+        ) {
+            if (strpos($telephone, '+') !== false && !empty($telephone)) {
+                $telephone = strstr($telephone, ' ');
+                $shippingAddress->setTelephone($telephone);
+                $shippingAddress->save();
+            }
+        }
+    }
+}

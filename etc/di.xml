@@ -410,7 +410,7 @@
     <virtualType name="CardknoxGPayCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
             <argument name="builders" xsi:type="array">
-                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\CaptureRequest</item>
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\GooglePayCaptureRequest</item>
                 <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
                 <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\GooglePayBaseRequest</item>
             </argument>
@@ -442,4 +442,11 @@
             <argument name="configInterface" xsi:type="object">CardknoxGpayConfig</argument>
         </arguments>
     </virtualType>
+
+    <!-- Update Shipping and Billing Address for guest order which is placed from the checkout/cart page -->
+    <type name="Magento\Sales\Api\OrderManagementInterface">
+        <plugin name="before_place_order_operation"
+            type="CardknoxDevelopment\Cardknox\Plugin\OrderManagement"
+            sortOrder="10"/>
+    </type>
 </config>

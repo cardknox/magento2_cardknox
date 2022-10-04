@@ -1,0 +1,42 @@
+<div class="googlepay-component">
+    <div class="actions-toolbar">
+        <div class="primary">
+            <div class="gpay-content">
+                <div id="divGpay" class="gp hidden">
+                    <iframe id="igp" 
+                            class="gp" 
+                            data-ifields-id="igp" 
+                            afterRender="initFrame()" 
+                            src="https://cdn.cardknox.com/ifields/2.12.2201.2101/igp.htm"
+                            allowpaymentrequest
+                            sandbox="allow-popups allow-modals allow-scripts allow-same-origin allow-forms allow-popups-to-escape-sandbox allow-top-navigation"
+                            title="GPay checkout page">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="messages">
+        <div class="message message-error error gpay-error" style="display: none;">
+    </div>
+</div>
+<style> 
+    iframe.gp {
+        display: inline-block;
+        border: 0;
+        width: 250px;
+        height: 45px;
+        padding: 0px;
+        margin-bottom: 0;
+        overflow: hidden;
+    }
+    div.gp {
+        overflow: hidden;
+        display: inline-block;
+        overflow: hidden;
+        margin-bottom: 0;
+    }
+    .hidden {
+        display: none;
+    }
+</style>

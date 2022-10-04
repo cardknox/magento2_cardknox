@@ -8,11 +8,25 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Magento\Payment\Helper\Formatter;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class AuthorizationRequest implements BuilderInterface
 {
-    use Formatter;
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Constructor
+     *
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
+
     /**
      * Builds ENV request
      *
@@ -27,16 +41,15 @@ class AuthorizationRequest implements BuilderInterface
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
 
-        /** @var PaymentDataObjectInterface $payment */
-
         $paymentDO = $buildSubject['payment'];
-        $amount = $this->formatPrice($buildSubject['amount']);
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
-
+        $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
+        $cc_exp_year = $payment->getAdditionalInformation("cc_exp_year");
         return [
             'xAmount' => $amount,
-            'xExp' => sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2)),
+            'xExp' => sprintf('%02d%02d', $cc_exp_month, substr($cc_exp_year, -2)),
             'xCVV' => $payment->getAdditionalInformation("xCVV"),
             'xCommand' => 'cc:authonly',
             'xInvoice' => $order->getOrderIncrementId(),

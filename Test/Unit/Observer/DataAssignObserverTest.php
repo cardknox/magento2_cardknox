@@ -16,10 +16,10 @@ use Magento\Quote\Api\Data\PaymentInterface;
 class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
 {
 
-    public const xCardNum = '4444333322221111';
-    public const xCVV = '123';
-    public const cc_exp_month = 10;
-    public const cc_exp_year = 2018;
+    public const XCARDNUM = '4444333322221111';
+    public const XCVV = '123';
+    public const CC_EXP_MONTH = 10;
+    public const CC_EXP_YEAR = 2018;
 
     public function testExectute()
     {
@@ -33,10 +33,10 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
         $dataObject = new DataObject(
             [
                 PaymentInterface::KEY_ADDITIONAL_DATA => [
-                    'xCardNum' => self::xCardNum,
-                    'xCVV' => self::xCVV,
-                    'cc_exp_month' => self::cc_exp_month,
-                    'cc_exp_year' => self::cc_exp_year
+                    'xCardNum' => self::XCARDNUM,
+                    'xCVV' => self::XCVV,
+                    'cc_exp_month' => self::CC_EXP_MONTH,
+                    'cc_exp_year' => self::CC_EXP_YEAR
                 ]
 
             ]
@@ -57,27 +57,27 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
             ->method('setAdditionalInformation')
             ->with(
                 'xCardNum',
-                self::xCardNum
+                self::XCARDNUM
             );
         $paymentInfoModel->expects(static::at(1))
             ->method('setAdditionalInformation')
             ->with(
                 'xCVV',
-                self::xCVV
+                self::XCVV
             );
 
         $paymentInfoModel->expects(static::at(2))
             ->method('setAdditionalInformation')
             ->with(
                 'cc_exp_month',
-                self::cc_exp_month
+                self::CC_EXP_MONTH
             );
 
         $paymentInfoModel->expects(static::at(3))
             ->method('setAdditionalInformation')
             ->with(
                 'cc_exp_year',
-                self::cc_exp_year
+                self::CC_EXP_YEAR
             );
 
         $observer = new DataAssignObserver();

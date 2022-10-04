@@ -14,7 +14,6 @@ use Magento\Sales\Model\Order\Payment;
 class VoidRequest implements BuilderInterface
 {
 
-
     /**
      * Builds ENV request
      *
@@ -43,7 +42,6 @@ class VoidRequest implements BuilderInterface
         return [
             'xCommand' => 'cc:void',
             'xRefNum' => $payment->getParentTransactionId(),
-
         ];
     }
 }

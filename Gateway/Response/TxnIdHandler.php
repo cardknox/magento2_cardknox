@@ -11,20 +11,20 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class TxnIdHandler implements HandlerInterface
 {
-    public const xRefNum = 'xRefNum';
-    public const xMaskedCardNumber = 'xMaskedCardNumber';
-    public const xAvsResult = 'xAvsResult';
-    public const xCvvResult = 'xCvvResult';
-    public const xCardType = 'xCardType';
-    public const xToken = 'xToken';
-    public const xAuthCode = 'xAuthCode';
-    public const xBatch = 'xBatch';
-    public const xAuthAmount = 'xAuthAmount';
-    public const xStatus = 'xStatus';
-    public const xError = 'xError';
-    public const xExp = 'xExp';
-    public const xCvvResultCode = 'xCvvResultCode';
-    public const xAvsResultCode = 'xAvsResultCode';
+    public const XREFNUM = 'xRefNum';
+    public const XMASKEDCARDNUMBER = 'xMaskedCardNumber';
+    public const XAVSRESULT = 'xAvsResult';
+    public const XCVVRESULT = 'xCvvResult';
+    public const XCARDTYPE = 'xCardType';
+    public const XTOKEN = 'xToken';
+    public const XAUTHCODE = 'xAuthCode';
+    public const XBATCH = 'xBatch';
+    public const XAUTHAMOUNT = 'xAuthAmount';
+    public const XSTATUS = 'xStatus';
+    public const XERROR = 'xError';
+    public const XEXP = 'xExp';
+    public const XCVVRESULTCODE = 'xCvvResultCode';
+    public const XAVSRESULTCODE = 'xAvsResultCode';
 
     /**
      * Config variable
@@ -50,17 +50,17 @@ class TxnIdHandler implements HandlerInterface
      * @var array
      */
     protected $additionalInformationMapping = [
-        self::xMaskedCardNumber,
-        self::xAvsResult,
-        self::xCvvResult,
-        self::xCardType,
-        self::xExp,
-        self::xBatch,
-        self::xRefNum,
-        self::xAuthCode,
-        self::xAvsResultCode,
-        self::xCvvResultCode,
-        self::xAuthAmount
+        self::XMASKEDCARDNUMBER,
+        self::XAVSRESULT,
+        self::XCVVRESULT,
+        self::XCARDTYPE,
+        self::XEXP,
+        self::XBATCH,
+        self::XREFNUM,
+        self::XAUTHCODE,
+        self::XAVSRESULTCODE,
+        self::XCVVRESULTCODE,
+        self::XAUTHAMOUNT
     ];
 
     /**
@@ -83,7 +83,7 @@ class TxnIdHandler implements HandlerInterface
 
         $payment = $paymentDO->getPayment();
         /** @var $payment \Magento\Sales\Model\Order\Payment */
-        $payment->setTransactionId($response[$this::xRefNum]);
+        $payment->setTransactionId($response[$this::XREFNUM]);
         $payment->setIsTransactionClosed(false);
         if ($payment->getLastTransId() == '') {
             foreach ($this->additionalInformationMapping as $item) {
@@ -93,9 +93,9 @@ class TxnIdHandler implements HandlerInterface
                 $payment->setAdditionalInformation($item, $response[$item]);
             }
         } else {
-            if (isset($response[self::xBatch])) {
+            if (isset($response[self::XBATCH])) {
                 //batch only gets added after capturing
-                $payment->setAdditionalInformation(self::xBatch, $response[self::xBatch]);
+                $payment->setAdditionalInformation(self::XBATCH, $response[self::XBATCH]);
             }
         }
     }

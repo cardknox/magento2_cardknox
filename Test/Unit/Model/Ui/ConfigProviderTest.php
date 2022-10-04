@@ -12,9 +12,19 @@ use Magento\Framework\Locale\ResolverInterface;
 
 class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-
+    /**
+     * @var Config
+     */
     private $config;
+
+    /**
+     * @var ResolverInterface
+     */
     private $resolverInterface;
+
+    /**
+     * @var ConfigProvider
+     */
     private $configProvider;
 
     protected function setUp(): void
@@ -30,8 +40,6 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConfig()
     {
-
-
         static::assertEquals(
             [
                 'payment' => [

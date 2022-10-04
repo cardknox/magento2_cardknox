@@ -9,11 +9,24 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Payment\Helper\Formatter;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class CaptureRequest implements BuilderInterface
 {
-    use Formatter;
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Constructor
+     *
+     * @param Data $helper
+     */
+    public function __construct(Data $helper)
+    {
+        $this->helper = $helper;
+    }
 
     /**
      * Builds ENV request
@@ -31,7 +44,7 @@ class CaptureRequest implements BuilderInterface
 
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $buildSubject['payment'];
-        $amount = $this->formatPrice($buildSubject['amount']);
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
 
         $order = $paymentDO->getOrder();
 
@@ -40,12 +53,13 @@ class CaptureRequest implements BuilderInterface
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
         }
-
+        $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
+        $cc_exp_year = $payment->getAdditionalInformation("cc_exp_year");
         if ($payment->getLastTransId() == '') {
             return [
                 'xCommand' => 'cc:sale',
                 'xAmount'   => $amount,
-                'xExp' => sprintf('%02d%02d', $payment->getAdditionalInformation("cc_exp_month"), substr($payment->getAdditionalInformation("cc_exp_year"), -2)),
+                'xExp' => sprintf('%02d%02d', $cc_exp_month, substr($cc_exp_year, -2)),
                 'xCVV' => $payment->getAdditionalInformation("xCVV"),
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),

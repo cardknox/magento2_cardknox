@@ -9,27 +9,34 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Payment\Helper\Formatter;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Payment\Model\Method\Logger;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class RefundRequest implements BuilderInterface
 {
-    use Formatter;
-
     /**
      * @var Logger
      */
     private $logger;
 
     /**
-     * @param Logger $logger
+     * @var Data
      */
+    private $helper;
 
+    /**
+     * Constructor
+     *
+     * @param Logger $logger
+     * @param Data $helper
+     */
     public function __construct(
-        Logger $logger
+        Logger $logger,
+        Data $helper
     ) {
         $this->logger = $logger;
+        $this->helper = $helper;
     }
 
     /**
@@ -59,7 +66,7 @@ class RefundRequest implements BuilderInterface
         }
 
         $command = "cc:voidrefund";
-        $amount = $this->formatPrice($buildSubject['amount']);
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
         if ($amount != $order->getGrandTotalAmount()) {
             $command = "cc:refund";
         }

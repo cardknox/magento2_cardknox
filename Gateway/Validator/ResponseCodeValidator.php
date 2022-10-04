@@ -15,6 +15,11 @@ use Magento\Payment\Gateway\Command\CommandException;
 
 class ResponseCodeValidator extends AbstractValidator
 {
+    public const RESULT_CODE = 'xResult';
+    public const DECLINE = 'D';
+    public const ERROR = 'E';
+    public const SUCCESS = 'A';
+
     /**
      * Logger variable
      *
@@ -36,10 +41,6 @@ class ResponseCodeValidator extends AbstractValidator
         $this->logger = $logger;
     }
 
-    public const RESULT_CODE = 'xResult';
-    public const DECLINE = 'D';
-    public const ERROR = 'E';
-    public const SUCCESS = 'A';
     /**
      * Performs validation of result code
      *
@@ -63,12 +64,6 @@ class ResponseCodeValidator extends AbstractValidator
                 $this->getFailedResponse($response),
                 $this->getErrorCode($response)
             );
-            // $errorMessage = $this->getFailedResponse($response);
-            // $logError['Payment Error'] = $errorMessage;
-            // $this->logger->debug([$logError]);
-            // throw new CommandException(
-            //     __(implode(PHP_EOL, $errorMessage))
-            // );
         }
     }
 
@@ -88,7 +83,7 @@ class ResponseCodeValidator extends AbstractValidator
      * GetFailedResponse function
      *
      * @param array $response
-     * @return void
+     * @return array
      */
     private function getFailedResponse(array $response)
     {
@@ -101,7 +96,7 @@ class ResponseCodeValidator extends AbstractValidator
      * GetErrorCode function
      *
      * @param array $response
-     * @return void
+     * @return array
      */
     private function getErrorCode(array $response)
     {

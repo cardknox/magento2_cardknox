@@ -72,11 +72,11 @@
             paymentResponse =  JSON.parse(JSON.stringify(paymentResponse));
             var xAmount  = paymentResponse.transactionInfo.totalPrice;
             if (xAmount <= 0) {
-                jQuery(".gpay-error").html("<div> Payment is not authorized. Invalid amount. Amount must be greater than 0 </div>").show();
+                jQuery(".gpay-error").html("<div> Payment is not authorized. Amount must be greater than 0 </div>").show();
                 setTimeout(function () { 
                     jQuery(".gpay-error").html("").hide();
                 }, 3000);
-                throw "Payment is not authorized. Invalid amount. Amount must be greater than 0";
+                throw "Payment is not authorized. Amount must be greater than 0";
             } else {
                 var token = btoa(paymentResponse.paymentData.paymentMethodData.tokenizationData.token);
                 return gPay.startPlaceOrder(token, xAmount);
@@ -147,7 +147,7 @@
             }
             gPay = parent;
             if (gPayConfig.merchantName == "" || gPayConfig.merchantName == null || gPayConfig.merchantName.length == 0) {
-                jQuery(".gpay-error").html("<div>Please contact to store owner. Failed to initalized Google Pay button. </div>").show();
+                jQuery(".gpay-error").html("<div>Please contact support. Failed to initialize Google Pay. </div>").show();
             } else {
                 jQuery('#igp').attr('data-ifields-oninit',"window.gpRequest.initGP");
                 ckGooglePay.enableGooglePay();
