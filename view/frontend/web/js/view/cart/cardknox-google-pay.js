@@ -84,11 +84,11 @@
             paymentResponse =  JSON.parse(JSON.stringify(paymentResponse));
             var xAmount  = paymentResponse.transactionInfo.totalPrice;
             if (xAmount <= 0) {
-                jQuery(".gpay-error").html("<div> Payment is not authorized. Invalid amount. Amount must be greater than 0 </div>").show();
+                jQuery(".gpay-error").html("<div> Payment is not authorized. Amount must be greater than 0 </div>").show();
                 setTimeout(function () { 
                     jQuery(".gpay-error").html("").hide();
                 }, 4000);
-                throw "Payment is not authorized. Invalid amount. Amount must be greater than 0";
+                throw "Payment is not authorized. Amount must be greater than 0";
             } else {
                 var token = btoa(paymentResponse.paymentData.paymentMethodData.tokenizationData.token);
                 return gPay.startPlaceOrder(token, xAmount, paymentResponse);
