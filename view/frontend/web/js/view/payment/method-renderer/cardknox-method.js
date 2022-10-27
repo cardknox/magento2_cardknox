@@ -126,7 +126,7 @@ define(
                 var self = this;
                 enableLogging();
                 enableAutoFormatting();
-                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.12");
+                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.13");
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);
                 this.onloadCallback();
