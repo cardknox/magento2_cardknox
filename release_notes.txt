@@ -1,0 +1,2 @@
+1. Support for Google Pay
+2. Minor updates
