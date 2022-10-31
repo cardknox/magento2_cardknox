@@ -60,7 +60,7 @@ define([
         },
 
         initCardknox: function () {
-            setAccount(window.checkoutConfig.payment.cardknox_google_pay.xKey, "Magento2", "1.0.13");
+            setAccount(window.checkoutConfig.payment.cardknox_google_pay.xKey, "Magento2", "1.0.14");
         },
 
         /**
