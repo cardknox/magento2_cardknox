@@ -162,7 +162,7 @@ define(
                 var self = this;
                 var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
                 if (isEnabledGoogleReCaptcha == true){
-                    var captchResponse = $('#g-recaptcha-response').val();
+                    var captchResponse = $('#cardknox_recaptcha .g-recaptcha-response').val();
                     if(captchResponse.length == 0 ){
                         $(".recaptcha-error").show();
                         return;
