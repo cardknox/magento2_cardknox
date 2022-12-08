@@ -168,7 +168,7 @@
             setTimeout(function () { 
                 jQuery(".gpay-error").html("").hide();
             }, 4000);
-            throw "Please check the shipping address information. Lastname is required. Enter and try again.";
+            throw new Error("Please check the shipping address information. Lastname is required. Enter and try again.");
         }
     }
     function isExistLastNameBillingAddress(data) {
