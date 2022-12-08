@@ -88,7 +88,7 @@
                 setTimeout(function () { 
                     jQuery(".gpay-error").html("").hide();
                 }, 4000);
-                throw "Payment is not authorized. Amount must be greater than 0";
+                throw new Error("Payment is not authorized. Amount must be greater than 0");
             } else {
                 var token = btoa(paymentResponse.paymentData.paymentMethodData.tokenizationData.token);
                 if (window.checkoutConfig.quoteData.customer_is_guest == '1') {
@@ -182,7 +182,7 @@
             setTimeout(function () { 
                 jQuery(".gpay-error").html("").hide();
             }, 4000);
-            throw "Please check the billing address information. Lastname is required. Enter and try again.";
+            throw new Error("Please check the billing address information. Lastname is required. Enter and try again.");
         }
     }
     return {
