@@ -76,7 +76,7 @@
                 setTimeout(function () { 
                     jQuery(".gpay-error").html("").hide();
                 }, 3000);
-                throw "Payment is not authorized. Amount must be greater than 0";
+                throw new Error("Payment is not authorized. Amount must be greater than 0");
             } else {
                 var token = btoa(paymentResponse.paymentData.paymentMethodData.tokenizationData.token);
                 return gPay.startPlaceOrder(token, xAmount);

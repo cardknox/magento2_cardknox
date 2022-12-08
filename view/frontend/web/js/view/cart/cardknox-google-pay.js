@@ -88,9 +88,15 @@
                 setTimeout(function () { 
                     jQuery(".gpay-error").html("").hide();
                 }, 4000);
-                throw "Payment is not authorized. Amount must be greater than 0";
+                throw new Error("Payment is not authorized. Amount must be greater than 0");
             } else {
                 var token = btoa(paymentResponse.paymentData.paymentMethodData.tokenizationData.token);
+                if (window.checkoutConfig.quoteData.customer_is_guest == '1') {
+                    // Check lastname is exist in shipping address from googlepay response
+                    isExistLastNameShippingAddress(paymentResponse);
+                    // Check lastname is exist in billing address from googlepay response
+                    isExistLastNameBillingAddress(paymentResponse);
+                }
                 return gPay.startPlaceOrder(token, xAmount, paymentResponse);
             }
         },
@@ -152,6 +158,32 @@
         var totals = quote.totals();
         var base_grand_total = (totals ? totals : quote)['base_grand_total'];
         return parseFloat(base_grand_total).toFixed(2);
+    }
+    function isExistLastNameShippingAddress(data) {
+        var address = data.paymentData.shippingAddress;
+        var addressNameArray = []; 
+            addressNameArray = address.name.replace("[","").replace("]","").split(' ');
+        if (addressNameArray.length == 1 ) {
+            jQuery(".gpay-error").html("<div>Please check the shipping address information. Lastname is required. Enter and try again.</div>").show();
+            setTimeout(function () { 
+                jQuery(".gpay-error").html("").hide();
+            }, 4000);
+            throw new Error("Please check the shipping address information. Lastname is required. Enter and try again.");
+        }
+    }
+    function isExistLastNameBillingAddress(data) {
+        var address = data.paymentData.paymentMethodData.info.billingAddress;
+
+        var addressNameArray = []; 
+            addressNameArray = address.name.replace("[","").replace("]","").split(' ');
+
+        if (addressNameArray.length == 1 ) {
+            jQuery(".gpay-error").html("<div>Please check the billing address information. Lastname is required. Enter and try again.</div>").show();
+            setTimeout(function () { 
+                jQuery(".gpay-error").html("").hide();
+            }, 4000);
+            throw new Error("Please check the billing address information. Lastname is required. Enter and try again.");
+        }
     }
     return {
         init: function (parent) {
