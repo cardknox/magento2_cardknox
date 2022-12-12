@@ -3,6 +3,8 @@ define([
     'Magento_Checkout/js/view/payment/default',
     'ko',
     'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/action/redirect-on-success',
+    'Magento_Checkout/js/model/full-screen-loader',
     'CardknoxDevelopment_Cardknox/js/view/cart/cardknox-google-pay',
     'ifields',
     'Magento_Checkout/js/model/payment/additional-validators',
@@ -17,6 +19,8 @@ define([
     Component,
     ko,
     quote,
+    redirectOnSuccessAction,
+    fullScreenLoader,
     cardknoxGpay,
     ifields,
     additionalValidators,
@@ -93,6 +97,73 @@ define([
         additionalValidator: function () {
             return additionalValidators.validate();
         },
+
+        /**
+         * Place order.
+         */
+        placeOrder: function (data, event) {
+            var self = this;
+
+            if (event) {
+                event.preventDefault();
+            }
+
+            if (this.validate() &&
+                additionalValidators.validate() &&
+                this.isPlaceOrderActionAllowed() === true
+            ) {
+                this.isPlaceOrderActionAllowed(false);
+
+                this.getPlaceOrderDeferredObject()
+                    .done(
+                        function () {
+                            self.afterPlaceOrder();
+
+                            if (self.redirectAfterPlaceOrder) {
+                                redirectOnSuccessAction.execute();
+                            }
+                        }
+                    ).always(
+                        function () {
+                            self.isPlaceOrderActionAllowed(true);
+                        }
+                    ).fail(
+                        function (response) {
+                            self.isPlaceOrderActionAllowed(true);
+
+                            var error_message = "Unable to process the order. Please try again.";
+                            if (response && response.responseJSON && response.responseJSON.message) {
+                                error_message = response.responseJSON.message;
+                            }
+                            self.showPaymentError(error_message);
+                        }
+                    );;
+
+                return true;
+            }
+
+            return false;
+        },
+
+        showPaymentError: function (message) {
+            $(".gpay-error").html("<div> "+message+" </div>").show();
+            setTimeout(function () { 
+                $(".gpay-error").html("").hide();
+            }, 5000);
+            
+            fullScreenLoader.stopLoader();
+            $('.checkout-cart-index .loading-mask').attr('style','display:none');
+        },
+
+        /**
+         * @return {*}
+         */
+        getPlaceOrderDeferredObject: function () {
+            return $.when(
+                placeOrderAction(this.getData(), this.messageContainer)
+            );
+        },
+
         /**
          * Google pay place order method
          */

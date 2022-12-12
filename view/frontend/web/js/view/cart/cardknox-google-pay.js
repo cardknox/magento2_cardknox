@@ -1,7 +1,7 @@
 /**
  * cardknox Google Pay for cart page
  **/
- define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,ifields,quote) {
+define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,ifields,quote) {
     'use strict';
     var gPayConfig = window.checkoutConfig.payment.cardknox_google_pay;
     var quoteData = window.checkoutConfig.quoteData;
@@ -19,14 +19,14 @@
         },
         
         billingParams: {
-            emailRequired: window.checkoutConfig.quoteData.customer_is_guest == '1' ? true : false,
-            billingAddressRequired: window.checkoutConfig.quoteData.customer_is_guest == '1' ? true : false,
-            phoneNumberRequired: window.checkoutConfig.quoteData.customer_is_guest == '1' ? true : false,
+            emailRequired: window.checkoutConfig.isCustomerLoggedIn == false ? true : false,
+            billingAddressRequired: window.checkoutConfig.isCustomerLoggedIn == false ? true : false,
+            phoneNumberRequired: window.checkoutConfig.isCustomerLoggedIn == false ? true : false,
             billingAddressFormat: GPBillingAddressFormat.full
         },
         shippingParams: {
-            phoneNumberRequired: window.checkoutConfig.quoteData.customer_is_guest == '1' ? true : false,
-            emailRequired: window.checkoutConfig.quoteData.customer_is_guest == '1' ? true : false,
+            phoneNumberRequired: window.checkoutConfig.isCustomerLoggedIn == false ? true : false,
+            emailRequired: window.checkoutConfig.isCustomerLoggedIn == false ? true : false,
         },
         onGetTransactionInfo: function () {
             let amt = getAmount();
@@ -91,7 +91,7 @@
                 throw new Error("Payment is not authorized. Amount must be greater than 0");
             } else {
                 var token = btoa(paymentResponse.paymentData.paymentMethodData.tokenizationData.token);
-                if (window.checkoutConfig.quoteData.customer_is_guest == '1') {
+                if (window.checkoutConfig.isCustomerLoggedIn == false) {
                     // Check lastname is exist in shipping address from googlepay response
                     isExistLastNameShippingAddress(paymentResponse);
                     // Check lastname is exist in billing address from googlepay response
