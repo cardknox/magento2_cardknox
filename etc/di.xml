@@ -15,6 +15,20 @@
             <argument name="infoBlockType" xsi:type="string">CardknoxDevelopment\Cardknox\Block\Info</argument>
             <argument name="valueHandlerPool" xsi:type="object">CardknoxValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">CardknoxCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">CardknoxValidatorPool</argument>
+        </arguments>
+    </virtualType>
+    <!-- Cardknox credit card validators infrastructure -->
+     <virtualType name="CardknoxCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CardknoxValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">CardknoxCountryValidator</item>
+            </argument>
         </arguments>
     </virtualType>
     <!-- Vault Method Facade configuration -->
@@ -350,9 +364,22 @@
             <argument name="commandPool" xsi:type="object">CardknoxGpayCommandPool</argument>
             <argument name="formBlockType" xsi:type="object">CardknoxDevelopment\GooglePay\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
+            <argument name="validatorPool" xsi:type="object">CardknoxGpayValidatorPool</argument>
         </arguments>
     </virtualType>
-
+    <!-- Cardknox GooglePay validators infrastructure -->
+     <virtualType name="CardknoxGpayCountryValidator" type="CardknoxDevelopment\Cardknox\Gateway\Validator\GpayCountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\GpayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CardknoxGpayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Validator\GpayCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
     <!-- Configuration reader -->
     <virtualType name="CardknoxGpayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
