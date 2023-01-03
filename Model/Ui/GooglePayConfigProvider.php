@@ -61,7 +61,9 @@ class GooglePayConfigProvider implements ConfigProviderInterface
                     'tokenKey' => $this->config->getTokenKey(),
                     'xKey' => $this->config->getTransactionKey(),
                     'button'  => $this->gpayConfig->getButtonStyle(),
-                    'GPEnvironment' => $this->gpayConfig->getEnvironment()
+                    'GPEnvironment' => $this->gpayConfig->getEnvironment(),
+                    'isGPaySplitCaptureEnabled' => $this->gpayConfig->isGPaySplitCaptureEnabled(),
+                    'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction()
                 ]
             ]
         ];

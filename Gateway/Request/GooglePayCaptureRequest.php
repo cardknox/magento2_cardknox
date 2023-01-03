@@ -11,6 +11,7 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Payment\Helper\Formatter;
 use CardknoxDevelopment\Cardknox\Helper\Data;
+use CardknoxDevelopment\Cardknox\Gateway\Config\GpayConfig;
 
 class GooglePayCaptureRequest implements BuilderInterface
 {
@@ -22,13 +23,23 @@ class GooglePayCaptureRequest implements BuilderInterface
     private $helper;
 
     /**
+     *
+     * @var GpayConfig
+     */
+    protected $config;
+
+    /**
      * Constructor
      *
      * @param Data $helper
+     * @param GpayConfig $config
      */
-    public function __construct(Data $helper)
-    {
+    public function __construct(
+        Data $helper,
+        GpayConfig $config
+    ) {
         $this->helper = $helper;
+        $this->config = $config;
     }
 
     /**
@@ -68,11 +79,22 @@ class GooglePayCaptureRequest implements BuilderInterface
                 'xTimeoutSeconds' => 55
             ];
         }
-
+        // phpcs:disable
+        $gPayPaymentAction = $payment->getAdditionalInformation("xPaymentAction") ? $payment->getAdditionalInformation("xPaymentAction") : $this->config->getGPayPaymentAction();
+        $isGPaySplitCaptureEnabled = $payment->getAdditionalInformation("isSplitCapture") ? $payment->getAdditionalInformation("isSplitCapture") : $this->helper->isGPaySplitCaptureEnabled();
+        $xCommand = 'cc:capture';
+        $transactionId = null;
+        $transactionId = $payment->getLastTransId();
+        if ($isGPaySplitCaptureEnabled == 1 && $gPayPaymentAction == 'authorize') {
+            $xCommand = 'cc:splitcapture';
+            $transactionId = $payment->getParentTransactionId();
+            $amount = $this->helper->formatPrice($buildSubject['amount']) ? $this->helper->formatPrice($buildSubject['amount']) : $this->helper->formatPrice($payment->getAdditionalInformation("xAmount"));
+        }
+        
         return [
-            'xCommand' => 'cc:capture',
+            'xCommand' => $xCommand,
             'xAmount'   => $amount,
-            'xRefNum' => $payment->getLastTransId(),
+            'xRefNum' => $transactionId,
             'xIgnoreInvoice' => true,
         ];
     }

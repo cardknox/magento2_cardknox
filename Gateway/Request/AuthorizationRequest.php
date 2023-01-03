@@ -9,6 +9,7 @@ namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use CardknoxDevelopment\Cardknox\Helper\Data;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class AuthorizationRequest implements BuilderInterface
 {
@@ -18,13 +19,23 @@ class AuthorizationRequest implements BuilderInterface
     private $helper;
 
     /**
+     *
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * Constructor
      *
      * @param Data $helper
+     * @param Config $config
      */
-    public function __construct(Data $helper)
-    {
+    public function __construct(
+        Data $helper,
+        Config $config
+    ) {
         $this->helper = $helper;
+        $this->config = $config;
     }
 
     /**
@@ -47,6 +58,13 @@ class AuthorizationRequest implements BuilderInterface
         $payment = $paymentDO->getPayment();
         $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
         $cc_exp_year = $payment->getAdditionalInformation("cc_exp_year");
+        // phpcs:disable
+        $ccPaymentAction = $payment->getAdditionalInformation("xPaymentAction") ? $payment->getAdditionalInformation("xPaymentAction") : $this->config->getCCPaymentAction();
+        $isCCSplitCaptureEnabled = $payment->getAdditionalInformation("isSplitCapture") ? $payment->getAdditionalInformation("isSplitCapture") : $this->helper->isCCSplitCaptureEnabled();
+        $xRequireSplitCapturable= 0;
+        if ($isCCSplitCaptureEnabled == 1 && $ccPaymentAction == 'authorize') {
+            $xRequireSplitCapturable = 1;
+        }
         return [
             'xAmount' => $amount,
             'xExp' => sprintf('%02d%02d', $cc_exp_month, substr($cc_exp_year, -2)),
@@ -57,7 +75,8 @@ class AuthorizationRequest implements BuilderInterface
             'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
             // always true; order number is incremented on every attempt so invoice is always different
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55
+            'xTimeoutSeconds' => 55,
+            'xRequireSplitCapturable' => $xRequireSplitCapturable
         ];
     }
 }

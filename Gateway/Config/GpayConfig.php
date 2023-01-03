@@ -21,6 +21,8 @@ class GpayConfig
     public const METHOD_CODE = 'cardknox_google_pay';
     public const CARDKNOX_TOKEN_KEY = 'cardknox_token_key';
     public const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
+    public const GPAY_PAYMENT_ACTION = 'payment/cardknox_google_pay/payment_action';
+    public const GPAY_SPLIT_CAPTURE_ENABLED = 'payment/cardknox_google_pay/split_capture_enabled';
 
     /**
      * @var ScopeConfigInterface
@@ -94,5 +96,25 @@ class GpayConfig
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * Get GooglePay payment action function
+     *
+     * @return string
+     */
+    public function getGPayPaymentAction()
+    {
+        return $this->getValue(self::GPAY_PAYMENT_ACTION);
+    }
+
+    /**
+     * Enable split capture for autorize payment action for GooglePay
+     *
+     * @return boolean
+     */
+    public function isGPaySplitCaptureEnabled()
+    {
+        return (bool) $this->getValue(self::GPAY_SPLIT_CAPTURE_ENABLED);
     }
 }
