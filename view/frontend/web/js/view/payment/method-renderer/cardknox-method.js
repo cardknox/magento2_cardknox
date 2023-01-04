@@ -54,7 +54,9 @@ define(
                         'cc_exp_year': this.creditCardExpYear(),
                         'cc_exp_month': this.creditCardExpMonth(),
                         'xCVV': document.getElementsByName("xCVV")[0].value,
-                        'xCardNum': document.getElementsByName("xCardNum")[0].value
+                        'xCardNum': document.getElementsByName("xCardNum")[0].value,
+                        'isSplitCapture': window.checkoutConfig.payment.cardknox.isCCSplitCaptureEnabled,
+                        'xPaymentAction': window.checkoutConfig.payment.cardknox.xPaymentAction
                     }
                 };
                 data['additional_data'] = _.extend(data['additional_data'], this.additionalData);

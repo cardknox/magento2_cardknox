@@ -10,6 +10,7 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use CardknoxDevelopment\Cardknox\Helper\Data;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class CaptureRequest implements BuilderInterface
 {
@@ -19,13 +20,23 @@ class CaptureRequest implements BuilderInterface
     private $helper;
 
     /**
+     *
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * Constructor
      *
      * @param Data $helper
+     * @param Config $config
      */
-    public function __construct(Data $helper)
-    {
+    public function __construct(
+        Data $helper,
+        Config $config
+    ) {
         $this->helper = $helper;
+        $this->config = $config;
     }
 
     /**
@@ -55,6 +66,7 @@ class CaptureRequest implements BuilderInterface
         }
         $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
         $cc_exp_year = $payment->getAdditionalInformation("cc_exp_year");
+        
         if ($payment->getLastTransId() == '') {
             return [
                 'xCommand' => 'cc:sale',
@@ -68,11 +80,20 @@ class CaptureRequest implements BuilderInterface
                 'xTimeoutSeconds' => 55
             ];
         }
-
+        // phpcs:disable
+        $ccPaymentAction = $payment->getAdditionalInformation("xPaymentAction") ? $payment->getAdditionalInformation("xPaymentAction") : $this->config->getCCPaymentAction();
+        $isCCSplitCaptureEnabled = $payment->getAdditionalInformation("isSplitCapture") ? $payment->getAdditionalInformation("isSplitCapture") : $this->helper->isCCSplitCaptureEnabled();
+        $xCommand = 'cc:capture';
+        $transactionId = null;
+        $transactionId = $payment->getLastTransId();
+        if ($isCCSplitCaptureEnabled == 1 && $ccPaymentAction == 'authorize') {
+            $xCommand = 'cc:splitcapture';
+            $transactionId = $payment->getParentTransactionId();
+        }
         return [
-            'xCommand' => 'cc:capture',
+            'xCommand' => $xCommand,
             'xAmount'   => $amount,
-            'xRefNum' => $payment->getLastTransId(),
+            'xRefNum' => $transactionId,
             'xIgnoreInvoice' => true
         ];
     }

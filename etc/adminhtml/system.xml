@@ -43,6 +43,14 @@
                     <label>Payment Action</label>
                     <source_model>CardknoxDevelopment\Cardknox\Model\Adminhtml\Source\PaymentAction</source_model>
                 </field>
+                <field id="cardknox_cc_split_capture_enabled" translate="label" type="select" sortOrder="111" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Split Capture For Credit Card</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>payment/cardknox/split_capture_enabled</config_path>
+                    <depends>
+                        <field id="payment_action">authorize</field>
+                    </depends>
+                </field>
                 <field id="cgi_url" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Cardknox Gateway Endpoint</label>
                 </field>
@@ -125,6 +133,14 @@
                         <config_path>payment/cardknox_google_pay/payment_action</config_path>
                         <depends>
                             <field id="cardknox_gpay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="cardknox_gpay_split_capture_enabled" translate="label" type="select" sortOrder="46" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enable Split Capture For GooglePay</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/cardknox_google_pay/split_capture_enabled</config_path>
+                        <depends>
+                            <field id="payment_action">authorize</field>
                         </depends>
                     </field>
                     <field id="allowspecific" translate="label" type="allowspecific" showInDefault="9"

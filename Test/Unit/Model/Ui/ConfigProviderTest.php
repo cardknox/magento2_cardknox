@@ -49,6 +49,7 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                         'ccVaultCode' => 'cardknox_cc_vault',
                         'isEnabledReCaptcha' => null,
                         'googleReCaptchaSiteKey' => null,
+                        'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
                     ],
                 ],
             ],

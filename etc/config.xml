@@ -17,6 +17,7 @@
                 <cardknox_token_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 <order_status>pending_payment</order_status>
                 <payment_action>authorize</payment_action>
+                <cardknox_cc_split_capture_enabled>0</cardknox_cc_split_capture_enabled>
                 <title>Credit Card</title>
                 <currency>USD</currency>
                 <can_authorize>1</can_authorize>
@@ -41,6 +42,7 @@
                 <recaptchaEnabled></recaptchaEnabled>
                 <visible_api_key></visible_api_key>
                 <visible_api_secret></visible_api_secret>
+                <allowspecific>0</allowspecific>
             </cardknox>
             <cardknox_cc_vault>
                 <model>CardknoxCreditCardVaultFacade</model>
@@ -53,20 +55,24 @@
                 <cardknox_gpay_active>1</cardknox_gpay_active>
                 <title>Google Pay</title>
                 <payment_action>authorize</payment_action>
+                <cardknox_gpay_split_capture_enabled>0</cardknox_gpay_split_capture_enabled>
                 <currency>USD</currency>
                 <sort_order>3</sort_order>
                 <is_gateway>1</is_gateway>
                 <can_use_checkout>1</can_use_checkout>
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <can_void>1</can_void>
                 <can_use_internal>0</can_use_internal>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <merchant_id></merchant_id>
                 <environment>TEST</environment>
                 <button_style>white</button_style>
+                <allowspecific>0</allowspecific>
             </cardknox_google_pay>
         </payment>
     </default>

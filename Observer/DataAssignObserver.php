@@ -65,6 +65,14 @@ class DataAssignObserver extends AbstractDataAssignObserver
             }
         }
         $paymentInfo->setAdditionalInformation("xAmount", $additionalData->getData('xAmount'));
+        $isSplitCapture = $additionalData->getData('isSplitCapture');
+        if (isset($isSplitCapture)) {
+            $paymentInfo->setAdditionalInformation("isSplitCapture", $additionalData->getData('isSplitCapture'));
+        }
+        $xPaymentAction = $additionalData->getData('xPaymentAction');
+        if (isset($xPaymentAction)) {
+            $paymentInfo->setAdditionalInformation("xPaymentAction", $additionalData->getData('xPaymentAction'));
+        }
         $paymentInfo->setAdditionalInformation(
             "shippingAddressFirstname",
             $additionalData->getData('shipping_address_firstname')

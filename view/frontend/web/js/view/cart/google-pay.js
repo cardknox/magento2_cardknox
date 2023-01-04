@@ -80,7 +80,9 @@ define([
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
                     'xAmount': this.xAmount,
-                    'shipping_address_firstname': shipping_address_firstname
+                    'shipping_address_firstname': shipping_address_firstname,
+                    'isSplitCapture': window.checkoutConfig.payment.cardknox_google_pay.isGPaySplitCaptureEnabled,
+                    'xPaymentAction': window.checkoutConfig.payment.cardknox_google_pay.xPaymentAction
                 }
             };
 

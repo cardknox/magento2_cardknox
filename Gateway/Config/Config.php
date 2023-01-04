@@ -16,6 +16,8 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
     public const IS_ENABLE_GOOGLE_REPCAPTCHA = "recaptchaEnabled";
     public const GOOGLE_REPCAPTCHA_SITE_KEY = "visible_api_key";
+    public const CC_PAYMENT_ACTION = "payment_action";
+    public const CC_SPLIT_CAPTURE_ENABLED = "split_capture_enabled";
     
     /**
      * IsActive function
@@ -89,5 +91,25 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function getGoogleRepCaptchaSiteKey()
     {
         return $this->getValue(self::GOOGLE_REPCAPTCHA_SITE_KEY);
+    }
+
+    /**
+     * Get CC payment action function
+     *
+     * @return string
+     */
+    public function getCCPaymentAction()
+    {
+        return $this->getValue(self::CC_PAYMENT_ACTION);
+    }
+
+    /**
+     * Enable split capture for autorize payment action function
+     *
+     * @return boolean
+     */
+    public function isCCSplitCaptureEnabled()
+    {
+        return (bool) $this->getValue(self::CC_SPLIT_CAPTURE_ENABLED);
     }
 }

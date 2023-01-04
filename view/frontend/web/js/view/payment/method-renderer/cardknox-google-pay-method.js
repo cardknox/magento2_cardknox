@@ -73,7 +73,9 @@ define([
                 'method': this.getCode(),
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
-                    'xAmount': this.xAmount
+                    'xAmount': this.xAmount,
+                    'isSplitCapture': window.checkoutConfig.payment.cardknox_google_pay.isGPaySplitCaptureEnabled,
+                    'xPaymentAction': window.checkoutConfig.payment.cardknox_google_pay.xPaymentAction
                 }
             };
             data['additional_data'] = _.extend(data['additional_data'], this.additionalData);

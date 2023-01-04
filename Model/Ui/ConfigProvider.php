@@ -50,7 +50,9 @@ class ConfigProvider implements ConfigProviderInterface
                     'tokenKey' => $this->config->getTokenKey(),
                     'isEnabledReCaptcha' => $this->config->isEnabledReCaptcha(),
                     'googleReCaptchaSiteKey' => $this->config->getGoogleRepCaptchaSiteKey(),
-                    'ccVaultCode' => self::CC_VAULT_CODE
+                    'ccVaultCode' => self::CC_VAULT_CODE,
+                    'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
+                    'xPaymentAction' => $this->config->getCCPaymentAction()
                 ]
             ]
         ];
