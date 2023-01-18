@@ -4,6 +4,6 @@
  */
  var config = {
     paths: {
-        ifields: 'https://cdn.cardknox.com/ifields/2.14.2211.1101/ifields.min'
+        ifields: 'https://cdn.cardknox.com/ifields/2.15.2211.1401/ifields.min'
     }
 };
