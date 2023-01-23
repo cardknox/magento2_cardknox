@@ -113,12 +113,18 @@ define(
             getSiteKeyV2: function () {
                 return window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey;
             },
-            onloadCallback: function () {
+            onloadCallbackV2: function () {
                 var cardknox_recaptcha_widget;
                 setTimeout(function(){ 
                     if($('#cardknox_recaptcha').length) {
                         cardknox_recaptcha_widget = grecaptcha.render('cardknox_recaptcha', {
-                          'sitekey' : window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey
+                            'sitekey' : window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey,
+                            'callback': function (response) {
+                                    $('#cardknox_recaptcha .g-recaptcha-response').val(response);
+                                },
+                            'expired-callback' : function (){
+                                $('#cardknox_recaptcha .g-recaptcha-response').val('');
+                            }
                         });
                     }
                 }, 2000);
@@ -150,8 +156,8 @@ define(
                 /**
                  * For google recaptcha
                  */
-                this.onloadCallback();
-                require(['https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit']);
+                this.onloadCallbackV2();
+                require(['https://www.google.com/recaptcha/api.js?onload=onloadCallbackV2&render=explicit']);
 
                 /*
                  * [Optional]

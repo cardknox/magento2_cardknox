@@ -60,14 +60,14 @@
                      <comment><![CDATA[Visible Google Recaptcha enable]]></comment>
                 </field>
                 <field id="visible_api_key" translate="label comment" type="text" sortOrder="152" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Google API Key V2</label>
+                    <label>Google reCAPTCHA v2 Site Key</label>
                     <comment><![CDATA[Create app <a href="https://www.google.com/recaptcha/admin" target="_blank">here</a>.]]></comment>
                     <depends>
                         <field id="recaptchaEnabled">1</field>
                     </depends>
                 </field>
                 <field id="visible_api_secret" translate="label comment" type="text" sortOrder="153" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Google API Secret Key V2</label>
+                    <label>Google reCAPTCHA v2 Secret Key</label>
                     <depends>
                         <field id="recaptchaEnabled">1</field>
                     </depends>
