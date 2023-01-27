@@ -155,4 +155,31 @@ class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
 
         return $mock;
     }
+
+    public function testHandleException()
+    {
+        $amount = '10.00';
+        $subject = [
+            'payment' => null
+        ];
+
+        $response = [
+            TxnIdHandler::XREFNUM => 'fcd7f001e9274fdefb14bff91c799306',
+            TxnIdHandler::XMASKEDCARDNUMBER => '4xxxxx4444',
+            TxnIdHandler::XCVVRESULT => 'Match',
+            TxnIdHandler::XCVVRESULTCODE => 'M',
+            TxnIdHandler::XCARDTYPE => 'Visa',
+            TxnIdHandler::XTOKEN => 'rh3gd4',
+            TxnIdHandler::XAUTHCODE => 'xAuthCode',
+            TxnIdHandler::XBATCH => 'xBatch',
+            TxnIdHandler::XAUTHAMOUNT => 'xAuthAmount',
+            TxnIdHandler::XSTATUS => 'xStatus',
+            TxnIdHandler::XERROR => 'xError',
+            TxnIdHandler::XEXP => '0122'
+        ];
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment data object should be provided');
+        $this->request->handle($subject, $response);
+    }
 }

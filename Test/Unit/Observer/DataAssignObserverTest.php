@@ -20,17 +20,19 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
     public const XCVV = '123';
     public const CC_EXP_MONTH = 10;
     public const CC_EXP_YEAR = 2018;
-
-    public function testExectute()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
-        $observerContainer = $this->getMockBuilder(Event\Observer::class)
+        $this->observerContainer = $this->getMockBuilder(Event\Observer::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event = $this->getMockBuilder(Event::class)
+        $this->event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $paymentInfoModel = $this->createMock(InfoInterface::class);
-        $dataObject = new DataObject(
+        $this->paymentInfoModel = $this->createMock(InfoInterface::class);
+        $this->dataObject = new DataObject(
             [
                 PaymentInterface::KEY_ADDITIONAL_DATA => [
                     'xCardNum' => self::XCARDNUM,
@@ -41,46 +43,50 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
 
             ]
         );
-        $observerContainer->expects(static::atLeastOnce())
+        $this->observer = new DataAssignObserver();
+    }
+
+    public function testExectute()
+    {
+        $this->observerContainer->expects(static::atLeastOnce())
             ->method('getEvent')
-            ->willReturn($event);
-        $event->expects(static::exactly(2))
+            ->willReturn($this->event);
+        $this->event->expects(static::exactly(2))
             ->method('getDataByKey')
             ->willReturnMap(
                 [
-                    [AbstractDataAssignObserver::MODEL_CODE, $paymentInfoModel],
-                    [AbstractDataAssignObserver::DATA_CODE, $dataObject]
+                    [AbstractDataAssignObserver::MODEL_CODE, $this->paymentInfoModel],
+                    [AbstractDataAssignObserver::DATA_CODE, $this->dataObject]
                 ]
             );
 
-        $paymentInfoModel->expects(static::at(0))
+        $this->paymentInfoModel->expects(static::at(0))
             ->method('setAdditionalInformation')
             ->with(
                 'xCardNum',
                 self::XCARDNUM
             );
-        $paymentInfoModel->expects(static::at(1))
+        $this->paymentInfoModel->expects(static::at(1))
             ->method('setAdditionalInformation')
             ->with(
                 'xCVV',
                 self::XCVV
             );
 
-        $paymentInfoModel->expects(static::at(2))
+        $this->paymentInfoModel->expects(static::at(2))
             ->method('setAdditionalInformation')
             ->with(
                 'cc_exp_month',
                 self::CC_EXP_MONTH
             );
 
-        $paymentInfoModel->expects(static::at(3))
+        $this->paymentInfoModel->expects(static::at(3))
             ->method('setAdditionalInformation')
             ->with(
                 'cc_exp_year',
                 self::CC_EXP_YEAR
             );
-
-        $observer = new DataAssignObserver();
-        $observer->execute($observerContainer);
+        
+        $this->observer->execute($this->observerContainer);
     }
 }

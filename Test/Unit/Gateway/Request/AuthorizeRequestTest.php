@@ -10,6 +10,8 @@ use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
+use CardknoxDevelopment\Cardknox\Helper\Data;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,6 +36,17 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
      */
     private $order;
 
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     *
+     * @var Config
+     */
+    protected $config;
+
     public const XCARDNUM = '4sdfssdfsdfdsf1111';
     public const XCVV = "ewerwre2345";
     public const CC_EXP_MONTH = 10;
@@ -48,7 +61,14 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
         $this->order = $this->getMockBuilder(OrderAdapterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->authorizationRequest = new AuthorizationRequest($this->payment);
+        $this->helper = $this->getMockBuilder(Data::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->config = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->authorizationRequest = new AuthorizationRequest($this->helper, $this->config);
+        // $this->authorizationRequest = new AuthorizationRequest($this->payment);
     }
 
     public function testBuild()
@@ -56,6 +76,7 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
         $invoiceId = 1001;
         $currencyCode = 'USD';
         $amount = "10.00";
+        $ccPaymentAction = 'authorize';
 
         $additionalData = [
             [
@@ -73,17 +94,20 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
                 self::CC_EXP_YEAR
             ],
         ];
-
+        $isCCSplitCaptureEnabled = 1;
+        $xRequireSplitCapturable= 0;
+        
         $expectation = [
+            'xAmount' => $this->helper->formatPrice($amount),
+            'xExp' => sprintf('%02d%02d', self::CC_EXP_MONTH, substr(self::CC_EXP_YEAR, -2)),
+            'xCVV' => self::XCVV,
             'xCommand' => 'cc:authonly',
             'xInvoice' => $invoiceId,
             'xCurrency' => $currencyCode,
-            'xExp' => sprintf('%02d%02d', self::CC_EXP_MONTH, substr(self::CC_EXP_YEAR, -2)),
-            'xCVV' => self::XCVV,
             'xCardNum' => self::XCARDNUM,
-            'xAmount' => $amount,
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55
+            'xTimeoutSeconds' => 55,
+            'xRequireSplitCapturable' => $xRequireSplitCapturable
         ];
 
         $buildSubject = [
@@ -91,7 +115,7 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             'amount' => $amount
         ];
 
-        $this->payment->expects(static::exactly(4))
+        $this->payment->expects(static::exactly(6))
             ->method('getAdditionalInformation')
             ->willReturnMap($additionalData);
 
@@ -115,5 +139,17 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             $expectation,
             $this->authorizationRequest->build($buildSubject)
         );
+    }
+
+    public function testBuildException()
+    {
+        $amount = '10.00';
+        $buildSubject = [
+            'payment' => null,
+            'amount' => $amount
+        ];
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment data object should be provided');
+        $this->authorizationRequest->build($buildSubject);
     }
 }

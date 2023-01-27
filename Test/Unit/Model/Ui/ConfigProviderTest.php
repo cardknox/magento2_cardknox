@@ -50,6 +50,7 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                         'isEnabledReCaptcha' => null,
                         'googleReCaptchaSiteKey' => null,
                         'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
+                        'xPaymentAction' => $this->config->getCCPaymentAction(),
                     ],
                 ],
             ],
