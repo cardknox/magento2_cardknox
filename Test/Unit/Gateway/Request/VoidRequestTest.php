@@ -22,7 +22,6 @@ class VoidRequestTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-
         /** @var ConfigInterface $configMock */
         $this->voidRequest = new VoidRequest($this->configMock);
     }
@@ -35,7 +34,7 @@ class VoidRequestTest extends \PHPUnit\Framework\TestCase
             'xCommand' => 'cc:void',
             'xRefNum' => $txnId,
         ];
-        
+
         $this->paymentDO->expects(static::once())
             ->method('getOrder')
             ->willReturn($this->orderMock);

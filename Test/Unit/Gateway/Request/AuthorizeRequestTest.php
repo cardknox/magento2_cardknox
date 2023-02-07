@@ -68,7 +68,6 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->authorizationRequest = new AuthorizationRequest($this->helper, $this->config);
-        // $this->authorizationRequest = new AuthorizationRequest($this->payment);
     }
 
     public function testBuild()
@@ -96,7 +95,7 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
         ];
         $isCCSplitCaptureEnabled = 1;
         $xRequireSplitCapturable= 0;
-        
+
         $expectation = [
             'xAmount' => $this->helper->formatPrice($amount),
             'xExp' => sprintf('%02d%02d', self::CC_EXP_MONTH, substr(self::CC_EXP_YEAR, -2)),

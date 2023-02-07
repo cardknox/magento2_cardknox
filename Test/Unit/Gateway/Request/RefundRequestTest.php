@@ -32,7 +32,7 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
         $this->paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->helper = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -48,7 +48,7 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
         $amount = "10.00";
         $command = "cc:voidrefund";
         $refnum = '23443535';
-        
+
         $buildSubject = [
             'payment' => $this->paymentDO,
             'amount' => $amount
@@ -62,7 +62,7 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
         $this->paymentDO->expects(static::once())
             ->method('getPayment')
             ->willReturn($this->paymentModel);
-      
+
         $this->paymentDO->expects(static::once())
             ->method('getOrder')
             ->willReturn($this->orderMock);
@@ -105,7 +105,6 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
             $expectation,
             $this->refundRequest->build($buildSubject)
         );
-        // $this->refundRequest->build($buildSubject);
     }
 
     public function testBuildException()
