@@ -62,7 +62,7 @@ class CaptureRequestTest extends \PHPUnit\Framework\TestCase
 
         $expectation = [
             'xCommand' => 'cc:capture',
-            'xAmount'   => $this->helper->formatPrice($amount),
+            'xAmount' => $this->helper->formatPrice($amount),
             'xRefNum' => $refnum,
             'xIgnoreInvoice' => true
         ];
