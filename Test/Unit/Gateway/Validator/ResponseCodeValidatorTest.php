@@ -34,6 +34,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->resultMock = $this->createMock(ResultInterface::class);
         $this->mockLogger = $this->createMock(Logger::class);
+        $this->validator = new ResponseCodeValidator($this->mockLogger, $this->resultFactory);
     }
 
     /**
@@ -50,10 +51,10 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 $expectationToResultCreation
             )
             ->willReturn($this->resultMock);
-        $validator = new ResponseCodeValidator($this->mockLogger, $this->resultFactory);
+        
         static::assertInstanceOf(
             ResultInterface::class,
-            $validator->validate(['response' => $response])
+            $this->validator->validate(['response' => $response])
         );
     }
 
@@ -85,5 +86,15 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+    }
+
+    public function testValidateException()
+    {
+        $buildSubject = [
+            'response' => null,
+        ];
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Response does not exist');
+        $this->validator->validate($buildSubject);
     }
 }

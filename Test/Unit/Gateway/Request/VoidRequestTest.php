@@ -13,9 +13,20 @@ use Magento\Sales\Model\Order\Payment;
 
 class VoidRequestTest extends \PHPUnit\Framework\TestCase
 {
+    protected function setUp(): void
+    {
+        $this->configMock = $this->createMock(ConfigInterface::class);
+        $this->orderMock = $this->createMock(OrderAdapterInterface::class);
+        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->paymentModel = $this->getMockBuilder(Payment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var ConfigInterface $configMock */
+        $this->voidRequest = new VoidRequest($this->configMock);
+    }
     public function testBuild()
     {
-
         $txnId = 'fcd7f001e9274fdefb14bff91c799306';
         $storeId = 1;
 
@@ -24,34 +35,44 @@ class VoidRequestTest extends \PHPUnit\Framework\TestCase
             'xRefNum' => $txnId,
         ];
 
-        $configMock = $this->createMock(ConfigInterface::class);
-        $orderMock = $this->createMock(OrderAdapterInterface::class);
-        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
-        $paymentModel = $this->getMockBuilder(Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $paymentDO->expects(static::once())
+        $this->paymentDO->expects(static::once())
             ->method('getOrder')
-            ->willReturn($orderMock);
-        $paymentDO->expects(static::once())
+            ->willReturn($this->orderMock);
+        $this->paymentDO->expects(static::once())
             ->method('getPayment')
-            ->willReturn($paymentModel);
+            ->willReturn($this->paymentModel);
 
-        $paymentModel->expects(static::once())
+        $this->paymentModel->expects(static::once())
             ->method('getParentTransactionId')
             ->willReturn($txnId);
 
-        $orderMock->expects(static::any())
+        $this->orderMock->expects(static::any())
             ->method('getStoreId')
             ->willReturn($storeId);
 
-        /** @var ConfigInterface $configMock */
-        $request = new VoidRequest($configMock);
-
         static::assertEquals(
             $expectation,
-            $request->build(['payment' => $paymentDO])
+            $this->voidRequest->build(['payment' => $this->paymentDO])
         );
+    }
+
+    public function testBuildException()
+    {
+        $buildSubject = [
+            'payment' => null
+        ];
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment data object should be provided');
+        $this->voidRequest->build($buildSubject);
+    }
+
+    public function testBuildLogicException()
+    {
+        $buildSubject = [
+            'payment' => $this->paymentDO
+        ];
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Order payment should be provided.');
+        $this->voidRequest->build($buildSubject);
     }
 }

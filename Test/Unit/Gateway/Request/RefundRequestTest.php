@@ -1,27 +1,24 @@
 <?php
-/**
- * Copyright © 2018 Cardknox Development Inc. All rights reserved.
- * See LICENSE for license details.
- */
 
-namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Request;
+namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 
-use CardknoxDevelopment\Cardknox\Gateway\Request\CaptureRequest;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use CardknoxDevelopment\Cardknox\Gateway\Request\RefundRequest;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
+use Magento\Payment\Gateway\Request\BuilderInterface;
+use Magento\Payment\Model\Method\Logger;
+use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order\Payment;
-use CardknoxDevelopment\Cardknox\Helper\Data;
-use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
-use InvalidArgumentException;
 
-class CaptureRequestTest extends \PHPUnit\Framework\TestCase
+class RefundRequestTest extends \PHPUnit\Framework\TestCase
 {
-    public const XCARDNUM = '4sdfssdfsdfdsf1111';
-    public const XCVV = "ewerwre2345";
-    public const CC_EXP_MONTH = 10;
-    public const CC_EXP_YEAR = 2018;
-
+    /**
+     * @var Logger
+     */
+    private $logger;
     /**
      * @var Data
      */
@@ -35,59 +32,81 @@ class CaptureRequestTest extends \PHPUnit\Framework\TestCase
         $this->paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->helper = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->config = $this->getMockBuilder(Config::class)
+        $this->logger = $this->getMockBuilder(Logger::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
-        $this->captureRequest = new CaptureRequest($this->helper, $this->config);
-    }
 
-    /**
-     *
-     * @var Config
-     */
-    protected $config;
+        $this->refundRequest = new RefundRequest($this->logger, $this->helper);
+    }
 
     public function testBuild()
     {
-        $amount = "1.00";
-        $storeId = 1;
+        $amount = "10.00";
+        $command = "cc:voidrefund";
         $refnum = '23443535';
-        $currencyCode = 'USD';
-        $invoiceId = 1001;
 
-        $expectation = [
-            'xCommand' => 'cc:capture',
-            'xAmount' => $this->helper->formatPrice($amount),
-            'xRefNum' => $refnum,
-            'xIgnoreInvoice' => true
+        $buildSubject = [
+            'payment' => $this->paymentDO,
+            'amount' => $amount
         ];
 
-        $this->paymentDO->expects(static::once())
-            ->method('getOrder')
-            ->willReturn($this->orderMock);
+        $expectation = [
+            'xCommand' => $command,
+            'xAmount'   => $this->helper->formatPrice($amount),
+            'xRefNum' => null,
+        ];
         $this->paymentDO->expects(static::once())
             ->method('getPayment')
             ->willReturn($this->paymentModel);
 
-        $this->paymentModel->expects(static::exactly(2))
-            ->method('getLastTransId')
-            ->willReturn($refnum);
+        $this->paymentDO->expects(static::once())
+            ->method('getOrder')
+            ->willReturn($this->orderMock);
 
-        $this->orderMock->expects(static::any())
-            ->method('getStoreId')
-            ->willReturn($storeId);
-        
         static::assertEquals(
             $expectation,
-            $this->captureRequest->build(['payment' => $this->paymentDO, 'amount' => 1])
+            $this->refundRequest->build($buildSubject)
         );
     }
-    
+
+    public function testBuildRefund()
+    {
+        $amount = "10.00";
+        $command = "cc:refund";
+        $refnum = '23443535';
+        $expectation = [
+            'xCommand' => $command,
+            'xAmount'   => $this->helper->formatPrice($amount),
+            'xRefNum' => null,
+        ];
+
+        $buildSubject = [
+            'payment' => $this->paymentDO,
+            'amount' => $amount
+        ];
+
+        $this->paymentDO->expects(static::once())
+            ->method('getPayment')
+            ->willReturn($this->paymentModel);
+
+        $this->paymentDO->expects(static::once())
+            ->method('getOrder')
+            ->willReturn($this->orderMock);
+
+        $this->orderMock->expects(static::any())
+            ->method('getGrandTotalAmount')
+            ->willReturn($amount);
+
+        static::assertEquals(
+            $expectation,
+            $this->refundRequest->build($buildSubject)
+        );
+    }
+
     public function testBuildException()
     {
         $amount = '10.00';
@@ -97,7 +116,7 @@ class CaptureRequestTest extends \PHPUnit\Framework\TestCase
         ];
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Payment data object should be provided');
-        $this->captureRequest->build($buildSubject);
+        $this->refundRequest->build($buildSubject);
     }
 
     public function testBuildLogicException()
@@ -109,6 +128,6 @@ class CaptureRequestTest extends \PHPUnit\Framework\TestCase
         ];
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Order payment should be provided.');
-        $this->captureRequest->build($buildSubject);
+        $this->refundRequest->build($buildSubject);
     }
 }
