@@ -33,7 +33,6 @@ define([
          */
         initialize: function () {
             this._super();
-            this.initCardknox();
 
             return this;
         },
@@ -57,10 +56,6 @@ define([
 
         getCode: function () {
             return METHOD_ID;
-        },
-
-        initCardknox: function () {
-            setAccount(window.checkoutConfig.payment.cardknox_google_pay.xKey, "Magento2", "1.0.14");
         },
 
         /**
