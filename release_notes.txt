@@ -1,0 +1,7 @@
+* Enabled split capture
+* Fix payment from applicable countries not working
+* Update the plugin to the latest version of iFields 2.14.2211.1101
+* Throw error using error object instead of string
+* Fix Googlepay not working cart page 
+* Added issuerupdated event to cc method
+* Fix ability to disable GooglePay from admin configuration
