@@ -36,9 +36,10 @@ class OrderManagement
         OrderInterface $order
     ): array {
         $quoteId = $order->getQuoteId();
+        $storeId = $order->getStoreId();
 
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->getQuote($quoteId);
+        $quote = $this->getQuote($storeId, $quoteId);
 
         $shippingAddress = $quote->getShippingAddress();
         $billingAddress = $quote->getBillingAddress();
@@ -92,12 +93,13 @@ class OrderManagement
     /**
      * GetQuote function
      *
+     * @param int $storeId
      * @param int $quoteId
      * @return void
      */
-    public function getQuote($quoteId)
+    public function getQuote($storeId, $quoteId)
     {
-        return $this->quoteFactory->create()->load($quoteId);
+        return $this->quoteFactory->create()->setStoreId($storeId)->load($quoteId);
     }
     /**
      * _modifyShippingAddress function
