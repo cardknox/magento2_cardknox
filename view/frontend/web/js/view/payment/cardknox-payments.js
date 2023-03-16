@@ -22,6 +22,10 @@ define(
             {
                 type: 'cardknox_google_pay',
                 component: 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/cardknox-google-pay-method'
+            },
+            {
+                type: 'cardknox_apple_pay',
+                component: 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/cardknox-apple-pay-method'
             }
         );
         /** Add view logic here if needed */
