@@ -177,6 +177,10 @@
                 <!-- Apple Pay Configuration -->
                 <group id="cardknox_apple_pay" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cardknox Apple Pay</label>
+                    <field id="cardknox_applepay_info" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="8">
+                        <frontend_model>CardknoxDevelopment\Cardknox\Block\Adminhtml\System\Config\ApplePay\Info</frontend_model>
+                        <config_path>payment/cardknox_apple_pay/domain_registration_info</config_path>
+                    </field>
                     <field id="cardknox_applepay_active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Enabled</label>
                         <config_path>payment/cardknox_apple_pay/active</config_path>
