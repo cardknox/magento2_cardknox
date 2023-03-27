@@ -12,9 +12,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: 'Magento Unit Tests'
-      uses: MAD-I-T/magento-actions@v3.8
-      with:
-        process: 'unit-test'
-        no_push: 1
-        unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
-        unit_test_subset_path: 'app\code\CardknoxDevelopment\Cardknox\Test'
+      run: php .\vendor\phpunit\phpunit\phpunit -c .\dev\tests\unit\phpunit.xml.dist .\app\code\CardknoxDevelopment\Cardknox\Test\
