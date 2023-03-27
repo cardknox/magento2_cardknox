@@ -27,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: 'install fresh magento repo'
+    - name: 'Install Magento'
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
@@ -49,12 +49,9 @@ jobs:
     #  with:
     #    process: 'build'
         
-    - name: 'Magento Unit Tests'
+    - name: 'Run Magento unit tests'
       uses: MAD-I-T/magento-actions@master
       with:
         process: 'unit-test'
-        unit_test_config: '../dev/tests/unit/phpunit.xml.dist'
-        unit_test_subset_path: '../app/code/CardknoxDevelopment/Cardknox/Test/'
-        run: |
-          $loc = pwd
-          # echo $loc
+        unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
+        unit_test_subset_path: 'github/workspace/magento/app/code/CardknoxDevelopment/Cardknox/Test'
