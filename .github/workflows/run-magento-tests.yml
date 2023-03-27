@@ -8,13 +8,40 @@ on:
 jobs:
   magento2-build:
     runs-on: ubuntu-latest
-    
+    name: 'm2 unit tests & build'
+    services:
+      mysql:
+        image: docker://mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: magento
+          MYSQL_DATABASE: magento
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      opensearch:
+        image: opensearchproject/opensearch:1.2.1
+        ports:
+          - 9200:9200
+        options: -e="discovery.type=single-node" -e "plugins.security.disabled=true"  -e "plugins.security.ssl.http.enabled=false" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+     
     steps:
     - uses: actions/checkout@v3
+    
+    - name: 'installing composer'
+      run: composer create-project --repository-url=https://repo.magento.com/magento/project-community-edition .
+    
+    - name: 'this step will build an magento artifact'
+      if: always()
+      uses: MAD-I-T/magento-actions@v3.8
+      env:
+        COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
+      with:
+        process: 'build'
+        
     - name: 'Magento Unit Tests'
-      run: |
-        php .\bin\magento deploy:mode:set developer
-        php .\bin\magento config:set dev/template/allow_symlink 1 --lock-env
-        php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
-        php bin/magento setup:upgrade
-        php .\vendor\phpunit\phpunit\phpunit -c .\dev\tests\unit\phpunit.xml.dist .\app\code\CardknoxDevelopment\Cardknox\Test\
+      uses: MAD-I-T/magento-actions@v3.8
+      with:
+        process: 'unit-test'
+        composer_version: 2
+        unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
+        unit_test_subset_path: 'app\code\CardknoxDevelopment\Cardknox\Test'
