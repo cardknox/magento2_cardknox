@@ -6,22 +6,9 @@ on:
       - 'rc/*/*/*'
 
 jobs:
-  magento2-build:
+  magento-unit-tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: 'Magento Install'
-      uses: MAD-I-T/magento-actions@v3.8
-      with:
-        process: 'install-magento'
-        magento_version: 2.4.6
-        no_push: 1
-    - name: 'Magento Build'
-      uses: MAD-I-T/magento-actions@v3.8
-      with:
-        php: '7.4'
-        process: 'build'
-        elasticsearch: 1
     - name: 'Magento Unit Tests'
       uses: MAD-I-T/magento-actions@v3.8
       with:
