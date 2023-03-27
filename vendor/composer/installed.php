@@ -1,8 +1,8 @@
 <?php return array(
     'root' => array(
         'name' => 'cardknox/cardknox',
-        'pretty_version' => '1.0.15',
-        'version' => '1.0.15.0',
+        'pretty_version' => '2.4.4',
+        'version' => '2.4.4.0',
         'reference' => NULL,
         'type' => 'magento2-module',
         'install_path' => __DIR__ . '/../../',
@@ -11,8 +11,8 @@
     ),
     'versions' => array(
         'cardknox/cardknox' => array(
-            'pretty_version' => '1.0.15',
-            'version' => '1.0.15.0',
+            'pretty_version' => '2.4.4',
+            'version' => '2.4.4.0',
             'reference' => NULL,
             'type' => 'magento2-module',
             'install_path' => __DIR__ . '/../../',
