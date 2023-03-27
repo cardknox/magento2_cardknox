@@ -27,7 +27,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-
+    - name: 'this step will build an magento artifact'
+      if: always()
+      uses: MAD-I-T/magento-actions@v3.19
+      env:
+        COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
+      with:
+        process: 'build'
         
     - name: 'Magento Unit Tests'
       uses: MAD-I-T/magento-actions@v3.19
