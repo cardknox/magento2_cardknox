@@ -31,7 +31,6 @@ jobs:
       uses: MAD-I-T/magento-actions@v3.8
       with:
         process: 'install-magento'
-        no_push: 1
     
     - name: 'this step will build an magento artifact'
       if: always()
