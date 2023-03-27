@@ -27,21 +27,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: 'installing composer'
-      run: composer create-project --repository-url=https://repo.magento.com/magento/project-community-edition .
-    
     - name: 'this step will build an magento artifact'
       if: always()
-      uses: MAD-I-T/magento-actions@v3.8
+      uses: MAD-I-T/magento-actions@v3.19
       env:
         COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
       with:
         process: 'build'
         
     - name: 'Magento Unit Tests'
-      uses: MAD-I-T/magento-actions@v3.8
+      uses: MAD-I-T/magento-actions@v3.19
       with:
         process: 'unit-test'
-        composer_version: 2
         unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
         unit_test_subset_path: 'app\code\CardknoxDevelopment\Cardknox\Test'
