@@ -32,7 +32,6 @@ jobs:
       uses: MAD-I-T/magento-actions@master
       with:
         process: 'build'
-        magento_version: 2.4.4
         
     - name: 'Magento Unit Tests'
       uses: MAD-I-T/magento-actions@master
