@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: 'Magento Unit Tests'
-      uses: MAD-I-T/magento-actions@v3.8
+      uses: MAD-I-T/magento-actions@v3.8 
       with:
         process: 'unit-test'
         elasticsearch: 1
