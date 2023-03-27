@@ -46,5 +46,5 @@ jobs:
       uses: MAD-I-T/magento-actions@master
       with:
         process: 'unit-test'
-        unit_test_config: 'github/workspace/magento/dev/tests/unit/phpunit.xml.dist'
-        unit_test_subset_path: '../../app/code/CardknoxDevelopment/Cardknox/Test'
+        unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
+        unit_test_subset_path: '../Test/'
