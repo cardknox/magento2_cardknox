@@ -11,10 +11,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: 'Magento Unit Tests'
-      uses: MAD-I-T/magento-actions@v3.8 
+      uses: MAD-I-T/magento-actions@v3.8
       with:
         process: 'unit-test'
         elasticsearch: 1
-        magento_version: 2.44
+        magento_version: 2.4.4
         unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
         unit_test_subset_path: 'app\code\CardknoxDevelopment\Cardknox\Test'
