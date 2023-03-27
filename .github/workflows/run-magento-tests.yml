@@ -26,10 +26,18 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
+
+    - name: 'Magento Install'
+      uses: MAD-I-T/magento-actions@v3.8
+      with:
+        process: 'install-magento'
+        no_push: 1
     
     - name: 'this step will build an magento artifact'
       if: always()
       uses: MAD-I-T/magento-actions@master
+      env:
+        COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
       with:
         process: 'build'
         
