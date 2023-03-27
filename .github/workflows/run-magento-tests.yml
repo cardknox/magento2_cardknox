@@ -4,17 +4,40 @@ on:
     branches-ignore: 
       - 'master'
       - 'rc/*/*/*'
-
+      
 jobs:
-  magento-unit-tests:
+  magento2-build:
     runs-on: ubuntu-latest
+    name: 'm2 unit tests & build'
+    services:
+      mysql:
+        image: docker://mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: magento
+          MYSQL_DATABASE: magento
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      opensearch:
+        image: opensearchproject/opensearch:1.2.1
+        ports:
+          - 9200:9200
+        options: -e="discovery.type=single-node" -e "plugins.security.disabled=true"  -e "plugins.security.ssl.http.enabled=false" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    
+    - name: 'this step will build an magento artifact'
+      if: always()
+      uses: MAD-I-T/magento-actions@v3.19
+      env:
+        COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
+      with:
+        process: 'build'
+        
     - name: 'Magento Unit Tests'
-      uses: MAD-I-T/magento-actions@v3.8
+      uses: MAD-I-T/magento-actions@v3.19
       with:
         process: 'unit-test'
-        elasticsearch: 1
-        magento_version: 2.44
         unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
         unit_test_subset_path: 'app\code\CardknoxDevelopment\Cardknox\Test'
