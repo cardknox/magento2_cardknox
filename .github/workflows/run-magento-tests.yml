@@ -26,6 +26,8 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
+      with:
+          path: Test
 
     - name: 'Install Magento'
       uses: MAD-I-T/magento-actions@v3.20
