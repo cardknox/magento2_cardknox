@@ -29,14 +29,15 @@ jobs:
     
     - name: 'this step will build an magento artifact'
       if: always()
-      uses: MAD-I-T/magento-actions@v3.19
+      uses: MAD-I-T/magento-actions@master
       env:
         COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
       with:
         process: 'build'
+        magento_version: 2.4.4
         
     - name: 'Magento Unit Tests'
-      uses: MAD-I-T/magento-actions@v3.19
+      uses: MAD-I-T/magento-actions@master
       with:
         process: 'unit-test'
         unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
