@@ -12,4 +12,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: 'Magento Unit Tests'
-      run: php .\vendor\phpunit\phpunit\phpunit -c .\dev\tests\unit\phpunit.xml.dist .\app\code\CardknoxDevelopment\Cardknox\Test\
+      run: |
+        php .\bin\magento deploy:mode:set developer
+        php .\bin\magento config:set dev/template/allow_symlink 1 --lock-env
+        php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
+        php bin/magento setup:upgrade
+        php .\vendor\phpunit\phpunit\phpunit -c .\dev\tests\unit\phpunit.xml.dist .\app\code\CardknoxDevelopment\Cardknox\Test\
