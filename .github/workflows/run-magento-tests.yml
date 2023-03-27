@@ -15,5 +15,6 @@ jobs:
       with:
         process: 'unit-test'
         elasticsearch: 1
+        magento_version: 2.44
         unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
         unit_test_subset_path: 'app\code\CardknoxDevelopment\Cardknox\Test'
