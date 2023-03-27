@@ -30,8 +30,6 @@ jobs:
     - name: 'this step will build an magento artifact'
       if: always()
       uses: MAD-I-T/magento-actions@master
-      env:
-        COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
       with:
         process: 'build'
         magento_version: 2.4.4
