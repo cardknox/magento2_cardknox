@@ -26,14 +26,12 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
-      with:
-        path: Gateway
 
     - name: 'Install Magento'
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
-        magento_version: 2.4.6
+        magento_version: 2.4.4
         no_push: 1
 
    # - name: 'this step will build an magento artifact'
