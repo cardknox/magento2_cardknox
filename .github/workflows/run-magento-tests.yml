@@ -10,11 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: 'Fix'
+      run: |
+          docker exec -it magento-phpfpm-1 bash
+          composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition=2.4.3 .
+          mv project-community-edition/* .
     - name: 'Magento Unit Tests'
       uses: MAD-I-T/magento-actions@v3.8
       with:
         process: 'unit-test'
-        elasticsearch: 1
-        magento_version: 2.4.4
         unit_test_config: 'dev\tests\unit\phpunit.xml.dist'
         unit_test_subset_path: 'app\code\CardknoxDevelopment\Cardknox\Test'
