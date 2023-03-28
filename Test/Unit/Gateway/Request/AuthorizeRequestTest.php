@@ -3,15 +3,15 @@
  * Copyright © 2018 Cardknox Development Inc. All rights reserved.
  * See LICENSE for license details.
  */
-namespace Test\Unit\Gateway\Request;
+namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Request;
 
-use Gateway\Request\AuthorizationRequest;
+use ..\Gateway\Request\AuthorizationRequest;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
-use Observer\DataAssignObserver;
-use Helper\Data;
-use Gateway\Config\Config;
+use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
+use CardknoxDevelopment\Cardknox\Helper\Data;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
 {
