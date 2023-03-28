@@ -18,11 +18,11 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      opensearch:
-        image: ghcr.io/mad-i-t/magento-opensearch:2.5.0
-        ports:
-          - 9200:9200
-        options: -e="discovery.type=single-node" -e "plugins.security.disabled=true" -e "plugins.security.ssl.http.enabled=false" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+      #opensearch:
+        #image: ghcr.io/mad-i-t/magento-opensearch:2.5.0
+        #ports:
+          #- 9200:9200
+        #options: -e="discovery.type=single-node" -e "plugins.security.disabled=true" -e "plugins.security.ssl.http.enabled=false" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
      
     steps:
     - uses: actions/checkout@v3
@@ -31,7 +31,7 @@ jobs:
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
-        php: 8.1
+        #php: 8.1
         magento_version: 2.4.6
         no_push: 0
 
@@ -44,6 +44,6 @@ jobs:
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'unit-test'
-        php: 8.1
+        #php: 8.1
         unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
         unit_test_subset_path: '../Test/'
