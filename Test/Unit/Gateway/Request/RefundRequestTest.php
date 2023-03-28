@@ -2,8 +2,6 @@
 
 namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 
-require __DIR__ . "/../Gateway/Requests/RefundRequest.php";
-
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use CardknoxDevelopment\Cardknox\Gateway\Request\RefundRequest;
 use CardknoxDevelopment\Cardknox\Helper\Data;
