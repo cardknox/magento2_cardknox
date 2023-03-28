@@ -9,8 +9,9 @@ use CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory;
 use Magento\Payment\Gateway\Http\TransferBuilder;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use PHPUnit\Framework\TestCase;
 
-class TransferFactoryTest extends \PHPUnit\Framework\TestCase
+class TransferFactoryTest extends TestCase
 {
 
     /**
