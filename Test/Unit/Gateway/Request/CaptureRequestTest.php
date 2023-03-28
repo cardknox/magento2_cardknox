@@ -6,6 +6,8 @@
 
 namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Request;
 
+require __DIR__ . "../Gateway/Requests/AuthorizationRequest.php";
+
 use CardknoxDevelopment\Cardknox\Gateway\Request\CaptureRequest;
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;

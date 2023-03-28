@@ -5,6 +5,8 @@
  */
 namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Request;
 
+require __DIR__ . "../../Gateway/Requests/AuthorizationRequest.php";
+
 use CardknoxDevelopment\Cardknox\Gateway\Request\AuthorizationRequest;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
@@ -12,9 +14,8 @@ use Magento\Sales\Model\Order\Payment;
 use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
 use CardknoxDevelopment\Cardknox\Helper\Data;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
-use PHPUnit\Framework\TestCase;
 
-class AuthorizeRequestTest extends TestCase
+class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Payment
