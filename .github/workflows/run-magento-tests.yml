@@ -28,13 +28,12 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: 'Install Magento'
-      uses: MAD-I-T/magento-actions@v2.0
+      uses: MAD-I-T/magento-actions@v3.19
       with:
         process: 'install-mage-os'
         php: 7.2
-        with: 
-          magento_version: 2.3.1
-          no_push: 1
+        magento_version: 2.3
+        no_push: 1
 
     #- name: 'this step will build an magento artifact'
     #  uses: MAD-I-T/magento-actions@v3.20
@@ -42,7 +41,7 @@ jobs:
     #    process: 'build'
         
     - name: 'Run Magento unit tests'
-      uses: MAD-I-T/magento-actions@v2.0
+      uses: MAD-I-T/magento-actions@v3.19
       with:
         process: 'unit-test'
         php: 7.2
