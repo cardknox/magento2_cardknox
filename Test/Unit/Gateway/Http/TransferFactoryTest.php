@@ -5,10 +5,10 @@
  */
 namespace Magento\SamplePaymentProvider\Test\Unit\Gateway\Http;
 
-use CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory;
+use ..\Gateway\Http\TransferFactory;
 use Magento\Payment\Gateway\Http\TransferBuilder;
 use Magento\Payment\Gateway\Http\TransferInterface;
-use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use ..\Gateway\Config\Config;
 
 class TransferFactoryTest extends \PHPUnit\Framework\TestCase
 {
