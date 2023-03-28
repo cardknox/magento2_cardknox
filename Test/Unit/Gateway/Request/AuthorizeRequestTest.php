@@ -5,9 +5,7 @@
  */
 namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Request;
 
-require "../../../../Gateway/Requests/AuthorizationRequest.php";
-
-use CardknoxDevelopment\Cardknox\Gateway\Request\AuthorizationRequest;
+use CardknoxDevelopment\Cardknox\Gateway\Request\AuthorizationRequest.php;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
