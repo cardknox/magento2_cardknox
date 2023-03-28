@@ -31,7 +31,7 @@ jobs:
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
-        magento_version: 2.4.6
+        magento_version: 2.3.1
         no_push: 1
 
     #- name: 'this step will build an magento artifact'
@@ -42,7 +42,7 @@ jobs:
     - name: 'Run Magento unit tests'
       uses: MAD-I-T/magento-actions@v3.20
       with:
-        php: '8.1'
+        php: 7.2.11
         process: 'unit-test'
         unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
         unit_test_subset_path: '../Test/'
