@@ -42,7 +42,7 @@ jobs:
     - name: 'Run Magento unit tests'
       uses: MAD-I-T/magento-actions@v3.19
       with:
-        php: 7.2.11
+        php: 7.2
         process: 'unit-test'
         unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
         unit_test_subset_path: '../Test/'
