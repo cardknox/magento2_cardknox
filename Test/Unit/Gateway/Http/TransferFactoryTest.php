@@ -5,10 +5,10 @@
  */
 namespace Magento\SamplePaymentProvider\Test\Unit\Gateway\Http;
 
-use Gateway\Http\TransferFactory;
+use github\workspace\Gateway\Http\TransferFactory;
 use Magento\Payment\Gateway\Http\TransferBuilder;
 use Magento\Payment\Gateway\Http\TransferInterface;
-use Gateway\Config\Config;
+use github\workspace\Gateway\Config\Config;
 
 class TransferFactoryTest extends \PHPUnit\Framework\TestCase
 {
