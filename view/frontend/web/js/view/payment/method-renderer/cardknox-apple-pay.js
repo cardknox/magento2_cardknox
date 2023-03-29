@@ -102,7 +102,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             if (err && err.xRefNum) {
                 setAPPayload("There was a problem with your order ("+err.xRefNum+")");
             } else {
-                setAPPayload("There was a problem with your order:"+exMsg(err));
+                setAPPayload("There was a problem with your order ("+exMsg(err)+")");
             }
         },
         onPaymentMethodSelected: function(paymentMethod) {
