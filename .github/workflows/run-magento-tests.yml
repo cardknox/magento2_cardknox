@@ -50,6 +50,7 @@ jobs:
         ls
         cd magento
         ls
+        sudo update composer
         sudo php bin/magento setup:di:compile
         sudo php bin/magento list
         php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
