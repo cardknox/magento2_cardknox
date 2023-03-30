@@ -47,7 +47,7 @@ jobs:
         dir
       #  pwd
       #  /home/runner/work/magento2_cardknox/magento2_cardknox/bin/phpunit
-      #  php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./app/code/CardknoxDevelopment/Cardknox/Test/
+        php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./Test/
 
     
     #- name: 'Install Magento'
