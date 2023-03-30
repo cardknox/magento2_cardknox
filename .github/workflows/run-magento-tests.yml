@@ -64,8 +64,8 @@ jobs:
         echo CHANGING TO MAGENTO ---------------
         cd magento
         ls
-        echo CHANGING TO BIN ---------------
-        cd BIN
+        echo CHANGING TO VENDOR ---------------
+        cd vendor
         ls
 
     - name: Run Unit Tests
