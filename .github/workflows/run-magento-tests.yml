@@ -44,8 +44,10 @@ jobs:
     - name: Execute tests
       run: |
         pwd
-        /home/runner/work/magento2_cardknox/magento2_cardknox/bin/phpunit
-        php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./app/code/CardknoxDevelopment/Cardknox/Test/
+        cd /home/runner/work/magento2_cardknox/magento2_cardknox
+        pwd
+      #  /home/runner/work/magento2_cardknox/magento2_cardknox/bin/phpunit
+      #  php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./app/code/CardknoxDevelopment/Cardknox/Test/
 
     
     #- name: 'Install Magento'
