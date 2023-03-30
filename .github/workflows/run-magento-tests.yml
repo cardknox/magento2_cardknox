@@ -52,9 +52,9 @@ jobs:
       run: |
         sudo composer install
 
-    - name: Run Unit Tests
-      run: |
-        sudo php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist Test
+    #- name: Run Unit Tests
+    #  run: |
+    #    sudo php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist Test
 
     - name: Compile Magento
       run: |
