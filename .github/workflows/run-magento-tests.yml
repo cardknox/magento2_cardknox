@@ -57,9 +57,9 @@ jobs:
       # sudo php bin/magento setup:install
       #  sudo php bin/magento setup:upgrade/setup:install
 
-    - name: Run Unit Tests
-      run: |
-        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+    #- name: Run Unit Tests
+     # run: |
+      #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  
       #  sudo php bin/magento setup:di:compile
@@ -92,9 +92,9 @@ jobs:
     #  with:
     #    process: 'build'
         
-    #- name: 'Run Magento unit tests'
-    #  uses: MAD-I-T/magento-actions@v3.20
-    #  with:
-    #    process: 'unit-test'
-    #    unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
-    #    unit_test_subset_path: '../Test/'
+    - name: 'Run Magento unit tests'
+      uses: MAD-I-T/magento-actions@v3.20
+      with:
+        process: 'unit-test'
+        unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
+        unit_test_subset_path: '../Test/'
