@@ -50,8 +50,8 @@ jobs:
         ls
         cd magento
         ls
-        php magento list
-        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+        php bin/magento list
+        php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
 
       # php magento setup:upgrade
 
