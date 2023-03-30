@@ -7,7 +7,7 @@ on:
       
 jobs:
   magento2-build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     name: 'm2 unit tests & build'
     services:
       mysql:
@@ -47,8 +47,10 @@ jobs:
 
     - name: Execute tests
       run: |
-        ls
+        composer update
         php magento setup:upgrade
+        php magento list
+        php bin/magento list
         php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  pwd
       #  ls
