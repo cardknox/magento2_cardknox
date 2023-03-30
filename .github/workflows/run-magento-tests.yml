@@ -67,14 +67,8 @@ jobs:
         echo CHANGING TO APP ---------------
         cd app
         ls
-        echo CHANGING TO CODE ---------------
-        cd code
-        ls
-        echo CHANGING TO CardknoxDevelopment ---------------
-        cd CardknoxDevelopment
-        ls
-        echo CHANGING TO Cardknox ---------------
-        cd Cardknox
+        echo CHANGING TO ETC ---------------
+        cd etc
         ls
 
     - name: Run Unit Tests
