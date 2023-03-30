@@ -57,8 +57,15 @@ jobs:
       # sudo php bin/magento setup:install
       #  sudo php bin/magento setup:upgrade/setup:install
 
-    #- name: Run Unit Tests
-     # run: |
+    - name: Run Unit Tests
+      run: |
+        pwd
+        ls
+        echo CHANGING TO MAGENTO
+        cd magento
+        ls
+
+
       #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  
