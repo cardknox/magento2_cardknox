@@ -57,7 +57,7 @@ jobs:
     - name: Install Dependencies
       run: |
         composer install
-        php bin/magento setup:upgrade
+        sudo php bin/magento setup:upgrade
 
     - name: Check Paths
       run: |
