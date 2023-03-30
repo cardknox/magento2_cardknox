@@ -54,6 +54,22 @@ jobs:
       #  sudo php bin/magento setup:upgrade
       #  sudo php bin/magento setup:install --base-url=http://127.0.0.1:3306/  --db-host=localhost --db-name=magento --db-user=root --db-password=magento  --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US  --currency=USD --timezone=America/Chicago --use-rewrites=1
 
+
+    - name: Check Paths2
+      run: |
+        pwd
+        ls
+        echo CHANGING TO VENDER ---------------
+        cd vendor
+        ls
+        echo CHANGING TO PHPUNIT ---------------
+        cd phpunit
+        ls
+        echo CHANGING TO PHPUNIT ---------------
+        cd phpunit
+        ls
+
+
     - name: Check Paths
       run: |
         pwd
@@ -70,9 +86,13 @@ jobs:
         echo CHANGING TO PHPUNIT ---------------
         cd phpunit
         ls
+        echo CHANGING TO PHPUNIT ---------------
+        cd phpunit
+        ls
 
     - name: Run Unit Tests
       run: |
+        pwd
         php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
         
     #- name: 'this step will build an magento artifact'
