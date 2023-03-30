@@ -48,7 +48,7 @@ jobs:
     - name: Execute tests
       run: |
         ls
-        bin/magento setup:upgrade
+        php bin/magento setup:upgrade
         php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  pwd
       #  ls
