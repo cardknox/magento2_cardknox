@@ -51,8 +51,6 @@ jobs:
         dir
         cd vendor/bin
         dir
-        cd phpunit
-        dir
         php vendor/bin/phpunit
       # -c dev/tests/unit/phpunit.xml.dist Test
         
