@@ -51,6 +51,8 @@ jobs:
         dir
         cd bin
         dir
+        cd phpunit
+        dir
         php bin/phpunit
       # -c dev/tests/unit/phpunit.xml.dist Test
         
