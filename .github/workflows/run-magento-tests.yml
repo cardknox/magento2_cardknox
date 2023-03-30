@@ -45,7 +45,7 @@ jobs:
     #- name: Install Dependencies
     #  run: composer install
 
-    - name: Compile Magento and Update Composer
+    - name: Compile Magento
       run: |
         cd magento
         sudo php bin/magento module:enable --all
@@ -66,9 +66,6 @@ jobs:
         ls
         echo CHANGING TO VENDER ---------------
         cd vendor
-        ls
-        echo CHANGING TO PHPUNIT ---------------
-        cd phpunit
         ls
         echo CHANGING TO PHPUNIT ---------------
         cd phpunit
