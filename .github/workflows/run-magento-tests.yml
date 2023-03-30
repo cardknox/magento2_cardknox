@@ -47,7 +47,7 @@ jobs:
 
     - name: Execute tests
       run: |
-        php magento list
+        magento list
         php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
 
       # php magento setup:upgrade
