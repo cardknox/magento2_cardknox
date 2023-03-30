@@ -49,7 +49,7 @@ jobs:
       run: |
         pwd
         dir
-        cd vendor/bin
+        cd vendor
         dir
         cd phpunit
         dir
