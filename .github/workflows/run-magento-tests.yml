@@ -55,7 +55,9 @@ jobs:
       #  sudo php bin/magento setup:install --base-url=http://127.0.0.1:3306/  --db-host=localhost --db-name=magento --db-user=root --db-password=magento  --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US  --currency=USD --timezone=America/Chicago --use-rewrites=1
 
     - name: Install Dependencies
-      run: composer install
+      run: |
+        composer install
+        bin/magento setup:upgrade
 
     - name: Check Paths
       run: |
@@ -72,17 +74,6 @@ jobs:
         ls
         echo CHANGING TO PHPUNIT ---------------
         cd phpunit
-        ls
-
-    - name: Check Paths var
-      run: |
-        pwd
-        ls
-        echo CHANGING TO MAGENTO ---------------
-        cd magento
-        ls
-        echo CHANGING TO VAR ---------------
-        cd var
         ls
 
     - name: Check Paths2
@@ -102,7 +93,7 @@ jobs:
     - name: Run Unit Tests
       run: |
         pwd
-        php magento/vendor/phpunit/phpunit -c magento/vendor/phpunit/phpunit.xml.dist Test
+        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
         
     #- name: 'this step will build an magento artifact'
     #  uses: MAD-I-T/magento-actions@v3.20
