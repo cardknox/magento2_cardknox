@@ -35,17 +35,17 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
 
-    - name: 'Install Magento'
+    - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
         magento_version: 2.4.6
         no_push: 1
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: composer install
 
-    - name: Update Composer
+    - name: Compile Magento and Update Composer
       run: |
         cd magento
         sudo php bin/magento module:enable --all
