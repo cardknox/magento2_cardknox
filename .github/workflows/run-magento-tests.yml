@@ -37,12 +37,12 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
 
-    - name: Install Magento
-      uses: MAD-I-T/magento-actions@v3.20
-      with:
-        process: 'install-mage-os'
-        magento_version: 2.4.6
-        no_push: 1
+    #- name: Install Magento
+    #  uses: MAD-I-T/magento-actions@v3.20
+    #  with:
+    #    process: 'install-mage-os'
+    #    magento_version: 2.4.6
+    #    no_push: 1
     
     - name: Install Dependencies
       run: |
@@ -53,20 +53,6 @@ jobs:
         ls
         pwd
         composer install
-
-    - name: Check Magento APP Paths
-      run: |
-        pwd
-        ls
-        echo CHANGING TO MAGENTO ---------------
-        cd magento
-        ls
-        echo CHANGING TO APP ---------------
-        cd app
-        ls
-        echo CHANGING TO ETC ---------------
-        cd etc
-        ls
 
     - name: Compile Magento
       run: |
@@ -112,6 +98,21 @@ jobs:
         ls
         echo CHANGING TO PHPUNIT ---------------
         cd phpunit
+        ls
+
+    
+    - name: Check Magento APP Paths
+      run: |
+        pwd
+        ls
+        echo CHANGING TO MAGENTO ---------------
+        cd magento
+        ls
+        echo CHANGING TO APP ---------------
+        cd app
+        ls
+        echo CHANGING TO ETC ---------------
+        cd etc
         ls
 
     - name: Run Unit Tests
