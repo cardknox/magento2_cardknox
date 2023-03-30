@@ -47,7 +47,9 @@ jobs:
 
     - name: Execute tests
       run: |
-        vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+        ls
+        php magento setup:upgrade
+        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  pwd
       #  ls
       #  echo CHANGING TO VENDOR
