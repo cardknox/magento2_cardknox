@@ -34,17 +34,17 @@ jobs:
       with:
         path: magento/app/code/CardknoxDevelopment/Cardknox
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        path: magento/app/code/CardknoxDevelopment/Cardknox
-
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
         magento_version: 2.4.6
         no_push: 1
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        path: magento/app/code/CardknoxDevelopment/Cardknox
     
     - name: Install Dependencies
       run: |
