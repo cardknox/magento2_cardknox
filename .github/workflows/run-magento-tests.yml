@@ -57,6 +57,9 @@ jobs:
       #  ls
       #  pwd
         
+    - name: Run Unit Tests
+      run: |
+        php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
 
     - name: Compile Magento
       run: |
