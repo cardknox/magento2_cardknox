@@ -58,20 +58,23 @@ jobs:
       run: |
         pwd
         ls
-        echo CHANGING TO MAGENTO
+        echo CHANGING TO MAGENTO ---------------
         cd magento
         ls
-        echo CHANGING TO VENDER
+        echo CHANGING TO VENDER ---------------
         cd vendor
         ls
-        echo CHANGING TO phpunit
+        echo CHANGING TO PHPUNIT ---------------
         cd phpunit
         ls
-        echo CHANGING TO phpunit
+        echo CHANGING TO PHPUNIT ---------------
+        cd phpunit
+        ls
+        echo CHANGING TO PHPUNIT ---------------
         cd phpunit
         ls
         
-        php phpunit -c phpunit.xml.dist ../../../../Test
+        php phpunit -c phpunit.xml.dist ../../../../../Test
         
     #- name: 'this step will build an magento artifact'
     #  uses: MAD-I-T/magento-actions@v3.20
