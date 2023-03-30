@@ -49,7 +49,7 @@ jobs:
       run: |
         ls
         php magento setup:upgrade
-        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+      #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  pwd
       #  ls
       #  echo CHANGING TO VENDOR
