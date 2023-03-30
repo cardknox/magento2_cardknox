@@ -64,11 +64,8 @@ jobs:
         echo CHANGING TO MAGENTO ---------------
         cd magento
         ls
-        echo CHANGING TO APP ---------------
-        cd app
-        ls
-        echo CHANGING TO ETC ---------------
-        cd etc
+        echo CHANGING TO BIN ---------------
+        cd BIN
         ls
 
     - name: Run Unit Tests
