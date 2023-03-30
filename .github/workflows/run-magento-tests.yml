@@ -42,8 +42,8 @@ jobs:
         magento_version: 2.4.6
         no_push: 1
 
-    #- name: Install Dependencies
-    #  run: composer install
+    - name: Install Dependencies
+      run: composer install
 
     - name: Compile Magento and Update Composer
       run: |
@@ -54,8 +54,8 @@ jobs:
       #  sudo php bin/magento setup:upgrade
       #  sudo php bin/magento setup:install --base-url=http://127.0.0.1:3306/  --db-host=localhost --db-name=magento --db-user=root --db-password=magento  --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US  --currency=USD --timezone=America/Chicago --use-rewrites=1
 
-    - name: Install Dependencies
-      run: composer install
+    #- name: Install Dependencies
+    #  run: composer install
 
     - name: Check Paths
       run: |
@@ -75,6 +75,20 @@ jobs:
         ls
         echo CHANGING TO PHPUNIT ---------------
         cd phpunit
+        ls
+
+    - name: Check Paths var
+      run: |
+        pwd
+        ls
+        echo CHANGING TO MAGENTO ---------------
+        cd magento
+        ls
+        echo CHANGING TO VAR ---------------
+        cd var
+        ls
+        echo CHANGING TO WWW ---------------
+        cd www
         ls
 
     - name: Check Paths2
