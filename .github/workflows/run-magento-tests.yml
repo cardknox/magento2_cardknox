@@ -48,8 +48,8 @@ jobs:
     - name: Execute tests
       run: |
         ls
-        php magento setup:upgrade
-        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+        magento setup:upgrade
+        vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  pwd
       #  ls
       #  echo CHANGING TO VENDOR
