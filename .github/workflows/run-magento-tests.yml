@@ -41,6 +41,10 @@ jobs:
         process: 'install-mage-os'
         magento_version: 2.4.6
         no_push: 1
+    
+    - name: Install Dependencies
+      run: |
+        composer install
 
     - name: Compile Magento
       run: |
@@ -56,9 +60,6 @@ jobs:
       #  sudo php bin/magento setup:upgrade
       #  sudo php bin/magento setup:install --base-url=http://127.0.0.1:3306/  --db-host=localhost --db-name=magento --db-user=root --db-password=magento  --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US  --currency=USD --timezone=America/Chicago --use-rewrites=1
 
-    - name: Install Dependencies
-      run: |
-        composer install
 
     - name: Check Paths
       run: |
