@@ -43,7 +43,7 @@ jobs:
         no_push: 1
 
     - name: Install dependencies
-      run: composer install --no-progress --prefer-dist --no-interaction
+      run: composer install
 
     - name: Execute tests
       run: |
