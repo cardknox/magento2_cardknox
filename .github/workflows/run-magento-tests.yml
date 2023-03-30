@@ -34,6 +34,8 @@ jobs:
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
+      with:
+        tools: phpunit
 
     - name: Install dependencies
       run: composer install --no-progress --prefer-dist --no-interaction
@@ -55,6 +57,8 @@ jobs:
         echo CHANGING TO PHPUNIT
         cd phpunit
         ls
+        echo CHANGING TO PHPUNIT
+        cd phpunit
       #  php bin/phpunit
       # -c dev/tests/unit/phpunit.xml.dist Test
         
