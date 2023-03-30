@@ -31,8 +31,6 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
-      with:
-        path: localhost/app/code/CardknoxDevelopment/Cardknox
 
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
@@ -82,7 +80,7 @@ jobs:
     - name: Compile Magento
       run: |
         cd magento
-        sudo php bin/magento module:enable ../localhost/app/code/CardknoxDevelopment/Cardknox/CardknoxDevelopment_Cardknox --clear-static-content
+        sudo php bin/magento module:enable ../registration.php --clear-static-content
         sudo php bin/magento setup:upgrade
       #  composer update
       #         sudo php bin/magento setup:di:compile
