@@ -60,7 +60,6 @@ jobs:
 
     - name: Compile Magento
       run: |
-        cd magento
         sudo php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php bin/magento setup:upgrade
       # cd magento
