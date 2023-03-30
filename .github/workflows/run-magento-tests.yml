@@ -49,9 +49,9 @@ jobs:
       run: |
         pwd
         dir
-        cd vendor/phpunit/phpunit/phpunit
+        cd vendor/phpunit/phpunit
         dir
-      #  php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./app/code/CardknoxDevelopment/Cardknox/Test/
+        php vendor/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist Test
         
 
     
