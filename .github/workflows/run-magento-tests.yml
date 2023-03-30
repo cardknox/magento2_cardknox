@@ -31,6 +31,8 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
+      with:
+        path: app/code/CardknoxDevelopment/Cardknox
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -63,7 +65,6 @@ jobs:
 
     - name: Compile Magento
       run: |
-        
         sudo php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php bin/magento setup:upgrade
         cd magento
