@@ -40,16 +40,16 @@ jobs:
     - name: Install dependencies
       run: composer install --no-progress --prefer-dist --no-interaction
 
-    #- name: 'Install Magento'
-    #  uses: MAD-I-T/magento-actions@v3.20
-    #  with:
-    #    process: 'install-mage-os'
-    #    magento_version: 2.4.6
-    #    no_push: 1
+    - name: 'Install Magento'
+      uses: MAD-I-T/magento-actions@v3.20
+      with:
+        process: 'install-mage-os'
+        magento_version: 2.4.6
+        no_push: 1
 
     - name: Execute tests
       run: |
-        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist /Test
+        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  pwd
       #  ls
       #  echo CHANGING TO VENDOR
