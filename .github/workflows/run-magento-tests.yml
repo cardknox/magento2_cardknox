@@ -50,7 +50,7 @@ jobs:
         cd magento
         sudo php bin/magento module:enable --all
         sudo php bin/magento setup:di:compile
-        sudo php bin/magento setup:upgrade
+      #  sudo php bin/magento setup:upgrade
       #  sudo php bin/magento setup:install --base-url=http://127.0.0.1:3306/  --db-host=localhost --db-name=magento --db-user=root --db-password=magento  --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US  --currency=USD --timezone=America/Chicago --use-rewrites=1
       #  sudo composer update
       # sudo php bin/magento setup:install
