@@ -42,8 +42,8 @@ jobs:
         magento_version: 2.4.4
         no_push: 1
     
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+    #- name: Setup PHP
+    #  uses: shivammathur/setup-php@v2
     
     - name: Install Dependencies
       run: |
