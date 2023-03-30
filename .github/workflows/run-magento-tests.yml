@@ -47,9 +47,8 @@ jobs:
 
     - name: Execute tests
       run: |
-        ls
         cd magento
-        ls
+        composer update
         php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
 
       # php magento setup:upgrade
