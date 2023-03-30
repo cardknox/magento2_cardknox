@@ -53,9 +53,6 @@ jobs:
         sudo composer update
       #  sudo php bin/magento setup:upgrade
       #  sudo php bin/magento setup:install --base-url=http://127.0.0.1:3306/  --db-host=localhost --db-name=magento --db-user=root --db-password=magento  --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US  --currency=USD --timezone=America/Chicago --use-rewrites=1
-      #  sudo composer update
-      # sudo php bin/magento setup:install
-      #  sudo php bin/magento setup:upgrade/setup:install
 
     - name: Run Unit Tests
       run: |
@@ -67,36 +64,14 @@ jobs:
         echo CHANGING TO VENDER
         cd vendor
         ls
+        echo CHANGING TO phpunit
+        cd phpunit
+        ls
+        echo CHANGING TO phpunit
+        cd phpunit
+        ls
         
-
-
-      #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
-      #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
-      #  
-      #  sudo php bin/magento setup:di:compile
-      #  php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
-
-      # php magento setup:upgrade
-
-      #  pwd
-      #  ls
-      #  echo CHANGING TO VENDOR
-      #  cd vendor
-      #  ls
-      #  echo CHANGING TO PHPUNIT
-      #  cd phpunit
-      #  ls
-      #  echo CHANGING TO PHPUNIT
-      #  cd phpunit
-      #  ls
-      #  php vendor/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
-      #  php bin/phpunit
-      # -c dev/tests/unit/phpunit.xml.dist Test
-        
-
-    
-
-
+        php phpunit -c phpunit.xml.dist ../../../../Test
         
     #- name: 'this step will build an magento artifact'
     #  uses: MAD-I-T/magento-actions@v3.20
