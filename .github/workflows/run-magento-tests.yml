@@ -48,10 +48,13 @@ jobs:
       run: |
         ls
         pwd
-        echo CHANGING TO CARDKNOX ---------------
-        cd magento/app/code/CardknoxDevelopment/Cardknox
+        echo CHANGING TO magento ---------------
+        cd magento
         ls
-        pwd
+      #  echo CHANGING TO CARDKNOX ---------------
+      #  cd magento/app/code/CardknoxDevelopment/Cardknox
+      #  ls
+      #  pwd
         composer install
 
     - name: Compile Magento
