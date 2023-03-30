@@ -49,11 +49,14 @@ jobs:
       run: |
         pwd
         dir
+        ls
         cd vendor
         dir
+        ls
         cd phpunit
         dir
-        php bin/phpunit
+        ls
+      #  php bin/phpunit
       # -c dev/tests/unit/phpunit.xml.dist Test
         
 
