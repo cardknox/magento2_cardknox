@@ -50,18 +50,18 @@ jobs:
     - name: Execute tests
       run: |
         php vendor/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
-        pwd
-        ls
-        echo CHANGING TO VENDOR
-        cd vendor
-        ls
-        echo CHANGING TO PHPUNIT
-        cd phpunit
-        ls
-        echo CHANGING TO PHPUNIT
-        cd phpunit
-        ls
-        php vendor/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+      #  pwd
+      #  ls
+      #  echo CHANGING TO VENDOR
+      #  cd vendor
+      #  ls
+      #  echo CHANGING TO PHPUNIT
+      #  cd phpunit
+      #  ls
+      #  echo CHANGING TO PHPUNIT
+      #  cd phpunit
+      #  ls
+      #  php vendor/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  php bin/phpunit
       # -c dev/tests/unit/phpunit.xml.dist Test
         
