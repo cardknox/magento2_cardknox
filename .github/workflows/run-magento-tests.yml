@@ -49,6 +49,7 @@ jobs:
         ls
         cd app/code/CardknoxDevelopment/Cardknox
         ls
+        pwd
         composer install
 
     - name: Check Magento APP Paths
