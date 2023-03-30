@@ -48,12 +48,12 @@ jobs:
 
     - name: Compile Magento
       run: |
-        sudo php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         cd magento
-        sudo php bin/magento deploy:mode:set developer
-        sudo php bin/magento config:set dev/template/allow_symlink 1 --lock-env
         sudo php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php bin/magento setup:upgrade
+      #  sudo php bin/magento deploy:mode:set developer
+      #  sudo php bin/magento config:set dev/template/allow_symlink 1 --lock-env
+        
       #  sudo php bin/magento setup:di:compile
       #  sudo php bin/magento module:enable --all
       #  sudo composer install
