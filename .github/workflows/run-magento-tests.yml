@@ -84,9 +84,6 @@ jobs:
         echo CHANGING TO VAR ---------------
         cd var
         ls
-        echo CHANGING TO WWW ---------------
-        cd www
-        ls
 
     - name: Check Paths2
       run: |
