@@ -46,9 +46,10 @@ jobs:
     
     - name: Install Dependencies
       run: |
+        ls
+        cd app/code/CardknoxDevelopment/Cardknox
         composer install
 
-    
     - name: Check Magento APP Paths
       run: |
         pwd
