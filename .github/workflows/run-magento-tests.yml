@@ -49,7 +49,7 @@ jobs:
         ls
         pwd
         echo CHANGING TO CARDKNOX ---------------
-        cd app/code/CardknoxDevelopment/Cardknox
+        cd magento/app/code/CardknoxDevelopment/Cardknox
         ls
         pwd
         composer install
