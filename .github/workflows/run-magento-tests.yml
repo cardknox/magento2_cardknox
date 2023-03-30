@@ -59,6 +59,7 @@ jobs:
         
     - name: Run Unit Tests
       run: |
+        cd magento
         php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
 
     - name: Compile Magento
