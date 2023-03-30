@@ -9,33 +9,33 @@ jobs:
   magento2-build:
     runs-on: ubuntu-latest
     name: 'm2 unit tests & build'
-    services:
-      mysql:
-        image: docker://mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: magento
-          MYSQL_DATABASE: magento
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    #services:
+    #  mysql:
+    #    image: docker://mysql:8.0
+    #    env:
+    #      MYSQL_ROOT_PASSWORD: magento
+    #      MYSQL_DATABASE: magento
+    #    ports:
+    #      - 3306:3306
+    #    options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       #elasticsearch:
         #image: docker://elasticsearch:7.1.0
         #ports:
         #  - 9200:9200
         #options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
-      opensearch:
-        image: ghcr.io/mad-i-t/magento-opensearch:2.5.0
-        ports:
-          - 9200:9200
-        options: -e="discovery.type=single-node" -e "plugins.security.disabled=true" -e "plugins.security.ssl.http.enabled=false" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+    #  opensearch:
+    #    image: ghcr.io/mad-i-t/magento-opensearch:2.5.0
+    #    ports:
+    #      - 9200:9200
+    #    options: -e="discovery.type=single-node" -e "plugins.security.disabled=true" -e "plugins.security.ssl.http.enabled=false" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
      
     steps:
     - uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
-      with:
-        extensions: none
+      #with:
+        #extensions: none
         #coverage: none
 
     - name: Install dependencies
