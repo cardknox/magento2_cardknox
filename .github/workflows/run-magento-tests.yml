@@ -46,7 +46,7 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        cd app/code/CardknoxDevelopment/Cardknox
+        cd app/code/CardknoxDevelopment_Cardknox
         sudo composer install
       #  echo CHANGING TO CARDKNOX ---------------
       #  cd magento/app/code/CardknoxDevelopment/Cardknox
@@ -68,11 +68,8 @@ jobs:
         echo CHANGING TO code ---------------
         cd code
         ls
-        echo CHANGING TO CardknoxDevelopment ---------------
-        cd CardknoxDevelopment
-        ls
-        echo CHANGING TO Cardknox ---------------
-        cd Cardknox
+        echo CHANGING TO CardknoxDevelopment_Cardknox ---------------
+        cd CardknoxDevelopment_Cardknox
         ls
 
     #- name: Run Unit Tests
