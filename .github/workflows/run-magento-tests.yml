@@ -31,8 +31,6 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
-      with:
-        path: app/code/CardknoxDevelopment_Cardknox
 
     # try installing another magento
     - name: Install Magento
@@ -52,12 +50,11 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        cd app/code/CardknoxDevelopment_Cardknox
         sudo composer install
 
     - name: Run Unit Tests
       run: |
-        sudo php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment_Cardknox/Test
+        sudo php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist Test
 
     - name: Compile Magento
       run: |
