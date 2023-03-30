@@ -49,7 +49,6 @@ jobs:
       run: |
         cd magento
         sudo composer update
-        sudo php bin/magento setup:config:set
         sudo php bin/magento setup:upgrade
       #  sudo php bin/magento module:enable --all
       #  sudo php bin/magento setup:di:compile
