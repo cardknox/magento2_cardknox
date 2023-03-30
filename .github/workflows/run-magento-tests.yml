@@ -39,9 +39,21 @@ jobs:
         magento_version: 2.4.6
         no_push: 1
 
-    - name: 'Run Magento Unit Tests'
-      run: |
-        php .\vendor\phpunit\phpunit\phpunit -c .\dev\tests\unit\phpunit.xml.dist .\app\code\CardknoxDevelopment\Cardknox\Test\
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      #with:
+        #extensions: mbstring
+        #coverage: none
+
+    - name: Install dependencies
+      run: composer install --no-progress --prefer-dist --no-interaction
+
+    - name: Execute tests
+      run: bin/phpunit
+
+    #- name: 'Run Magento Unit Tests'
+     # run: |
+       # php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./app/code/CardknoxDevelopment/Cardknox/Test/
         
     #- name: 'this step will build an magento artifact'
     #  uses: MAD-I-T/magento-actions@v3.20
