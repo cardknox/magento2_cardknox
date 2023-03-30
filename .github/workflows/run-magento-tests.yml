@@ -59,6 +59,7 @@ jobs:
         ls
         echo CHANGING TO PHPUNIT
         cd phpunit
+        ls
       #  php bin/phpunit
       # -c dev/tests/unit/phpunit.xml.dist Test
         
