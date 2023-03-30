@@ -42,9 +42,6 @@ jobs:
         magento_version: 2.4.6
         no_push: 1
 
-    #- name: Install Dependencies
-    #  run: composer install
-
     - name: Compile Magento
       run: |
         cd magento
@@ -57,7 +54,6 @@ jobs:
     - name: Install Dependencies
       run: |
         composer install
-        sudo php bin/magento setup:upgrade
 
     - name: Check Paths
       run: |
@@ -90,9 +86,19 @@ jobs:
         cd phpunit
         ls
 
-    - name: Run Unit Tests
+    - name: Check Magento APP Paths
       run: |
         pwd
+        ls
+        echo CHANGING TO MAGENTO ---------------
+        cd magento
+        ls
+        echo CHANGING TO APP ---------------
+        cd app
+        ls
+
+    - name: Run Unit Tests
+      run: |
         php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
         
     #- name: 'this step will build an magento artifact'
