@@ -31,6 +31,8 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
+      with:
+        path: app/code/CardknoxDevelopment/Cardknox
 
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
@@ -58,9 +60,6 @@ jobs:
     - name: Check Magento APP Paths
       run: |
         pwd
-        ls
-        echo CHANGING TO LOCALHOST ---------------
-        cd localhost
         ls
         echo CHANGING TO APP ---------------
         cd app
