@@ -32,7 +32,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        path: app/code/CardknoxDevelopment/Cardknox
+        path: magento/app/code/CardknoxDevelopment/Cardknox
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
