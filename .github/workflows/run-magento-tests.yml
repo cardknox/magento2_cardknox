@@ -48,8 +48,10 @@ jobs:
     - name: Update Composer
       run: |
         cd magento
+        sudo php bin/magento setup:install
         sudo composer update
-      #  sudo php bin/magento setup:upgrade
+
+      #  sudo php bin/magento setup:upgrade/setup:install
 
     - name: Run Unit Tests
       run: |
