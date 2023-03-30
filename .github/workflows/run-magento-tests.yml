@@ -34,11 +34,6 @@ jobs:
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
-      with:
-        tools: phpunit
-
-    - name: Install dependencies
-      run: composer install --no-progress --prefer-dist --no-interaction
 
     - name: 'Install Magento'
       uses: MAD-I-T/magento-actions@v3.20
@@ -46,6 +41,11 @@ jobs:
         process: 'install-mage-os'
         magento_version: 2.4.6
         no_push: 1
+
+    - name: Install dependencies
+      run: composer install --no-progress --prefer-dist --no-interaction
+
+
 
     - name: Execute tests
       run: |
