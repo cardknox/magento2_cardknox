@@ -51,7 +51,7 @@ jobs:
         echo CHANGING TO magento ---------------
         cd magento
         ls
-        sudo composer install
+      #  sudo composer install
       #  echo CHANGING TO CARDKNOX ---------------
       #  cd magento/app/code/CardknoxDevelopment/Cardknox
       #  ls
