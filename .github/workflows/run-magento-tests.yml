@@ -48,15 +48,14 @@ jobs:
     - name: Update Composer
       run: |
         cd magento
-        sudo php bin/magento setup:install
         sudo composer update
-
+      # sudo php bin/magento setup:install
       #  sudo php bin/magento setup:upgrade/setup:install
 
     - name: Run Unit Tests
       run: |
         pwd
-        php ../vendor/phpunit/phpunit/phpunit -c ../vendor/phpunit/phpunit/phpunit.xml.dist ../Test
+        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  sudo php bin/magento module:enable --all
       #  sudo php bin/magento setup:di:compile
       #  php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
