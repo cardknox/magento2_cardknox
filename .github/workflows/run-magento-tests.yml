@@ -35,18 +35,20 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
 
-    - name: 'Install Magento'
-      uses: MAD-I-T/magento-actions@v3.20
-      with:
-        process: 'install-mage-os'
-        magento_version: 2.4.6
-        no_push: 1
+    #- name: 'Install Magento'
+    #  uses: MAD-I-T/magento-actions@v3.20
+    #  with:
+    #    process: 'install-mage-os'
+    #    magento_version: 2.4.6
+    #    no_push: 1
 
     - name: Install dependencies
       run: composer install
 
     - name: Execute tests
       run: |
+        composer -help
+        composer list -help
         composer update
         php magento setup:upgrade
         php magento list
