@@ -60,13 +60,13 @@ jobs:
     - name: Run Unit Tests
       run: |
         cd magento
-        php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
+        php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
 
     - name: Compile Magento
       run: |
+        cd magento
         sudo php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php bin/magento setup:upgrade
-      # cd magento
       #  composer update
       #         sudo php bin/magento setup:di:compile
       #  sudo php bin/magento deploy:mode:set developer
