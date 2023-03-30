@@ -36,6 +36,8 @@ jobs:
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
+      with:
+        path: magento/app/code/CardknoxDevelopment/Cardknox
 
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
