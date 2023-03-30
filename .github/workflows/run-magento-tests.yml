@@ -49,9 +49,9 @@ jobs:
       run: |
         pwd
         dir
-        cd vendor/phpunit/phpunit
+        cd vendor/bin/phpunit
         dir
-        php vendor/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist Test
+        php vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist Test
         
 
     
