@@ -70,6 +70,12 @@ jobs:
         echo CHANGING TO CODE ---------------
         cd code
         ls
+        echo CHANGING TO CardknoxDevelopment ---------------
+        cd CardknoxDevelopment
+        ls
+        echo CHANGING TO Cardknox ---------------
+        cd Cardknox
+        ls
 
     - name: Run Unit Tests
       run: |
