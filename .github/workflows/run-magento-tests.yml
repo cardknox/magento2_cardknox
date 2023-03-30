@@ -43,18 +43,16 @@ jobs:
         no_push: 1
 
     - name: Install dependencies
-      run: |
-        cd magento
-        composer install
+      run: composer install
 
-    #- name: Execute tests
-    #  run: |
-    #    ls
-    #    cd magento
-    #    ls
-    #    php bin/magento setup:di:compile
-    #    php bin/magento list
-    #    php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
+    - name: Execute tests
+      run: |
+        ls
+        cd magento
+        ls
+        sudo php bin/magento setup:di:compile
+        sudo php bin/magento list
+        php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
 
       # php magento setup:upgrade
 
