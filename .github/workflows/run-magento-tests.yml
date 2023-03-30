@@ -37,12 +37,12 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
 
-    #- name: Install Magento
-    #  uses: MAD-I-T/magento-actions@v3.20
-    #  with:
-    #    process: 'install-mage-os'
-    #    magento_version: 2.4.6
-    #    no_push: 1
+    - name: Install Magento
+      uses: MAD-I-T/magento-actions@v3.20
+      with:
+        process: 'install-mage-os'
+        magento_version: 2.4.6
+        no_push: 1
     
     - name: Install Dependencies
       run: |
@@ -57,13 +57,14 @@ jobs:
     - name: Compile Magento
       run: |
         cd magento
+        sudo php bin/magento setup:di:compile
         sudo php bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php bin/magento setup:upgrade
+      #  composer update
         
       #  sudo php bin/magento deploy:mode:set developer
       #  sudo php bin/magento config:set dev/template/allow_symlink 1 --lock-env
         
-      #  sudo php bin/magento setup:di:compile
       #  sudo php bin/magento module:enable --all
       #  sudo composer install
       #  sudo php bin/magento setup:upgrade
