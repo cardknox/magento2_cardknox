@@ -45,7 +45,8 @@ jobs:
       run: |
         pwd
         dir
-        dir /vendor
+        cd /vendor
+        dir
         php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./Test/
       #  pwd
       #  /home/runner/work/magento2_cardknox/magento2_cardknox/bin/phpunit
