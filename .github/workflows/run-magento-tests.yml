@@ -47,7 +47,7 @@ jobs:
         dir
         cd vendor
         dir
-        php ./vendor/phpunit/phpunit/phpunit -c ./dev/tests/unit/phpunit.xml.dist ./Test/
+        php Test
       #  pwd
       #  /home/runner/work/magento2_cardknox/magento2_cardknox/bin/phpunit
         
