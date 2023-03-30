@@ -43,8 +43,6 @@ jobs:
     
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
-      with:
-        path: magento/app/code/CardknoxDevelopment/Cardknox
     
     - name: Install Dependencies
       run: |
