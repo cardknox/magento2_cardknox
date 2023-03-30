@@ -32,17 +32,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        path: magento/app/code/CardknoxDevelopment/Cardknox
+        path: magento
 
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
       with:
+        path: magento
         process: 'install-mage-os'
         magento_version: 2.4.6
         no_push: 1
     
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+    #- name: Setup PHP
+    #  uses: shivammathur/setup-php@v2
     
     - name: Install Dependencies
       run: |
