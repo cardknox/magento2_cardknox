@@ -69,7 +69,7 @@ jobs:
         echo CHANGING TO ETC
         cd etc
         ls
-      #  php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
       #  
       #  sudo php bin/magento setup:di:compile
       #  php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
