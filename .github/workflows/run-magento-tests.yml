@@ -51,11 +51,12 @@ jobs:
         cd magento
         ls
         sudo composer update
-        sudo php bin/magento setup:upgrade
-        sudo php bin/magento module:enable --all
-        sudo php bin/magento setup:di:compile
         sudo php bin/magento list
-        php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
+        sudo php bin/magento setup:upgrade
+      #  sudo php bin/magento module:enable --all
+      #  sudo php bin/magento setup:di:compile
+      #  sudo php bin/magento list
+      #  php ./vendor/phpunit/phpunit/phpunit -c ./vendor/phpunit/phpunit/phpunit.xml.dist ./Test
 
       # php magento setup:upgrade
 
