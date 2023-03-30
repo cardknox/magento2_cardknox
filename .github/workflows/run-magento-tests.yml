@@ -47,13 +47,15 @@ jobs:
 
     - name: Execute tests
       run: |
-        composer -help
-        composer list -help
         composer update
-        php magento setup:upgrade
+
+    - name: Execute tests
+      run: |
         php magento list
-        php bin/magento list
         php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+
+      # php magento setup:upgrade
+
       #  pwd
       #  ls
       #  echo CHANGING TO VENDOR
