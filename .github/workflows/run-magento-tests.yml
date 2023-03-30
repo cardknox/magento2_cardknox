@@ -48,13 +48,12 @@ jobs:
     - name: Execute tests
       run: |
         pwd
-        dir
         ls
+        echo CHANGING TO VENDOR
         cd vendor
-        dir
         ls
+        echo CHANGING TO PHPUNIT
         cd phpunit
-        dir
         ls
       #  php bin/phpunit
       # -c dev/tests/unit/phpunit.xml.dist Test
