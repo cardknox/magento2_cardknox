@@ -72,9 +72,9 @@ jobs:
         cd CardknoxDevelopment_Cardknox
         ls
 
-    #- name: Run Unit Tests
-    #  run: |
-    #    php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
+    - name: Run Unit Tests
+      run: |
+        php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
 
     - name: Compile Magento
       run: |
@@ -125,7 +125,7 @@ jobs:
 
     - name: Run Unit Tests
       run: |
-        php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
+        php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment_Cardknox/Test
         
     #- name: 'this step will build an magento artifact'
     #  uses: MAD-I-T/magento-actions@v3.20
