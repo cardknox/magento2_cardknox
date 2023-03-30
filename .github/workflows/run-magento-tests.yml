@@ -40,7 +40,6 @@ jobs:
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
       with:
-        path: app/code/CardknoxDevelopment/Cardknox
         process: 'install-mage-os'
         magento_version: 2.4.6
         no_push: 1
@@ -48,6 +47,7 @@ jobs:
     - name: Install Dependencies
       run: |
         ls
+        pwd
         cd app/code/CardknoxDevelopment/Cardknox
         ls
         pwd

@@ -7,7 +7,17 @@
         "GPL-3.0"
     ],
     "require-dev": {
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0",
+        "magento/module-backend": "100.0.*",
+        "magento/module-customer": "100.0.*",
+        "magento/module-product": "100.0.*",
+        "magento/module-wishlist": "100.0.*",
+        "magento/module-cms": "100.0.*",
+        "magento/module-catalog": "100.0.*",
+        "magento/module-eav": "100.0.*",
+        "magento/module-store": "100.0.*",
+        "magento/module-ui": "100.0.*",
+        "magento/framework": "100.0.*"
     },
     "autoload": {
         "files": [
