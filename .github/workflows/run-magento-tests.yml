@@ -48,6 +48,7 @@ jobs:
       run: |
         ls
         pwd
+        echo CHANGING TO CARDKNOX ---------------
         cd app/code/CardknoxDevelopment/Cardknox
         ls
         pwd
