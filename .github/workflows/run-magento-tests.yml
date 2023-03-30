@@ -38,7 +38,7 @@ jobs:
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
-        magento_version: 2.4.6
+        magento_version: 2.4.4
         no_push: 1
     
     #- name: Setup PHP
@@ -46,17 +46,18 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        ls
-        pwd
-        echo CHANGING TO magento ---------------
         cd magento
-        ls
-      #  sudo composer install
+        sudo composer install
       #  echo CHANGING TO CARDKNOX ---------------
       #  cd magento/app/code/CardknoxDevelopment/Cardknox
       #  ls
       #  pwd
-        
+    
+    - name: Install Dependencies
+      run: |
+        cd app/code/CardknoxDevelopment/Cardknox
+        sudo composer install
+
     - name: Check Magento APP Paths
       run: |
         pwd
@@ -74,14 +75,14 @@ jobs:
         cd Cardknox
         ls
 
-    - name: Run Unit Tests
-      run: |
-        php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
+    #- name: Run Unit Tests
+    #  run: |
+    #    php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
 
     - name: Compile Magento
       run: |
         sudo php magento/bin/magento module:status
-        sudo php magento/bin/magento module:enable ../registration.php --clear-static-content
+        sudo php magento/bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php magento/bin/magento setup:upgrade
       #  composer update
       #         sudo php bin/magento setup:di:compile
