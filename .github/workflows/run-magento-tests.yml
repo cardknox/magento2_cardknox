@@ -67,6 +67,15 @@ jobs:
         echo CHANGING TO APP ---------------
         cd app
         ls
+        echo CHANGING TO code ---------------
+        cd code
+        ls
+        echo CHANGING TO CardknoxDevelopment ---------------
+        cd CardknoxDevelopment
+        ls
+        echo CHANGING TO Cardknox ---------------
+        cd Cardknox
+        ls
 
 
 
