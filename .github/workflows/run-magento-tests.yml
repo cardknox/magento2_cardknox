@@ -46,7 +46,7 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        cd magento
+        cd app/code/CardknoxDevelopment/Cardknox
         sudo composer install
       #  echo CHANGING TO CARDKNOX ---------------
       #  cd magento/app/code/CardknoxDevelopment/Cardknox
@@ -55,7 +55,7 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        cd app/code/CardknoxDevelopment/Cardknox
+        cd magento
         sudo composer install
 
     - name: Check Magento APP Paths
