@@ -69,10 +69,7 @@ jobs:
         cd app
         ls
 
-    - name: Run Unit Tests
-      run: |
-        cd magento
-        php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
+
 
     - name: Compile Magento
       run: |
@@ -120,10 +117,11 @@ jobs:
         echo CHANGING TO PHPUNIT ---------------
         cd phpunit
         ls
-
+        
     - name: Run Unit Tests
       run: |
-        php vendor/phpunit/phpunit/phpunit -c vendor/phpunit/phpunit/phpunit.xml.dist Test
+        cd magento
+        php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test
         
     #- name: 'this step will build an magento artifact'
     #  uses: MAD-I-T/magento-actions@v3.20
