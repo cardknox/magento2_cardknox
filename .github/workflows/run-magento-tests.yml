@@ -79,9 +79,9 @@ jobs:
 
     - name: Compile Magento
       run: |
-        cd magento
-        sudo php bin/magento module:enable ../registration.php --clear-static-content
-        sudo php bin/magento setup:upgrade
+        sudo php magento/bin/magento module:status
+        sudo php magento/bin/magento module:enable ../registration.php --clear-static-content
+        sudo php magento/bin/magento setup:upgrade
       #  composer update
       #         sudo php bin/magento setup:di:compile
       #  sudo php bin/magento deploy:mode:set developer
