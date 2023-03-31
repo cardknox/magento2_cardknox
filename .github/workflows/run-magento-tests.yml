@@ -1,4 +1,4 @@
-name: m2-actions-test
+name: Magento2 Build & Run Unit Tests
 on: 
   push:
     branches-ignore: 
@@ -8,7 +8,7 @@ on:
 jobs:
   magento2-build:
     runs-on: ubuntu-latest
-    name: 'm2 build & run cardknox unit tests'
+    name: Magento2 Build & Run Unit Tests
     services:
       mysql:
         image: docker://mysql:8.0
