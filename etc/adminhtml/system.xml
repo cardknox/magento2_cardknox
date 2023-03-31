@@ -11,6 +11,7 @@
         <section id="payment">
             <group id="cardknox" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Cardknox</label>
+                <!-- Credit Card Configuration Start -->
                 <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -87,7 +88,9 @@
                     <label>Sort Order</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
+                <!-- Credit Card Configuration End -->
 
+                <!-- Google Pay Configuration -->
                 <group id="cardknox_google_pay" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cardknox Google Pay</label>
                     <field id="cardknox_gpay_active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -167,6 +170,96 @@
                         <frontend_class>validate-number</frontend_class>
                         <depends>
                             <field id="cardknox_gpay_active">1</field>
+                        </depends>
+                    </field>
+                </group>
+
+                <!-- Apple Pay Configuration -->
+                <group id="cardknox_apple_pay" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cardknox Apple Pay</label>
+                    <field id="cardknox_applepay_info" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="8">
+                        <frontend_model>CardknoxDevelopment\Cardknox\Block\Adminhtml\System\Config\ApplePay\Info</frontend_model>
+                        <config_path>payment/cardknox_apple_pay/domain_registration_info</config_path>
+                    </field>
+                    <field id="cardknox_applepay_active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enabled</label>
+                        <config_path>payment/cardknox_apple_pay/active</config_path>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
+                    <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Title</label>
+                        <config_path>payment/cardknox_apple_pay/title</config_path>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="merchant_identifier" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Merchant Identifier</label>
+                        <config_path>payment/cardknox_apple_pay/merchant_identifier</config_path>
+                        <validate>required-entry</validate>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="environment" type="select" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="40">
+                        <label>Environment</label>
+                        <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\ConfigApplePayEnvironment</source_model>
+                        <config_path>payment/cardknox_apple_pay/environment</config_path>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="ap_button_style" type="select" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="50">
+                        <label>Apple Pay Button Style</label>
+                        <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\ConfigApplePayButton</source_model>
+                        <config_path>payment/cardknox_apple_pay/ap_button_style</config_path>
+                        <comment>The Apple Pay place order button style</comment>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="ap_button_type" type="select" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="60">
+                        <label>Apple Pay Button Type</label>
+                        <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\ConfigApplePayButtonType</source_model>
+                        <config_path>payment/cardknox_apple_pay/ap_button_type</config_path>
+                        <comment>The Apple Pay place order button style</comment>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+
+                    <field id="payment_action" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Payment Action</label>
+                        <source_model>CardknoxDevelopment\Cardknox\Model\Adminhtml\Source\PaymentAction</source_model>
+                        <config_path>payment/cardknox_apple_pay/payment_action</config_path>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="allowspecific" translate="label" type="allowspecific" showInDefault="9"
+                        showInWebsite="1" showInStore="0" sortOrder="70">
+                        <label>Payment From Applicable Countries</label>
+                        <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                        <config_path>payment/cardknox_apple_pay/allowspecific</config_path>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="specificcountry" translate="label" type="multiselect" showInDefault="1"
+                        showInWebsite="1" showInStore="0" sortOrder="80">
+                        <label>Payment From Specific Countries</label>
+                        <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                        <config_path>payment/cardknox_apple_pay/specificcountry</config_path>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="sort_order" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                        showInStore="0" sortOrder="90">
+                        <label>Sort Order</label>
+                        <frontend_class>validate-number</frontend_class>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
                         </depends>
                     </field>
                 </group>
