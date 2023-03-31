@@ -1,4 +1,5 @@
 name: Magento2 Build & Run Unit Tests
+
 on: 
   push:
     branches-ignore: 
@@ -9,6 +10,7 @@ jobs:
   magento2-build:
     runs-on: ubuntu-latest
     name: Magento2 Build & Run Unit Tests
+    
     services:
       mysql:
         image: docker://mysql:8.0
