@@ -8,7 +8,7 @@ on:
 jobs:
   magento2-build:
     runs-on: ubuntu-latest
-    name: 'm2 unit tests & build'
+    name: 'm2 build & run cardknox unit tests'
     services:
       mysql:
         image: docker://mysql:8.0
@@ -18,11 +18,6 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      #elasticsearch:
-        #image: docker://elasticsearch:7.1.0
-        #ports:
-        #  - 9200:9200
-        #options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
       opensearch:
         image: ghcr.io/mad-i-t/magento-opensearch:2.5.0
         ports:
@@ -31,91 +26,50 @@ jobs:
      
     steps:
     - uses: actions/checkout@v3
-
-    # try installing another magento
+      with:
+        path: Cardknox
+​
+    # try installing magento
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
-        magento_version: 2.4.4
+        magento_version: 2.4.5
         no_push: 1
     
-    #- name: Setup PHP
-    #  uses: shivammathur/setup-php@v2
-    
     - name: Install Dependencies
       run: |
         cd magento
         sudo composer install
-    
-    - name: Install Dependencies
+​
+    - name: Check Path & Create directories code/CardknoxDevelopment into app directory
       run: |
-        sudo composer install
-
-    #- name: Run Unit Tests
-    #  run: |
-    #    sudo php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist Test
-
-    - name: Compile Magento
+        pwd
+        ls
+        cd magento
+        ls
+        cd app
+        ls 
+        sudo mkdir code
+        cd code
+        sudo mkdir CardknoxDevelopment
+        cd CardknoxDevelopment         
+      
+    - name: Move Cardknox module to app/code/CardknoxDevelopment
       run: |
-        sudo php magento/bin/magento module:status
+        sudo mv Cardknox magento/app/code/CardknoxDevelopment
+        cd magento/app/code/CardknoxDevelopment
+        pwd
+        ls
+​
+    - name: Enable CardknoxDevelopment_Cardknox module 
+      run: |
         sudo php magento/bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
-        sudo php magento/bin/magento setup:upgrade
-      #  composer update
-      #         sudo php bin/magento setup:di:compile
-      #  sudo php bin/magento deploy:mode:set developer
-      #  sudo php bin/magento config:set dev/template/allow_symlink 1 --lock-env
-        
-      #  sudo php bin/magento module:enable --all
-      #  sudo composer install
-      #  sudo php bin/magento setup:upgrade
-      #  sudo php bin/magento setup:install --base-url=http://127.0.0.1:3306/  --db-host=localhost --db-name=magento --db-user=root --db-password=magento  --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US  --currency=USD --timezone=America/Chicago --use-rewrites=1
-
-
-    - name: Check Paths
-      run: |
-        pwd
-        ls
-        echo CHANGING TO MAGENTO ---------------
-        cd magento
-        ls
-        echo CHANGING TO VENDER ---------------
-        cd vendor
-        ls
-        echo CHANGING TO PHPUNIT ---------------
-        cd phpunit
-        ls
-        echo CHANGING TO PHPUNIT ---------------
-        cd phpunit
-        ls
-
-    - name: Check Paths2
-      run: |
-        pwd
-        ls
-        echo CHANGING TO VENDER ---------------
-        cd vendor
-        ls
-        echo CHANGING TO PHPUNIT ---------------
-        cd phpunit
-        ls
-        echo CHANGING TO PHPUNIT ---------------
-        cd phpunit
-        ls
-
+        sudo php magento/bin/magento setup:di:compile
+        sudo chmod -R 777 magento/generated/ magento/var/ magento/pub/
+        sudo php magento/bin/magento module:status
+    
     - name: Run Unit Tests
       run: |
-        php magento/vendor/phpunit/phpunit/phpunit -c magento/dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment_Cardknox/Test
-        
-    #- name: 'this step will build an magento artifact'
-    #  uses: MAD-I-T/magento-actions@v3.20
-    #  with:
-    #    process: 'build'
-        
-    #- name: 'Run Magento unit tests'
-    #  uses: MAD-I-T/magento-actions@v3.20
-    #  with:
-    #    process: 'unit-test'
-    #    unit_test_subset_path: '../Test/'
-      #  unit_test_config: 'dev/tests/unit/phpunit.xml.dist'
-        
+        cd magento
+        sudo php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
