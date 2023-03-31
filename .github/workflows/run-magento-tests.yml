@@ -50,12 +50,10 @@ jobs:
         sudo mkdir code
         cd code
         sudo mkdir CardknoxDevelopment
-        cd CardknoxDevelopment         
       
     - name: Move Cardknox Module
       run: |
         sudo mv Cardknox magento/app/code/CardknoxDevelopment
-        cd magento/app/code/CardknoxDevelopment
 
     - name: Enable Cardknox module 
       run: |
