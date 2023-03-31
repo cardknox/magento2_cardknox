@@ -41,27 +41,21 @@ jobs:
         cd magento
         sudo composer install
 
-    - name: Check Path & Create directories code/CardknoxDevelopment into app directory
+    - name: Create Directories for Cardknox Module
       run: |
-        pwd
-        ls
         cd magento
-        ls
         cd app
-        ls 
         sudo mkdir code
         cd code
         sudo mkdir CardknoxDevelopment
         cd CardknoxDevelopment         
       
-    - name: Move Cardknox module to app/code/CardknoxDevelopment
+    - name: Move Cardknox Module
       run: |
         sudo mv Cardknox magento/app/code/CardknoxDevelopment
         cd magento/app/code/CardknoxDevelopment
-        pwd
-        ls
 
-    - name: Enable CardknoxDevelopment_Cardknox module 
+    - name: Enable Cardknox module 
       run: |
         sudo php magento/bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php magento/bin/magento setup:di:compile
