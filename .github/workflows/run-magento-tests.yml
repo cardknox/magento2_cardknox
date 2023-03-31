@@ -28,8 +28,7 @@ jobs:
     - uses: actions/checkout@v3
       with:
         path: Cardknox
-​
-    # try installing magento
+
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
       with:
