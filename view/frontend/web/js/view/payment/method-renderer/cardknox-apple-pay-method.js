@@ -61,7 +61,7 @@ define([
         },
 
         initCardknox: function () {
-            setAccount(window.checkoutConfig.payment.cardknox_apple_pay.xKey, "Magento2", "1.0.14");
+            setAccount(window.checkoutConfig.payment.cardknox_apple_pay.xKey, "Magento2", "1.0.16");
         },
 
         /**
