@@ -40,7 +40,7 @@ jobs:
       run: |
         cd magento
         sudo composer install
-​
+
     - name: Check Path & Create directories code/CardknoxDevelopment into app directory
       run: |
         pwd
@@ -60,7 +60,7 @@ jobs:
         cd magento/app/code/CardknoxDevelopment
         pwd
         ls
-​
+
     - name: Enable CardknoxDevelopment_Cardknox module 
       run: |
         sudo php magento/bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
