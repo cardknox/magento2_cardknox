@@ -272,7 +272,7 @@
             <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
             <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
             <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
-            <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument> 
+            <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
     <!-- Cancel Request -->
@@ -362,7 +362,7 @@
             <argument name="code" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\GooglePayConfigProvider::CODE</argument>
             <argument name="valueHandlerPool" xsi:type="object">CardknoxGpayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">CardknoxGpayCommandPool</argument>
-            <argument name="formBlockType" xsi:type="object">CardknoxDevelopment\GooglePay\Block\Form</argument>
+            <argument name="formBlockType" xsi:type="object">CardknoxDevelopment\Cardknox\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
             <argument name="validatorPool" xsi:type="object">CardknoxGpayValidatorPool</argument>
         </arguments>
@@ -476,4 +476,121 @@
             type="CardknoxDevelopment\Cardknox\Plugin\OrderManagement"
             sortOrder="10"/>
     </type>
+
+    <!-- Apple Pay -->
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="CardknoxApplePayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ApplePayConfigProvider::CODE</argument>
+            <argument name="valueHandlerPool" xsi:type="object">CardknoxApplePayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">CardknoxApplePayCommandPool</argument>
+            <argument name="formBlockType" xsi:type="object">CardknoxDevelopment\Cardknox\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
+            <argument name="validatorPool" xsi:type="object">CardknoxApplePayValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="CardknoxApplePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">CardknoxApplePayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CardknoxApplePayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">CardknoxApplePayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Configuration reader -->
+    <virtualType name="CardknoxApplePayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">CardknoxDevelopment\Cardknox\Model\Ui\ApplePayConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+     <!-- Commands infrastructure -->
+     <virtualType name="CardknoxApplePayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">CardknoxApplePayAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">CardknoxApplePayCaptureCommand</item>
+                <item name="void" xsi:type="string">CardknoxVoidCommand</item>
+                <item name="refund" xsi:type="string">CardknoxRefundCommand</item>
+                <item name="cancel" xsi:type="string">CardknoxCancelCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+     <!-- Authorize command -->
+    <virtualType name="CardknoxApplePayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxApplePayAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxApplePayVaultResponseHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorization Request -->
+    <virtualType name="CardknoxApplePayAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\ApplePayAuthorizationRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\ApplePayBaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture command -->
+    <virtualType name="CardknoxApplePayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CardknoxApplePayCaptureRequest</argument>
+            <argument name="handler" xsi:type="object">CardknoxVaultResponseHandler</argument>
+            <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+            <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Request -->
+    <virtualType name="CardknoxApplePayCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\ApplePayCaptureRequest</item>
+                <item name="Data" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\DataRequest</item>
+                <item name="Base" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Request\ApplePayBaseRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Response handlers -->
+    <virtualType name="CardknoxApplePayVaultResponseHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="txnid" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Response\TxnIdHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cardknox Apple Pay validators infrastructure -->
+    <virtualType name="CardknoxApplePayCountryValidator" type="CardknoxDevelopment\Cardknox\Gateway\Validator\ApplePayCountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Config\ApplePayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CardknoxApplePayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">CardknoxDevelopment\Cardknox\Gateway\Validator\ApplePayCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
 </config>
