@@ -5,6 +5,8 @@ on:
     branches-ignore: 
       - 'master'
       - 'rc/*/*/*'
+    branches: 
+      - pritesh-lr:master
       
 jobs:
   magento2-build:
@@ -35,7 +37,7 @@ jobs:
       uses: MAD-I-T/magento-actions@v3.20
       with:
         process: 'install-mage-os'
-        magento_version: 2.4.5
+        magento_version: 2.4.6
         no_push: 1
     
     - name: Install Dependencies
@@ -65,4 +67,5 @@ jobs:
     - name: Run Unit Tests
       run: |
         cd magento
+        sudo sed -i "/<string>allure.*/c\<directory>allure/allure.config.php</directory>" dev/tests/unit/phpunit.xml.dist
         sudo php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
