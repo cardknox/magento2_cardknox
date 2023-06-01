@@ -5,7 +5,10 @@ on:
     branches-ignore: 
       - 'master'
       - 'rc/*/*/*'
-      
+  pull_request:
+    types:
+      - opened
+          
 jobs:
   magento2-build:
     runs-on: ubuntu-latest
