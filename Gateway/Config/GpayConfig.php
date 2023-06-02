@@ -30,6 +30,11 @@ class GpayConfig
     private $scopeConfig;
 
     /**
+     * @var mixed
+     */
+    public $pathPattern;
+
+    /**
      * @param ScopeConfigInterface $scopeConfig
      * @param string $pathPattern
      */
