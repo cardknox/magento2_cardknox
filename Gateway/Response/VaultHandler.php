@@ -5,6 +5,8 @@
  */
 namespace CardknoxDevelopment\Cardknox\Gateway\Response;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
@@ -52,6 +54,11 @@ class VaultHandler implements HandlerInterface
     private $logger;
 
     /**
+     * @var Json
+     */
+    protected $serializer;
+
+    /**
      * Constructor function
      *
      * @param PaymentTokenInterfaceFactory $paymentTokenFactory
@@ -59,19 +66,23 @@ class VaultHandler implements HandlerInterface
      * @param Config $config
      * @param Logger $logger
      * @param EncryptorInterface $encryptor
+     * @param Json|null $serializer
      */
     public function __construct(
         PaymentTokenInterfaceFactory $paymentTokenFactory,
         OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory,
         Config $config,
         Logger $logger,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        Json $serializer = null
     ) {
         $this->paymentTokenFactory = $paymentTokenFactory;
         $this->paymentExtensionFactory = $paymentExtensionFactory;
         $this->config = $config;
         $this->logger = $logger;
         $this->encryptor = $encryptor;
+        $this->serializer = $serializer ?: ObjectManager::getInstance()
+            ->get(Json::class);
     }
 
     /**
@@ -187,9 +198,9 @@ class VaultHandler implements HandlerInterface
      * @param array $details
      * @return string
      */
-    private function convertDetailsToJSON($details)
+    private function convertDetailsToJSON($details): string
     {
-        $json = \Zend_Json::encode($details);
+        $json = $this->serializer->serialize($details);
         return $json ? $json : '{}';
     }
 

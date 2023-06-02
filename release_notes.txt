@@ -1,1 +1,4 @@
-* Added support for Apple Pay
+- Added support for Apple Pay
+- Compatible with magento v2.4.6 & php 8.1
+- Security updates
+- Fix PHPUnit test failed 

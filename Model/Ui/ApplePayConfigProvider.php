@@ -60,7 +60,6 @@ class ApplePayConfigProvider implements ConfigProviderInterface
                     'title' => $this->applePayConfig->getApplePayTitle(),
                     'merchantIdentifier' => $this->applePayConfig->getMerchantIdentifier(),
                     'tokenKey' => $this->config->getTokenKey(),
-                    'xKey' => $this->config->getTransactionKey(),
                     'button'  => $this->applePayConfig->getButtonStyle(),
                     'type'  => $this->applePayConfig->getApplePayButtonType(),
                     'xPaymentAction' => $this->applePayConfig->getGPayPaymentAction()
