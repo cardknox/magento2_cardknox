@@ -12,21 +12,25 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class TransferFactoryTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var TransferBuilder
+     */
+    private $transferBuilder;
+    
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @var TransferInterface
+     */
+    private $transferMock;
 
     /**
      * @var TransferFactory
      */
     private $transferFactory;
-
-    /**
-     * @var String
-     */
-    private $transferMock;
-
-    /**
-     * @var Config
-     */
-    private $config;
 
     /**
      * setUp function

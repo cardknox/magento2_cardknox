@@ -20,6 +20,32 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
     public const XCVV = '123';
     public const CC_EXP_MONTH = 10;
     public const CC_EXP_YEAR = 2018;
+    
+    /**
+     * @var Event\Observer
+     */
+    private $observerContainer;
+
+    /**
+     * @var Event
+     */
+    private $event;
+
+    /**
+     * @var InfoInterface
+     */
+    private $paymentInfoModel;
+
+    /**
+     * @var DataObject
+     */
+    private $dataObject;
+
+    /**
+     * @var DataAssignObserver
+     */
+    private $observer;
+
     /**
      * @return void
      */

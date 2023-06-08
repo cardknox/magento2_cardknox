@@ -39,6 +39,11 @@ class DataTest extends TestCase
     private $helper;
 
     /**
+     * @var ConfigInterface
+     */
+    private $_outputConfig;
+
+    /**
      * @return void
      */
     protected function setUp(): void

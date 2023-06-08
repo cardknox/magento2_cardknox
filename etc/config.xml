@@ -42,6 +42,7 @@
                 <recaptchaEnabled></recaptchaEnabled>
                 <visible_api_key></visible_api_key>
                 <visible_api_secret></visible_api_secret>
+                <select_recaptcha_source>google.com</select_recaptcha_source>
                 <allowspecific>0</allowspecific>
             </cardknox>
             <cardknox_cc_vault>

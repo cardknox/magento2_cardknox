@@ -9,6 +9,7 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Model\Ui;
 use CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\View\Asset\Repository as AssetRepository;
 
 class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,6 +28,11 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $configProvider;
 
+    /**
+     * @var AssetRepository
+     */
+    private $assetRepository;
+
     protected function setUp(): void
     {
         $this->config = $this->getMockBuilder(Config::class)
@@ -35,11 +41,22 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
         $this->resolverInterface = $this->getMockBuilder(ResolverInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configProvider = new ConfigProvider($this->config, $this->resolverInterface);
+        $this->assetRepository = $this->getMockBuilder(AssetRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->configProvider = new ConfigProvider(
+            $this->config,
+            $this->resolverInterface,
+            $this->assetRepository
+        );
     }
 
     public function testGetConfig()
     {
+        $recaptchaNetApiJsPath = "https://example.com/path/CardknoxDevelopment_Cardknox/js/recaptcha/api.js";
+        $recaptchaEnJsPath = "https://example.com/path/CardknoxDevelopment_Cardknox/js/recaptcha/recaptcha__en.js";
+
         static::assertEquals(
             [
                 'payment' => [
@@ -51,10 +68,35 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                         'googleReCaptchaSiteKey' => null,
                         'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
                         'xPaymentAction' => $this->config->getCCPaymentAction(),
+                        'recaptchaNetApiJsPath' => '',
+                        'recaptchaEnJsPath' => '',
+                        'selectRecaptchaSource' => $this->config->getSelectReCaptchaSource()
                     ],
                 ],
             ],
             $this->configProvider->getConfig()
         );
+    }
+
+    /**
+     * Get recaptcha.net api.js path function
+     *
+     * @return string
+     */
+    public function getRecaptchaNetApiJsPath()
+    {
+        return $this->assetRepository->createAsset('CardknoxDevelopment_Cardknox::js/recaptcha/api.js')->getUrl();
+    }
+
+    /**
+     * Get recaptcha.net recaptcha__en.js path function
+     *
+     * @return string
+     */
+    public function getRecaptchaEnJsPath()
+    {
+        return $this->assetRepository->createAsset(
+            'CardknoxDevelopment_Cardknox::js/recaptcha/recaptcha__en.js'
+        )->getUrl();
     }
 }
