@@ -110,9 +110,6 @@ define(
             isEnabledReCaptcha: function () {
                 return window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == 1;
             },
-            recaptchaNetApiJsPath: function () {
-                return window.checkoutConfig.payment.cardknox.recaptchaNetApiJsPath;
-            },
             getSiteKeyV2: function () {
                 return window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey;
             },

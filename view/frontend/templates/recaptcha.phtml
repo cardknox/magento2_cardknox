@@ -7,5 +7,7 @@ $selectReCaptchaSource = $viewModel->getSelectReCaptchaSource();
 
 
 if ($isEnabledReCaptcha && $selectReCaptchaSource == "recaptcha.net") : ?>
-    <script src="https://www.recaptcha.net/recaptcha/api.js" async defer></script>
+    <script>
+        require(['https://www.recaptcha.net/recaptcha/api.js']);
+    </script>
 <?php endif;?>
