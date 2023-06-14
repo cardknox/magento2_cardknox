@@ -6,18 +6,22 @@
 
 namespace CardknoxDevelopment\Cardknox\Gateway\Http\Client;
 
-use Magento\Framework\HTTP\ZendClientFactory;
-use Magento\Framework\HTTP\ZendClient;
+use LogicException;
+use RuntimeException;
+use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\Webapi\Rest\Request;
+use Magento\Payment\Gateway\Http\ClientException;
 use Magento\Payment\Gateway\Http\ClientInterface;
+use Magento\Payment\Gateway\Http\ConverterException;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
 
 class Client implements ClientInterface
 {
     /**
-     * @var ZendClientFactory
+     * @var Curl
      */
-    private $clientFactory;
+    protected $curl;
 
     /**
      * @var Logger
@@ -25,14 +29,14 @@ class Client implements ClientInterface
     private $logger;
 
     /**
-     * @param ZendClientFactory $clientFactory
+     * @param Curl $curl
      * @param Logger $logger
      */
     public function __construct(
-        ZendClientFactory $clientFactory,
+        Curl $curl,
         Logger $logger
     ) {
-        $this->clientFactory = $clientFactory;
+        $this->curl = $curl;
         $this->logger = $logger;
     }
 
@@ -49,39 +53,34 @@ class Client implements ClientInterface
             'request_uri' => $transferObject->getUri()
         ];
         $result = [];
-
-        $client = $this->clientFactory->create();
-        $client->setConfig($transferObject->getClientConfig());
-        $client->setMethod($transferObject->getMethod());
+        
+        $this->curl->setHeaders($transferObject->getHeaders());
 
         switch ($transferObject->getMethod()) {
-            case \Zend_Http_Client::GET:
-                $client->setParameterGet($transferObject->getBody());
+            case Request::METHOD_GET:
+                $this->curl->get($transferObject->getUri());
                 break;
-            case \Zend_Http_Client::POST:
-                $client->setParameterPost($transferObject->getBody());
+            case Request::METHOD_POST:
+                $this->curl->post($transferObject->getUri(), $transferObject->getBody());
                 break;
             default:
-                throw new \LogicException(
+                throw new LogicException(
                     sprintf(
                         'Unsupported HTTP method %s',
                         $transferObject->getMethod()
                     )
                 );
         }
-        $client->setHeaders($transferObject->getHeaders());
-        $client->setUrlEncodeBody($transferObject->shouldEncode());
-        $client->setUri($transferObject->getUri());
+
         try {
-            $response = $client->request();
             //phpcs:disable
-            parse_str($response->getBody(), $result);
+            parse_str($this->curl->getBody(), $result);
             //phpcs:enable
             $log['response'] = $result;
-        } catch (\Zend_Http_Client_Exception $e) {
-            throw new \Magento\Payment\Gateway\Http\ClientException(
-                __($e->getMessage())
-            );
+        } catch (RuntimeException $e) {
+            throw new ClientException(__($e->getMessage()));
+        } catch (ConverterException $e) {
+            throw $e;
         } finally {
             $this->logger->debug($log);
         }

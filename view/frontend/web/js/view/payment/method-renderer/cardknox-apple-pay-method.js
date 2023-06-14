@@ -34,7 +34,6 @@ define([
         initialize: function () {
             console.log('js loaded');
             this._super();
-            this.initCardknox();
 
             return this;
         },
@@ -58,10 +57,6 @@ define([
 
         getCode: function () {
             return METHOD_ID;
-        },
-
-        initCardknox: function () {
-            setAccount(window.checkoutConfig.payment.cardknox_apple_pay.xKey, "Magento2", "1.0.16");
         },
 
         /**
