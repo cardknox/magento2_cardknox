@@ -155,7 +155,6 @@ define(
                  */
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);
-                
                 /**
                  * For google recaptcha
                 */
