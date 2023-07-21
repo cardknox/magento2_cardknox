@@ -64,6 +64,7 @@ class BaseRequest implements BuilderInterface
                 $order->getStoreId()
             ),
             'xIP' => $order->getRemoteIp(),
+            'xSupports64BitRefnum' => true,
         ];
     }
 }
