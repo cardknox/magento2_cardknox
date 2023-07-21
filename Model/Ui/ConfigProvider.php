@@ -23,6 +23,13 @@ class ConfigProvider implements ConfigProviderInterface
     private $config;
 
     /**
+     * ResolverInterface variable
+     *
+     * @var ResolverInterface
+     */
+    private $localeResolver;
+
+    /**
      * ConfigProvider function
      *
      * @param Config $config
@@ -32,7 +39,6 @@ class ConfigProvider implements ConfigProviderInterface
         Config $config,
         ResolverInterface $localeResolver
     ) {
-    
         $this->config = $config;
     }
 
@@ -52,7 +58,8 @@ class ConfigProvider implements ConfigProviderInterface
                     'googleReCaptchaSiteKey' => $this->config->getGoogleRepCaptchaSiteKey(),
                     'ccVaultCode' => self::CC_VAULT_CODE,
                     'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
-                    'xPaymentAction' => $this->config->getCCPaymentAction()
+                    'xPaymentAction' => $this->config->getCCPaymentAction(),
+                    'selectRecaptchaSource' => $this->config->getSelectReCaptchaSource()
                 ]
             ]
         ];

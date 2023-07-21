@@ -116,16 +116,19 @@ define(
             onloadCallbackV2: function () {
                 var cardknox_recaptcha_widget;
                 setTimeout(function(){ 
-                    if($('#cardknox_recaptcha').length) {
-                        cardknox_recaptcha_widget = grecaptcha.render('cardknox_recaptcha', {
-                            'sitekey' : window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey,
-                            'callback': function (response) {
+                    if ($('#cardknox_recaptcha').length) {
+                        // If cardknox recaptcha enabled
+                        if (window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == '1') {
+                            cardknox_recaptcha_widget = grecaptcha.render('cardknox_recaptcha', {
+                                'sitekey': window.checkoutConfig.payment.cardknox.googleReCaptchaSiteKey,
+                                'callback': function (response) {
                                     $('#cardknox_recaptcha .g-recaptcha-response').val(response);
                                 },
-                            'expired-callback' : function (){
-                                $('#cardknox_recaptcha .g-recaptcha-response').val('');
-                            }
-                        });
+                                'expired-callback': function () {
+                                    $('#cardknox_recaptcha .g-recaptcha-response').val('');
+                                }
+                            });
+                        }
                     }
                 }, 2000);
                 return cardknox_recaptcha_widget;
@@ -152,13 +155,22 @@ define(
                  */
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);
-
                 /**
                  * For google recaptcha
-                 */
-                this.onloadCallbackV2();
-                require(['https://www.google.com/recaptcha/api.js?onload=onloadCallbackV2&render=explicit']);
-
+                */
+                
+                // If cardknox recaptcha enabled
+                var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
+                
+                if (isEnabledGoogleReCaptcha == true) {
+                    var selectRecaptchaSource = window.checkoutConfig.payment.cardknox.selectRecaptchaSource;
+                    var recaptchaApiJs = null;
+                    if (selectRecaptchaSource == "google.com") {
+                        recaptchaApiJs = 'https://www.google.com/recaptcha/api.js'; 
+                        require([recaptchaApiJs + '?onload=onloadCallbackV2&render=explicit']);
+                    } 
+                    this.onloadCallbackV2();
+                }
                 /*
                  * [Optional]
                  * Use addIfieldCallback(event, callback) to set callbacks for when the event is triggered inside the ifield

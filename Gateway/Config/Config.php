@@ -18,7 +18,8 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public const GOOGLE_REPCAPTCHA_SITE_KEY = "visible_api_key";
     public const CC_PAYMENT_ACTION = "payment_action";
     public const CC_SPLIT_CAPTURE_ENABLED = "split_capture_enabled";
-    
+    public const CC_SELECT_RECAPTCHA_SOURCE = "select_recaptcha_source";
+
     /**
      * IsActive function
      *
@@ -111,5 +112,17 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function isCCSplitCaptureEnabled()
     {
         return (bool) $this->getValue(self::CC_SPLIT_CAPTURE_ENABLED);
+    }
+
+    /**
+     * Select recaptcha source function
+     *
+     * Either google.com or recaptcha.net
+     *
+     * @return string
+     */
+    public function getSelectReCaptchaSource()
+    {
+        return $this->getValue(self::CC_SELECT_RECAPTCHA_SOURCE);
     }
 }

@@ -1,0 +1,13 @@
+<?php // phpcs:disable
+
+/** @var $viewModel \CardknoxDevelopment\Cardknox\ViewModel\Data */
+$viewModel = $block->getViewModel();
+$isEnabledReCaptcha = $viewModel->isEnabledReCaptcha();
+$selectReCaptchaSource = $viewModel->getSelectReCaptchaSource();
+
+
+if ($isEnabledReCaptcha && $selectReCaptchaSource == "recaptcha.net") : ?>
+    <script>
+        require(['https://www.recaptcha.net/recaptcha/api.js']);
+    </script>
+<?php endif;?>

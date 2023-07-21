@@ -35,7 +35,11 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
         $this->resolverInterface = $this->getMockBuilder(ResolverInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configProvider = new ConfigProvider($this->config, $this->resolverInterface);
+
+        $this->configProvider = new ConfigProvider(
+            $this->config,
+            $this->resolverInterface
+        );
     }
 
     public function testGetConfig()
@@ -51,6 +55,7 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                         'googleReCaptchaSiteKey' => null,
                         'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
                         'xPaymentAction' => $this->config->getCCPaymentAction(),
+                        'selectRecaptchaSource' => $this->config->getSelectReCaptchaSource()
                     ],
                 ],
             ],

@@ -73,6 +73,15 @@
                         <field id="recaptchaEnabled">1</field>
                     </depends>
                 </field>
+                <field id="select_recaptcha_source" translate="label comment" type="select" sortOrder="154" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Select reCaptcha Source</label>
+                    <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\SelectRecaptchaSource</source_model>
+                    <config_path>payment/cardknox/select_recaptcha_source</config_path>
+                    <comment><![CDATA[If you are not sure if your country blocks Google then you may leave this as default. Otherwise, if your country blocks google.com requests then please select the suggested recapatcha.net alternative.]]></comment>
+                    <depends>
+                        <field id="recaptchaEnabled">1</field>
+                    </depends>
+                </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="130" showInDefault="9"
                        showInWebsite="1" showInStore="0">
                     <label>Payment From Applicable Countries</label>

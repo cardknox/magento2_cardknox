@@ -24,6 +24,21 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $resultMock;
 
+    /**
+     * @var Logger
+     */
+    private $mockLogger;
+
+    /**
+     * @var Payment
+     */
+    private $paymentModel;
+
+    /**
+     * @var ResponseCodeValidator
+     */
+    private $validator;
+
     public function setUp(): void
     {
         $this->resultFactory = $this->getMockBuilder(

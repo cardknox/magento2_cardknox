@@ -10,6 +10,9 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     protected $scopeConfig;
 
     public const XPATH_FIELD_GOOGLEPAY_ENABLED = 'payment/cardknox_google_pay/active';
+    public const XPATH_FIELD_CC_SELECT_RECAPTCHA_SOURCE = 'payment/cardknox/select_recaptcha_source';
+    public const IS_ENABLE_GOOGLE_REPCAPTCHA = "payment/cardknox/recaptchaEnabled";
+
 
     /**
      * __construct function
@@ -30,6 +33,34 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     {
         return (bool) $this->scopeConfig->getValue(
             self::XPATH_FIELD_GOOGLEPAY_ENABLED,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) ?? false;
+    }
+
+    /**
+     * Cardknox Google Recaptcha enable function
+     *
+     * @return boolean
+     */
+    public function isEnabledReCaptcha(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::IS_ENABLE_GOOGLE_REPCAPTCHA,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) ?? false;
+    }
+
+    /**
+     * Select recaptcha source function
+     *
+     * Either google.com or recaptcha.net
+     *
+     * @return string
+     */
+    public function getSelectReCaptchaSource(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::XPATH_FIELD_CC_SELECT_RECAPTCHA_SOURCE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         ) ?? false;
     }

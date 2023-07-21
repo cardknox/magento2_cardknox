@@ -24,6 +24,31 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
      */
     private $helper;
 
+    /**
+     * @var ConfigInterface
+     */
+    private $configMock;
+
+    /**
+     * @var OrderAdapterInterface
+     */
+    private $orderMock;
+
+    /**
+     * @var PaymentDataObjectInterface
+     */
+    private $paymentDO;
+
+    /**
+     * @var Payment
+     */
+    private $paymentModel;
+
+    /**
+     * @var RefundRequest
+     */
+    private $refundRequest;
+
     protected function setUp(): void
     {
         $this->configMock = $this->createMock(ConfigInterface::class);

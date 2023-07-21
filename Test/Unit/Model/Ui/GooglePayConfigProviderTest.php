@@ -31,9 +31,14 @@ class GooglePayConfigProviderTest extends \PHPUnit\Framework\TestCase
     private $gpayConfig;
 
     /**
+     * @var ResolverInterface
+     */
+    private $resolverInterface;
+
+    /**
      * @var GooglePayConfigProvider
      */
-    private $configProvider;
+    private $gPayConfigProvider;
 
     protected function setUp(): void
     {

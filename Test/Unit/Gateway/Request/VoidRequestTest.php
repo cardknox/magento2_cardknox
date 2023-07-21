@@ -13,6 +13,31 @@ use Magento\Sales\Model\Order\Payment;
 
 class VoidRequestTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var ConfigInterface
+     */
+    private $configMock;
+
+    /**
+     * @var OrderAdapterInterface
+     */
+    private $orderMock;
+
+    /**
+     * @var PaymentDataObjectInterface
+     */
+    private $paymentDO;
+
+    /**
+     * @var Payment
+     */
+    private $paymentModel;
+
+    /**
+     * @var VoidRequest
+     */
+    private $voidRequest;
+
     protected function setUp(): void
     {
         $this->configMock = $this->createMock(ConfigInterface::class);
