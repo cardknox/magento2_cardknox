@@ -73,6 +73,13 @@ class DataAssignObserver extends AbstractDataAssignObserver
         if (isset($xPaymentAction)) {
             $paymentInfo->setAdditionalInformation("xPaymentAction", $additionalData->getData('xPaymentAction'));
         }
+        $isAllowDuplicateTransactionCC = $additionalData->getData('isAllowDuplicateTransactionCC');
+        if (isset($xPaymentAction)) {
+            $paymentInfo->setAdditionalInformation(
+                "isAllowDuplicateTransactionCC",
+                $additionalData->getData('isAllowDuplicateTransactionCC')
+            );
+        }
         $paymentInfo->setAdditionalInformation(
             "shippingAddressFirstname",
             $additionalData->getData('shipping_address_firstname')
