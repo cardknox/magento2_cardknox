@@ -72,7 +72,7 @@ define(
                         'xCardNum': document.getElementsByName("xCardNum")[0].value,
                         'isSplitCapture': window.checkoutConfig.payment.cardknox.isCCSplitCaptureEnabled,
                         'xPaymentAction': window.checkoutConfig.payment.cardknox.xPaymentAction,
-                        'isAllowDuplicateTransactionCC': this.getAllowDuplicateTransactionCC()
+                        'isAllowDuplicateTransaction': this.getAllowDuplicateTransactionCC()
                     }
                 };
                 data['additional_data'] = _.extend(data['additional_data'], this.additionalData);

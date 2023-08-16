@@ -66,7 +66,7 @@ class CaptureRequest implements BuilderInterface
         }
         $cc_exp_month = $payment->getAdditionalInformation("cc_exp_month");
         $cc_exp_year = $payment->getAdditionalInformation("cc_exp_year");
-        $isAllowDuplicateTransactionCC = $payment->getAdditionalInformation("isAllowDuplicateTransactionCC");
+        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         if ($payment->getLastTransId() == '') {
             return [
                 'xCommand' => 'cc:sale',
@@ -78,7 +78,7 @@ class CaptureRequest implements BuilderInterface
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
                 'xIgnoreInvoice' => true,
                 'xTimeoutSeconds' => 55,
-                'xAllowDuplicate' => $isAllowDuplicateTransactionCC
+                'xAllowDuplicate' => $isAllowDuplicateTransaction
             ];
         }
         // phpcs:disable

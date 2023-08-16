@@ -20,6 +20,18 @@
             <!-- /ko -->
             <!--/ko-->
         </div>
+        <div class="ck-allow-duplicate-transaction" data-bind="visible: isAllowDuplicateTransaction">
+            <div class="field choice">
+                <input type="checkbox"
+                    name="is_allow_duplicate_transaction_apay"
+                    class="checkbox"
+                    id="is_allow_duplicate_transaction_apay"
+                    >
+                <label class="label" >
+                    <span><!-- ko i18n: 'Allow Duplicate Transaction'--><!-- /ko --></span>
+                </label>
+            </div>
+        </div>
 
         <!-- ko foreach: getRegion('messages') -->
         <!-- ko template: getTemplate() --><!-- /ko -->
