@@ -7,7 +7,8 @@ define([
     "jquery",
     "ko",
     'Magento_Checkout/js/action/redirect-on-success',
-    'Magento_Checkout/js/action/place-order'
+    'Magento_Checkout/js/action/place-order',
+    'Magento_Checkout/js/model/full-screen-loader',
 ], function (
     Component,
     quote,
@@ -17,7 +18,8 @@ define([
     $,
     ko,
     redirectOnSuccessAction,
-    placeOrderAction
+    placeOrderAction,
+    fullScreenLoader
 ) {
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
