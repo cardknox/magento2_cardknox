@@ -345,12 +345,6 @@ define(
                     placeOrderAction(this.getData(), this.messageContainer)
                 );
             },
-            /**
-             * @return {Boolean}
-             */
-            validate: function () {
-                return true;
-            },
             
             additionalValidator: function () {
                 return additionalValidators.validate();
