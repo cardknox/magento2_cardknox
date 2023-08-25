@@ -61,7 +61,7 @@ class ApplePayAuthorizationRequest implements BuilderInterface
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
         $amount = $this->helper->formatPrice($payment->getAdditionalInformation("xAmount"));
-        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
+        $isAllowDuplicateTransactionApAuth = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         
         return [
             'xAmount' => $amount,
@@ -72,7 +72,7 @@ class ApplePayAuthorizationRequest implements BuilderInterface
             // always true; order number is incremented on every attempt so invoice is always different
             'xIgnoreInvoice' => true,
             'xTimeoutSeconds' => 55,
-            'xAllowDuplicate' => $isAllowDuplicateTransaction
+            'xAllowDuplicate' => $isAllowDuplicateTransactionApAuth
         ];
     }
 }

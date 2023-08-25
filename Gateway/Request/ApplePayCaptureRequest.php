@@ -67,7 +67,7 @@ class ApplePayCaptureRequest implements BuilderInterface
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
         }
-        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
+        $isAllowDuplicateTransactionApCapture = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         
         if ($payment->getLastTransId() == '') {
             return [
@@ -78,7 +78,7 @@ class ApplePayCaptureRequest implements BuilderInterface
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
                 'xIgnoreInvoice' => true,
                 'xTimeoutSeconds' => 55,
-                'xAllowDuplicate' => $isAllowDuplicateTransaction
+                'xAllowDuplicate' => $isAllowDuplicateTransactionApCapture
             ];
         }
 

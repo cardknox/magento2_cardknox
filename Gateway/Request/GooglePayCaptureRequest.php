@@ -67,7 +67,7 @@ class GooglePayCaptureRequest implements BuilderInterface
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
         }
-        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
+        $isAllowDuplicateTransactionGpCapture = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         if ($payment->getLastTransId() == '') {
             return [
                 'xCommand' => 'cc:sale',
@@ -77,7 +77,7 @@ class GooglePayCaptureRequest implements BuilderInterface
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
                 'xIgnoreInvoice' => true,
                 'xTimeoutSeconds' => 55,
-                'xAllowDuplicate' => $isAllowDuplicateTransaction
+                'xAllowDuplicate' => $isAllowDuplicateTransactionGpCapture
             ];
         }
         // phpcs:disable

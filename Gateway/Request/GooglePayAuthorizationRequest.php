@@ -69,7 +69,7 @@ class GooglePayAuthorizationRequest implements BuilderInterface
         if ($isGPaySplitCaptureEnabled == 1 && $gPayPaymentAction == 'authorize') {
             $xRequireSplitCapturable = 1;
         }
-        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
+        $isAllowDuplicateTransactionGpAuth = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         return [
             'xAmount' => $amount,
             'xCommand' => 'cc:authonly',
@@ -80,7 +80,7 @@ class GooglePayAuthorizationRequest implements BuilderInterface
             'xIgnoreInvoice' => true,
             'xTimeoutSeconds' => 55,
             'xRequireSplitCapturable' => $xRequireSplitCapturable,
-            'xAllowDuplicate' => $isAllowDuplicateTransaction
+            'xAllowDuplicate' => $isAllowDuplicateTransactionGpAuth
         ];
     }
 }
