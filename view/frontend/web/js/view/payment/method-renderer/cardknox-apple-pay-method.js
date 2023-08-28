@@ -6,9 +6,9 @@ define([
     'Magento_Checkout/js/model/payment/additional-validators',
     "jquery",
     "ko",
+    'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/action/redirect-on-success',
     'Magento_Checkout/js/action/place-order',
-    'Magento_Checkout/js/model/full-screen-loader',
 ], function (
     Component,
     quote,
@@ -16,10 +16,10 @@ define([
     ifields,
     additionalValidators,
     $,
-    ko,
-    redirectOnSuccessAction,
-    placeOrderAction,
-    fullScreenLoader
+    koForAP,
+    fullScreenLoaderAP,
+    redirectOnSuccessActionAP,
+    placeOrderActionAP
 ) {
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
@@ -33,7 +33,7 @@ define([
             paymentMethodNonce: null,
             xAmount: null
         },
-        isAllowDuplicateTransaction: ko.observable(false),
+        isAllowDuplicateTransaction: koForAP.observable(false),
         /**
          * @return {exports}
          */
@@ -115,7 +115,7 @@ define([
              */
         getPlaceOrderDeferredObject: function () {
             return $.when(
-                placeOrderAction(this.getData(), this.messageContainer)
+                placeOrderActionAP(this.getData(), this.messageContainer)
             );
         },
         /**
@@ -140,7 +140,7 @@ define([
                             self.afterPlaceOrder();
 
                             if (self.redirectAfterPlaceOrder) {
-                                redirectOnSuccessAction.execute();
+                                redirectOnSuccessActionAP.execute();
                             }
                         }
                     ).always(
@@ -175,7 +175,7 @@ define([
                 $(".applepay-error").html("").hide();
             }, 5000);
             
-            fullScreenLoader.stopLoader();
+            fullScreenLoaderAP.stopLoader();
             $('.checkout-cart-index .loading-mask').attr('style','display:none');
         }
     });

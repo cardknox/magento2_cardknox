@@ -5,8 +5,8 @@ define([
     'ifields',
     'Magento_Checkout/js/model/payment/additional-validators',
     "jquery",
-    "ko",
     'Magento_Checkout/js/action/redirect-on-success',
+    "ko",
     'Magento_Checkout/js/action/place-order'
 ], function (
     Component,
@@ -15,9 +15,9 @@ define([
     ifields,
     additionalValidators,
     $,
-    ko,
-    redirectOnSuccessAction,
-    placeOrderAction
+    redirectOnSuccessActionGP,
+    koForGP,
+    placeOrderActionGP
 ) {
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
@@ -31,7 +31,7 @@ define([
             paymentMethodNonce: null,
             xAmount: null
         },
-        isAllowDuplicateTransaction: ko.observable(false),
+        isAllowDuplicateTransaction: koForGP.observable(false),
         /**
          * @return {exports}
          */
@@ -113,7 +113,7 @@ define([
              */
         getPlaceOrderDeferredObject: function () {
             return $.when(
-                placeOrderAction(this.getData(), this.messageContainer)
+                placeOrderActionGP(this.getData(), this.messageContainer)
             );
         },
         /**
@@ -138,7 +138,7 @@ define([
                             self.afterPlaceOrder();
 
                             if (self.redirectAfterPlaceOrder) {
-                                redirectOnSuccessAction.execute();
+                                redirectOnSuccessActionGP.execute();
                             }
                         }
                     ).always(

@@ -8,16 +8,16 @@ define([
     "jquery",
     "ko",
     'Magento_Checkout/js/action/redirect-on-success',
-    'Magento_Checkout/js/action/place-order',
-    'Magento_Checkout/js/model/full-screen-loader'
-], function (VaultComponent,additionalValidators,$,ko,redirectOnSuccessAction,placeOrderAction,fullScreenLoader) {
+    'Magento_Checkout/js/model/full-screen-loader',
+    'Magento_Checkout/js/action/place-order'
+], function (VaultComponent,additionalValidators,$,knockout,redirectOnSuccessActionVault,fullScreenLoaderVault,placeOrderActionVault) {
     'use strict';
 
     return VaultComponent.extend({
         defaults: {
             template: 'CardknoxDevelopment_Cardknox/payment/cardknox-vault-form'
         },
-        isAllowDuplicateTransactionVault: ko.observable(false),
+        isAllowDuplicateTransactionVault: knockout.observable(false),
         /**
          * Get last 4 digits of card
          * @returns {String}
@@ -87,7 +87,7 @@ define([
              */
         getPlaceOrderDeferredObject: function () {
             return $.when(
-                placeOrderAction(this.getData(), this.messageContainer)
+                placeOrderActionVault(this.getData(), this.messageContainer)
             );
         },
         /**
@@ -112,7 +112,7 @@ define([
                             self.afterPlaceOrder();
 
                             if (self.redirectAfterPlaceOrder) {
-                                redirectOnSuccessAction.execute();
+                                redirectOnSuccessActionVault.execute();
                             }
                         }
                     ).always(
@@ -147,7 +147,7 @@ define([
                 $(".ck-vault-error").html("").hide();
             }, 5000);
 
-            fullScreenLoader.stopLoader();
+            fullScreenLoaderVault.stopLoader();
             $('.checkout-cart-index .loading-mask').attr('style','display:none');
         }
     });
