@@ -63,7 +63,7 @@ define(
              * @returns {Object}
              */
             getData: function () {
-                var data = {
+                let data = {
                     'method': this.getCode(),
                     'additional_data': {
                         'cc_exp_year': this.creditCardExpYear(),
@@ -354,8 +354,6 @@ define(
                 if ($('#is_allow_duplicate_transaction_cc').length) {
                     if($("#is_allow_duplicate_transaction_cc").prop('checked') == true){
                         isAllowDuplicateTransactionCC = true;
-                    } else {
-                        isAllowDuplicateTransactionCC = false;
                     }
                 }
                 return isAllowDuplicateTransactionCC;

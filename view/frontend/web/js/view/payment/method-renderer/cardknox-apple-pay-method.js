@@ -71,7 +71,7 @@ define([
          * @returns {Object}
          */
         getData: function () {
-            var data = {
+            let data = {
                 'method': this.getCode(),
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
@@ -102,12 +102,10 @@ define([
             return additionalValidators.validate();
         },
         getAllowDuplicateTransactionApay: function () {
-            var isAllowDuplicateTransactionApay = false;
+            let isAllowDuplicateTransactionApay = false;
             if ($('#is_allow_duplicate_transaction_apay').length) {
                 if($("#is_allow_duplicate_transaction_apay").prop('checked') == true){
                     isAllowDuplicateTransactionApay = true;
-                } else {
-                    isAllowDuplicateTransactionApay = false;
                 }
             }
             return isAllowDuplicateTransactionApay;
@@ -124,7 +122,7 @@ define([
          * Place order.
          */
         placeOrder: function (data, event) {
-            var self = this;
+            let self = this;
 
             if (event) {
                 event.preventDefault();
@@ -153,12 +151,12 @@ define([
                         function (response) {
                             self.isPlaceOrderActionAllowed(true);
 
-                            var error_message = "Unable to process the order. Please try again.";
+                            let errorMessage = "Unable to process the order. Please try again.";
                             if (response && response.responseJSON && response.responseJSON.message) {
-                                error_message = response.responseJSON.message;
+                                errorMessage = response.responseJSON.message;
                             }
-                            self.showPaymentError(error_message);
-                            if (error_message == 'Duplicate Transaction') {
+                            self.showPaymentError(errorMessage);
+                            if (errorMessage == 'Duplicate Transaction') {
                                 self.isAllowDuplicateTransaction(true);
                             } else {
                                 self.isAllowDuplicateTransaction(false);

@@ -68,7 +68,7 @@ define([
          * @returns {Object}
          */
         getData: function () {
-            var data = {
+            let data = {
                 'method': this.getCode(),
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
@@ -100,12 +100,10 @@ define([
             return additionalValidators.validate();
         },
         getAllowDuplicateTransactionGpay: function () {
-            var isAllowDuplicateTransactionGpay = false;
+            let isAllowDuplicateTransactionGpay = false;
             if ($('#is_allow_duplicate_transaction_gpay').length) {
                 if($("#is_allow_duplicate_transaction_gpay").prop('checked') == true){
                     isAllowDuplicateTransactionGpay = true;
-                } else {
-                    isAllowDuplicateTransactionGpay = false;
                 }
             }
             return isAllowDuplicateTransactionGpay;
@@ -122,7 +120,7 @@ define([
          * Place order.
          */
         placeOrder: function (data, event) {
-            var self = this;
+            let self = this;
 
             if (event) {
                 event.preventDefault();
@@ -151,7 +149,7 @@ define([
                         function (response) {
                             self.isPlaceOrderActionAllowed(true);
 
-                            var error_message = "Unable to process the order. Please try again.";
+                            let error_message = "Unable to process the order. Please try again.";
                             if (response && response.responseJSON && response.responseJSON.message) {
                                 error_message = response.responseJSON.message;
                             }

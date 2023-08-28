@@ -53,7 +53,7 @@ define([
          * @returns {*}
          */
         getData: function () {
-            var data = {
+            let data = {
                 method: this.getCode()
             };
 
@@ -74,12 +74,10 @@ define([
             return additionalValidators.validate();
         },
         getAllowDuplicateTransactionVault: function () {
-            var isAllowDuplicateTransactionCkVault = false;
+            let isAllowDuplicateTransactionCkVault = false;
             if ($('#is_allow_duplicate_transaction_vault').length) {
                 if($("#is_allow_duplicate_transaction_vault").prop('checked') == true){
                     isAllowDuplicateTransactionCkVault = true;
-                } else {
-                    isAllowDuplicateTransactionCkVault = false;
                 }
             }
             return isAllowDuplicateTransactionCkVault;
@@ -96,7 +94,7 @@ define([
          * Place order.
          */
         placeOrder: function (data, event) {
-            var self = this;
+            let self = this;
 
             if (event) {
                 event.preventDefault();
@@ -125,7 +123,7 @@ define([
                         function (response) {
                             self.isPlaceOrderActionAllowed(true);
 
-                            var error_message = "Unable to process the order. Please try again.";
+                            let error_message = "Unable to process the order. Please try again.";
                             if (response && response.responseJSON && response.responseJSON.message) {
                                 error_message = response.responseJSON.message;
                             }
