@@ -2,6 +2,7 @@
  * Copyright © 2018 Cardknox Development Inc. All rights reserved.
  * See LICENSE for license details.
  */
+/* tslint:disable: parameters-max-number no-redundant-boolean */
 define([
     'Magento_Vault/js/view/payment/method-renderer/vault',
     'Magento_Checkout/js/model/payment/additional-validators',

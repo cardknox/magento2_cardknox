@@ -1,3 +1,4 @@
+/* tslint:disable: parameters-max-number no-redundant-boolean */
 define([
     'Magento_Checkout/js/view/payment/default',
     'Magento_Checkout/js/model/quote',
