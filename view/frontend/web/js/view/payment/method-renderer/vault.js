@@ -64,8 +64,8 @@ define([
             return data;
         },
         /**
-             * @return {Boolean}
-             */
+         * @return {Boolean}
+         */
         validate: function () {
             return true;
         },
@@ -75,16 +75,16 @@ define([
         },
         getAllowDuplicateTransactionVault: function () {
             let isAllowDuplicateTransactionCkVault = false;
-            if ($('#is_allow_duplicate_transaction_vault').length) {
-                if($("#is_allow_duplicate_transaction_vault").prop('checked')){
+            if ($("#is_allow_duplicate_transaction_"+this.index).length) {
+                if($("#is_allow_duplicate_transaction_"+this.index).prop('checked')){
                     isAllowDuplicateTransactionCkVault = true;
                 }
             }
             return isAllowDuplicateTransactionCkVault;
         },
         /**
-             * @return {*}
-             */
+         * @return {*}
+         */
         getPlaceOrderDeferredObject: function () {
             return $.when(
                 placeOrderActionVault(this.getData(), this.messageContainer)
@@ -149,7 +149,13 @@ define([
 
             fullScreenLoaderVault.stopLoader();
             $('.checkout-cart-index .loading-mask').attr('style','display:none');
-        }
+        },
+        /**
+             * @returns {String}
+             */
+        getIdAllowDuplicateTransaction: function () {
+            return "is_allow_duplicate_transaction_"+this.index;
+        },
     });
 });
 

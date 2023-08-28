@@ -45,21 +45,20 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <div class="ck-allow-duplicate-transaction" data-bind="visible: isAllowDuplicateTransaction">
+        <div class="ck-allow-duplicate-transaction" data-bind="visible: isAllowDuplicateTransactionVault">
             <div class="field choice">
                 <input type="checkbox"
                     name="is_allow_duplicate_transaction_vault"
                     class="checkbox"
-                    id="is_allow_duplicate_transaction_vault"
-                    >
+                    data-bind="attr: {'id': getIdAllowDuplicateTransaction()}">
                 <label class="label" >
                     <span><!-- ko i18n: 'Allow Duplicate Transaction'--><!-- /ko --></span>
                 </label>
             </div>
         </div>
-        <div class="messages">
+        <!-- <div class="messages">
             <div class="message message-error error ck-vault-error" style="display: none;">
-        </div>
+        </div> -->
         <div class="actions-toolbar">
             <div class="primary">
                 <button class="action primary checkout"
