@@ -10,22 +10,14 @@ define([
     'Magento_Checkout/js/action/redirect-on-success',
     'Magento_Checkout/js/action/place-order',
     'Magento_Checkout/js/model/full-screen-loader'
-], function (
-    VaultComponent,
-    additionalValidators,
-    $,
-    ko,
-    redirectOnSuccessAction,
-    placeOrderAction,
-    fullScreenLoader
-) {
+], function (VaultComponent,additionalValidators,$,ko,redirectOnSuccessAction,placeOrderAction,fullScreenLoader) {
     'use strict';
 
     return VaultComponent.extend({
         defaults: {
             template: 'CardknoxDevelopment_Cardknox/payment/cardknox-vault-form'
         },
-        isAllowDuplicateTransaction: ko.observable(false),
+        isAllowDuplicateTransactionVault: ko.observable(false),
         /**
          * Get last 4 digits of card
          * @returns {String}
@@ -82,15 +74,15 @@ define([
             return additionalValidators.validate();
         },
         getAllowDuplicateTransactionVault: function () {
-            var isAllowDuplicateTransactionApay = false;
+            var isAllowDuplicateTransactionCkVault = false;
             if ($('#is_allow_duplicate_transaction_vault').length) {
                 if($("#is_allow_duplicate_transaction_vault").prop('checked') == true){
-                    isAllowDuplicateTransactionApay = true;
+                    isAllowDuplicateTransactionCkVault = true;
                 } else {
-                    isAllowDuplicateTransactionApay = false;
+                    isAllowDuplicateTransactionCkVault = false;
                 }
             }
-            return isAllowDuplicateTransactionApay;
+            return isAllowDuplicateTransactionCkVault;
         },
         /**
              * @return {*}
@@ -139,9 +131,9 @@ define([
                             }
                             self.showPaymentError(error_message);
                             if (error_message == 'Duplicate Transaction') {
-                                self.isAllowDuplicateTransaction(true);
+                                self.isAllowDuplicateTransactionVault(true);
                             } else {
-                                self.isAllowDuplicateTransaction(false);
+                                self.isAllowDuplicateTransactionVault(false);
                             }
                         }
                     );;
@@ -152,9 +144,9 @@ define([
             return false;
         },
         showPaymentError: function (message) {
-            $(".applepay-error").html("<div> "+message+" </div>").show();
+            $(".ck-vault-error").html("<div> "+message+" </div>").show();
             setTimeout(function () { 
-                $(".applepay-error").html("").hide();
+                $(".ck-vault-error").html("").hide();
             }, 5000);
 
             fullScreenLoader.stopLoader();
