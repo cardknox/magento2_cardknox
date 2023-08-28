@@ -2,7 +2,6 @@
  * Copyright © 2018 Cardknox Development Inc. All rights reserved.
  * See LICENSE for license details.
  */
-/* tslint:disable: parameters-max-number no-redundant-boolean */
 define([
     'Magento_Vault/js/view/payment/method-renderer/vault',
     'Magento_Checkout/js/model/payment/additional-validators',
@@ -77,7 +76,7 @@ define([
         getAllowDuplicateTransactionVault: function () {
             let isAllowDuplicateTransactionCkVault = false;
             if ($('#is_allow_duplicate_transaction_vault').length) {
-                if($("#is_allow_duplicate_transaction_vault").prop('checked') == true){
+                if($("#is_allow_duplicate_transaction_vault").prop('checked')){
                     isAllowDuplicateTransactionCkVault = true;
                 }
             }
@@ -125,7 +124,7 @@ define([
                             self.isPlaceOrderActionAllowed(true);
 
                             let error_message = "Unable to process the order. Please try again.";
-                            if (response && response.responseJSON && response.responseJSON.message) {
+                            if (response?.responseJSON?.message) {
                                 error_message = response.responseJSON.message;
                             }
                             self.showPaymentError(error_message);

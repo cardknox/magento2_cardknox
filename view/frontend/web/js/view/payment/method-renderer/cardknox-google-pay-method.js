@@ -1,4 +1,3 @@
-/* tslint:disable: parameters-max-number no-redundant-boolean */
 define([
     'Magento_Checkout/js/view/payment/default',
     'Magento_Checkout/js/model/quote',
@@ -103,7 +102,7 @@ define([
         getAllowDuplicateTransactionGpay: function () {
             let isAllowDuplicateTransactionGpay = false;
             if ($('#is_allow_duplicate_transaction_gpay').length) {
-                if($("#is_allow_duplicate_transaction_gpay").prop('checked') == true){
+                if($("#is_allow_duplicate_transaction_gpay").prop('checked')){
                     isAllowDuplicateTransactionGpay = true;
                 }
             }
@@ -151,7 +150,7 @@ define([
                             self.isPlaceOrderActionAllowed(true);
 
                             let error_message = "Unable to process the order. Please try again.";
-                            if (response && response.responseJSON && response.responseJSON.message) {
+                            if (response?.responseJSON?.message) {
                                 error_message = response.responseJSON.message;
                             }
                             self.showPaymentError(error_message);
