@@ -85,11 +85,7 @@ define([
             cardknoxApplePay.init(this);
         },
         isSupportedApplePay: function () {
-            if (!window.ApplePaySession || !ApplePaySession.canMakePayments()) {
-                return false
-            } else {
-                return true;
-            }
+            return window.ApplePaySession && ApplePaySession.canMakePayments();
         },
         /**
          * @return {Boolean}
