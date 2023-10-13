@@ -158,7 +158,7 @@ define(
                 /**
                  * For google recaptcha
                 */
-                
+
                 // If cardknox recaptcha enabled
                 var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
                 
@@ -228,8 +228,20 @@ define(
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
                     if (!self.cardNumberIsValid() || !self.cvvIsValid()) {
-                        self.showError(!this.cardNumberIsValid() ? "Invalid card" : "Invalid CVV");  
-                        self.isPlaceOrderActionAllowed(true); 
+                        let cardNumberErrorMessage = !this.cardNumberIsValid() ? "Invalid card" : "";
+                        let cvvErrorMessage = !this.cvvIsValid() ? "Invalid CVV" : "";
+                        let errorMessage = '';
+                        if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length > 0){
+                            errorMessage = cardNumberErrorMessage + ' and ' +cvvErrorMessage;
+                        } else if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length == 0) {
+                            errorMessage = cardNumberErrorMessage;
+                        } else if (cardNumberErrorMessage.length == 0 && cvvErrorMessage.length > 0) {
+                            errorMessage = cvvErrorMessage;
+                        }
+                        if (errorMessage.length > 0 ) {
+                            self.showError(errorMessage);
+                        }
+                        self.isPlaceOrderActionAllowed(true);
                         return false;
                     }
                     getTokens(
