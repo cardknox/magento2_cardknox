@@ -21,6 +21,8 @@ define(
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
             cvvIsValid:  ko.observable(false),
+            xCardNumberLength:  ko.observable(false),
+            xCvvLength:  ko.observable(false),
             /**
              * @returns {exports.initialize}
              */
@@ -92,10 +94,10 @@ define(
                 width: '145px',
                 height: '25px'
             },
-            validateCardIfPresent: function(data) {
+            validateCardIfPresent: function (data) {
                 return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;            
             },
-            validateCVVIfPresent: function(data) {
+            validateCVVIfPresent: function (data) {
                return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;     
             },
             validateCVVLengthIfPresent: function(data) {
@@ -185,6 +187,8 @@ define(
                 addIfieldCallback('input', function(data) {
                     if (data.ifieldValueChanged) {
                         self.cardNumberIsValid(self.validateCardIfPresent(data));
+                        self.xCardNumberLength(data.cardNumberLength);
+                        self.xCvvLength(data.cvvLength);
                         setIfieldStyle('card-number', data.cardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
                         if (data.lastIfieldChanged === 'cvv'){
                             self.cvvIsValid(self.validateCVVIfPresent(data));
@@ -227,10 +231,23 @@ define(
                 }
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
+                    let errorMessage = '';
+                    if (self.xCardNumberLength() == false && self.xCvvLength() == false) {
+                        errorMessage = "Card number and CVV are required";
+                    } else if (self.xCardNumberLength() == false) {
+                        errorMessage = "Card number is required";
+                    } else if (self.xCvvLength() == false) {
+                        errorMessage = "CVV is required";
+                    }
+
+                    if (errorMessage.length > 0 ) {
+                        self.showError(errorMessage);
+                        self.isPlaceOrderActionAllowed(true);
+                        return false;
+                    }
                     if (!self.cardNumberIsValid() || !self.cvvIsValid()) {
                         let cardNumberErrorMessage = !this.cardNumberIsValid() ? "Invalid card" : "";
                         let cvvErrorMessage = !this.cvvIsValid() ? "Invalid CVV" : "";
-                        let errorMessage = '';
                         if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length > 0){
                             errorMessage = cardNumberErrorMessage + ' and ' +cvvErrorMessage;
                         } else if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length == 0) {
@@ -247,17 +264,6 @@ define(
                     getTokens(
                         function () {
                             //onSuccess
-                            //perform your own validation here...
-                            if (document.getElementsByName("xCardNum")[0].value === '') {
-                                self.showError("Card Number Required");
-                                self.isPlaceOrderActionAllowed(true);
-                                return false
-                            }
-                            if (document.getElementsByName("xCVV")[0].value === '') {
-                                self.showError("CVV Required");
-                                self.isPlaceOrderActionAllowed(true);
-                                return false
-                            }
                             self.isPlaceOrderActionAllowed(true);
                             return self.placeOrder('parent');
                         },
