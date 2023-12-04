@@ -179,14 +179,17 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 isDebug: true
             };
         },
-        apButtonLoaded: function(resp) {
+        apButtonLoaded: function (resp) {
             if (!resp) return;
+            
             if (resp.status === iStatus.success) {
                 showHide(this.buttonOptions.buttonContainer, true);
                 // showHide("lbAPPayload", true);
             } else if (resp.reason) {
                 jQuery(".applepay-error").html("<div>"+resp.reason+"</div>").show();
                 console.log(resp.reason);
+            } else if(resp.status == -100){
+                jQuery(".applepay-error").html("<div> Apple Pay initialization failed. Apple Pay not supported.</div>").show();
             }
         }
     };

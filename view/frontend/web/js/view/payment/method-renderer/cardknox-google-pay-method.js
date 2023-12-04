@@ -5,7 +5,9 @@ define([
     'ifields',
     'Magento_Checkout/js/model/payment/additional-validators',
     "jquery",
-    "ko"
+    'Magento_Checkout/js/action/redirect-on-success',
+    "ko",
+    'Magento_Checkout/js/action/place-order'
 ], function (
     Component,
     quote,
@@ -13,7 +15,9 @@ define([
     ifields,
     additionalValidators,
     $,
-    ko
+    redirectOnSuccessActionGP,
+    koForGP,
+    placeOrderActionGP
 ) {
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
@@ -27,7 +31,7 @@ define([
             paymentMethodNonce: null,
             xAmount: null
         },
-
+        isAllowDuplicateTransaction: koForGP.observable(false),
         /**
          * @return {exports}
          */
@@ -64,13 +68,14 @@ define([
          * @returns {Object}
          */
         getData: function () {
-            var data = {
+            let data = {
                 'method': this.getCode(),
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
                     'xAmount': this.xAmount,
                     'isSplitCapture': window.checkoutConfig.payment.cardknox_google_pay.isGPaySplitCaptureEnabled,
-                    'xPaymentAction': window.checkoutConfig.payment.cardknox_google_pay.xPaymentAction
+                    'xPaymentAction': window.checkoutConfig.payment.cardknox_google_pay.xPaymentAction,
+                    'isAllowDuplicateTransaction': this.getAllowDuplicateTransactionGpay()
                 }
             };
             data['additional_data'] = _.extend(data['additional_data'], this.additionalData);
@@ -93,6 +98,83 @@ define([
         
         additionalValidator: function () {
             return additionalValidators.validate();
+        },
+        getAllowDuplicateTransactionGpay: function () {
+            let isAllowDuplicateTransactionGpay = false;
+            if ($('#is_allow_duplicate_transaction_gpay').length) {
+                if($("#is_allow_duplicate_transaction_gpay").prop('checked')){
+                    isAllowDuplicateTransactionGpay = true;
+                }
+            }
+            return isAllowDuplicateTransactionGpay;
+        },
+        /**
+             * @return {*}
+             */
+        getPlaceOrderDeferredObject: function () {
+            return $.when(
+                placeOrderActionGP(this.getData(), this.messageContainer)
+            );
+        },
+        /**
+         * Place order.
+         */
+        placeOrder: function (data, event) {
+            let self = this;
+
+            if (event) {
+                event.preventDefault();
+            }
+
+            if (this.validate() &&
+                additionalValidators.validate() &&
+                this.isPlaceOrderActionAllowed() === true
+            ) {
+                this.isPlaceOrderActionAllowed(false);
+
+                this.getPlaceOrderDeferredObject()
+                    .done(
+                        function () {
+                            self.afterPlaceOrder();
+
+                            if (self.redirectAfterPlaceOrder) {
+                                redirectOnSuccessActionGP.execute();
+                            }
+                        }
+                    ).always(
+                        function () {
+                            self.isPlaceOrderActionAllowed(true);
+                        }
+                    ).fail(
+                        function (response) {
+                            self.isPlaceOrderActionAllowed(true);
+
+                            let error_message = "Unable to process the order. Please try again.";
+                            if (response?.responseJSON?.message) {
+                                error_message = response.responseJSON.message;
+                            }
+                            self.showPaymentError(error_message);
+                            if (error_message == 'Duplicate Transaction') {
+                                self.isAllowDuplicateTransaction(true);
+                            } else {
+                                self.isAllowDuplicateTransaction(false);
+                            }
+                        }
+                    );;
+
+                return true;
+            }
+
+            return false;
+        },
+        showPaymentError: function (message) {
+            $(".gpay-error").html("<div> "+message+" </div>").show();
+            setTimeout(function () { 
+                $(".gpay-error").html("").hide();
+            }, 5000);
+            
+            fullScreenLoader.stopLoader();
+            $('.checkout-cart-index .loading-mask').attr('style','display:none');
         }
     });
 });

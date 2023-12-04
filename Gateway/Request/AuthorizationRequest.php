@@ -65,6 +65,7 @@ class AuthorizationRequest implements BuilderInterface
         if ($isCCSplitCaptureEnabled == 1 && $ccPaymentAction == 'authorize') {
             $xRequireSplitCapturable = 1;
         }
+        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         return [
             'xAmount' => $amount,
             'xExp' => sprintf('%02d%02d', $cc_exp_month, substr($cc_exp_year, -2)),
@@ -76,7 +77,8 @@ class AuthorizationRequest implements BuilderInterface
             // always true; order number is incremented on every attempt so invoice is always different
             'xIgnoreInvoice' => true,
             'xTimeoutSeconds' => 55,
-            'xRequireSplitCapturable' => $xRequireSplitCapturable
+            'xRequireSplitCapturable' => $xRequireSplitCapturable,
+            'xAllowDuplicate' => $isAllowDuplicateTransaction
         ];
     }
 }

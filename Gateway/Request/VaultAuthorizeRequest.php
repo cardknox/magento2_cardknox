@@ -47,7 +47,7 @@ class VaultAuthorizeRequest implements BuilderInterface
         $payment = $paymentDO->getPayment();
         $extensionAttributes = $payment->getExtensionAttributes();
         $paymentToken = $extensionAttributes->getVaultPaymentToken();
-
+        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         return [
             'xAmount' => $amount,
             'xToken' => $paymentToken->getGatewayToken(),
@@ -55,7 +55,8 @@ class VaultAuthorizeRequest implements BuilderInterface
             'xInvoice' => $order->getOrderIncrementId(),
             'xCurrency' => $order->getCurrencyCode(),
             'xIgnoreInvoice' => true,
-            'xTimeoutSeconds' => 55
+            'xTimeoutSeconds' => 55,
+            'xAllowDuplicate' => $isAllowDuplicateTransaction
         ];
     }
 }

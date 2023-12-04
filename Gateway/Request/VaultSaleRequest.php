@@ -57,7 +57,7 @@ class VaultSaleRequest implements BuilderInterface
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
         }
-
+        $isAllowDuplicateTransaction = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         if ($payment->getLastTransId() == '') {
             return [
                 'xCommand' => 'cc:sale',
@@ -66,7 +66,8 @@ class VaultSaleRequest implements BuilderInterface
                 'xInvoice' => $order->getOrderIncrementId(),
                 'xCurrency' => $order->getCurrencyCode(),
                 'xIgnoreInvoice' => true,
-                'xTimeoutSeconds' => 55
+                'xTimeoutSeconds' => 55,
+                'xAllowDuplicate' => $isAllowDuplicateTransaction
             ];
         }
 
