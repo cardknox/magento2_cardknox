@@ -75,21 +75,18 @@ define(
             },
             defaultStyle: {
                 border: '2px solid #adadad',
-                'font-size': '14px',
                 padding: '3px',
                 width: '145px',
                 height: '25px'
             },
             validStyle: {
                 border: '2px solid green',
-                'font-size': '14px',
                 padding: '3px',
                 width: '145px',
                 height: '25px'
             },
             invalidStyle: {
                 border: '2px solid red',
-                'font-size': '14px',
                 padding: '3px',
                 width: '145px',
                 height: '25px'
