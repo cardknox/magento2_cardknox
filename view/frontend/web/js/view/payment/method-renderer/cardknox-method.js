@@ -14,9 +14,23 @@ define(
         'Magento_Checkout/js/action/place-order',
         'Magento_Ui/js/model/messageList',
         'Magento_Vault/js/view/payment/vault-enabler',
-        'ko'
+        'ko',
+        'Magento_Checkout/js/action/redirect-on-success',
+        'Magento_Checkout/js/model/payment/additional-validators',
     ],
-    function (Component, $, v, i,fullScreenLoader,placeOrderAction,messageList,VaultEnabler, ko) {
+    function (
+        Component,
+        $,
+        v,
+        i,
+        fullScreenLoader,
+        placeOrderAction,
+        messageList,
+        VaultEnabler,
+        ko,
+        redirectOnSuccessAction,
+        additionalValidators
+    ) {
         'use strict';
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
@@ -35,6 +49,7 @@ define(
             defaults: {
                 template: 'CardknoxDevelopment_Cardknox/payment/cardknox-form'
             },
+            isAllowDuplicateTransaction: ko.observable(false),
             /** Returns send check to info */
             getMailingAddress: function () {
                 return window.checkoutConfig.payment.checkmo.mailingAddress;
@@ -48,7 +63,7 @@ define(
              * @returns {Object}
              */
             getData: function () {
-                var data = {
+                let data = {
                     'method': this.getCode(),
                     'additional_data': {
                         'cc_exp_year': this.creditCardExpYear(),
@@ -56,7 +71,8 @@ define(
                         'xCVV': document.getElementsByName("xCVV")[0].value,
                         'xCardNum': document.getElementsByName("xCardNum")[0].value,
                         'isSplitCapture': window.checkoutConfig.payment.cardknox.isCCSplitCaptureEnabled,
-                        'xPaymentAction': window.checkoutConfig.payment.cardknox.xPaymentAction
+                        'xPaymentAction': window.checkoutConfig.payment.cardknox.xPaymentAction,
+                        'isAllowDuplicateTransaction': this.getAllowDuplicateTransactionCC()
                     }
                 };
                 data['additional_data'] = _.extend(data['additional_data'], this.additionalData);
@@ -259,7 +275,44 @@ define(
                                 return false
                             }
                             self.isPlaceOrderActionAllowed(true);
-                            return self.placeOrder('parent');
+                            
+                            /**
+                             * Validation
+                             * Place Order action
+                             * Display Allow duplicate transaction checkbox if getting an error = Duplicate Transaction
+                             */
+                            if (self.validate() &&
+                                additionalValidators.validate() &&
+                                self.isPlaceOrderActionAllowed() === true
+                            ) {
+                                self.isPlaceOrderActionAllowed(false);
+                                self.getPlaceOrderDeferredObject()
+                                    .done(
+                                        function () {
+                                            self.afterPlaceOrder();
+
+                                            if (self.redirectAfterPlaceOrder) {
+                                                redirectOnSuccessAction.execute();
+                                            }
+                                        }
+                                    ).always(
+                                        function () {
+                                            self.isPlaceOrderActionAllowed(true);
+                                        }
+                                    ).fail(
+                                        function (response) {
+                                            self.isPlaceOrderActionAllowed(true);
+                                            var error = response.responseJSON.message;
+                                            if (error == 'Duplicate Transaction') {
+                                                self.isAllowDuplicateTransaction(true);
+                                            } else {
+                                                self.isAllowDuplicateTransaction(false);
+                                            }
+                                        }
+                                    );
+
+                                return true;
+                            }
                         },
                         function () { 
                             //onError
@@ -295,6 +348,27 @@ define(
              */
             getVaultCode: function () {
                 return window.checkoutConfig.payment[this.getCode()].ccVaultCode;
+            },
+            /**
+             * @return {*}
+             */
+            getPlaceOrderDeferredObject: function () {
+                return $.when(
+                    placeOrderAction(this.getData(), this.messageContainer)
+                );
+            },
+            
+            additionalValidator: function () {
+                return additionalValidators.validate();
+            },
+            getAllowDuplicateTransactionCC: function () {
+                var isAllowDuplicateTransactionCC = false;
+                if ($('#is_allow_duplicate_transaction_cc').length) {
+                    if($("#is_allow_duplicate_transaction_cc").prop('checked') == true){
+                        isAllowDuplicateTransactionCC = true;
+                    }
+                }
+                return isAllowDuplicateTransactionCC;
             }
         });
     }

@@ -95,6 +95,7 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
         ];
         $isCCSplitCaptureEnabled = 1;
         $xRequireSplitCapturable= 0;
+        $isAllowDuplicateTransactionCC= '';
 
         $expectation = [
             'xAmount' => $this->helper->formatPrice($amount),
@@ -106,7 +107,8 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             'xCardNum' => self::XCARDNUM,
             'xIgnoreInvoice' => true,
             'xTimeoutSeconds' => 55,
-            'xRequireSplitCapturable' => $xRequireSplitCapturable
+            'xRequireSplitCapturable' => $xRequireSplitCapturable,
+            'xAllowDuplicate' => $isAllowDuplicateTransactionCC
         ];
 
         $buildSubject = [
@@ -114,7 +116,7 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             'amount' => $amount
         ];
 
-        $this->payment->expects(static::exactly(6))
+        $this->payment->expects(static::exactly(7))
             ->method('getAdditionalInformation')
             ->willReturnMap($additionalData);
 
