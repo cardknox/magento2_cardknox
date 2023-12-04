@@ -237,17 +237,13 @@ define(
                 }
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
-                    let errorMessage = '';
-                    let isCardNumberEmpty = !self.xCardNumberLength();
-                    let isCvvEmpty = !self.xCvvLength();
-                    if (isCardNumberEmpty && isCvvEmpty) {
-                        errorMessage = "Card number and CVV are required";
-                    } else if (isCardNumberEmpty) {
-                        errorMessage = "Card number is required";
-                    } else if (isCvvEmpty) {
-                        errorMessage = "CVV is required";
-                    }
-
+                    let errorMessage = !self.xCardNumberLength() && !self.xCvvLength()
+                        ? "Card number and CVV are required"
+                        : !self.xCardNumberLength()
+                            ? "Card number is required"
+                            : !self.xCvvLength()
+                                ? "CVV is required"
+                                : '';
                     if (errorMessage.length > 0 ) {
                         self.showError(errorMessage);
                         self.isPlaceOrderActionAllowed(true);
