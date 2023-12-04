@@ -91,13 +91,15 @@ define([
 
             cardknoxApplePay.init(this);
         },
+        isSupportedApplePay: function () {
+            return window.ApplePaySession && ApplePaySession.canMakePayments();
+        },
         /**
          * @return {Boolean}
          */
          validate: function () {
             return true;
         },
-
         additionalValidator: function () {
             return additionalValidators.validate();
         },
