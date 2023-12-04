@@ -20,7 +20,7 @@ define(
         'use strict';
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
-            cvvIsValid:  ko.observable(false),
+            cvvIsValid: ko.observable(false),
             xCardNumberLength:  ko.observable(false),
             xCvvLength:  ko.observable(false),
             /**
@@ -94,10 +94,10 @@ define(
                 width: '145px',
                 height: '25px'
             },
-            validateCardIfPresent: function (data) {
+            validateCardIfPresent: function(data) {
                 return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;
             },
-            validateCVVIfPresent: function (data) {
+            validateCVVIfPresent: function(data) {
                return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;
             },
             validateCVVLengthIfPresent: function(data) {
@@ -138,13 +138,12 @@ define(
             initCardknox: function () {
                 var self = this;
                 enableLogging();
-
                 /*
                  * [Optional]
-                 * You can customize the iFields by passing in the appropriate css as JSON using setIfieldStyle(ifieldName, style)
+                 * Use enableAutoFormatting(separator) to automatically format the card number field making it easier to read
+                 * The function contains an optional parameter to set the separator used between the card number chunks (Default is a single space)
                  */
-                setIfieldStyle('card-number', self.defaultStyle);
-                setIfieldStyle('cvv', self.defaultStyle);
+                enableAutoFormatting();
 
                 /*
                  * [Required]
@@ -154,11 +153,26 @@ define(
 
                 /*
                  * [Optional]
-                 * Use enableAutoFormatting(separator) to automatically format the card number field making it easier to read
-                 * The function contains an optional parameter to set the separator used between the card number chunks (Default is a single space)
+                 * You can customize the iFields by passing in the appropriate css as JSON using setIfieldStyle(ifieldName, style)
                  */
-                enableAutoFormatting();
+                setIfieldStyle('card-number', self.defaultStyle);
+                setIfieldStyle('cvv', self.defaultStyle);
+                /**
+                 * For google recaptcha
+                */
 
+                // If cardknox recaptcha enabled
+                var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
+
+                if (isEnabledGoogleReCaptcha == true) {
+                    var selectRecaptchaSource = window.checkoutConfig.payment.cardknox.selectRecaptchaSource;
+                    var recaptchaApiJs = null;
+                    if (selectRecaptchaSource == "google.com") {
+                        recaptchaApiJs = 'https://www.google.com/recaptcha/api.js';
+                        require([recaptchaApiJs + '?onload=onloadCallbackV2&render=explicit']);
+                    }
+                    this.onloadCallbackV2();
+                }
                 /*
                  * [Optional]
                  * Use addIfieldCallback(event, callback) to set callbacks for when the event is triggered inside the ifield
@@ -191,6 +205,7 @@ define(
                         }
                     }
                 });
+
                 addIfieldCallback('issuerupdated', function (data) {
                     setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
                 });
@@ -203,23 +218,6 @@ define(
                     clearInterval(checkCardLoaded);
                     focusIfield('card-number');
                 }, 1000);
-
-                /**
-                 * For google recaptcha
-                */
-
-                // If cardknox recaptcha enabled
-                var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
-
-                if (isEnabledGoogleReCaptcha == true) {
-                    var selectRecaptchaSource = window.checkoutConfig.payment.cardknox.selectRecaptchaSource;
-                    var recaptchaApiJs = null;
-                    if (selectRecaptchaSource == "google.com") {
-                        recaptchaApiJs = 'https://www.google.com/recaptcha/api.js';
-                        require([recaptchaApiJs + '?onload=onloadCallbackV2&render=explicit']);
-                    }
-                    this.onloadCallbackV2();
-                }
             },
             /**
              * Prepare data to place order
@@ -259,15 +257,16 @@ define(
                     if (!self.cardNumberIsValid() || !self.cvvIsValid()) {
                         let cardNumberErrorMessage = !this.cardNumberIsValid() ? "Invalid card" : "";
                         let cvvErrorMessage = !this.cvvIsValid() ? "Invalid CVV" : "";
+                        let isValidErrorMessage = '';
                         if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length > 0){
-                            errorMessage = cardNumberErrorMessage + ' and ' +cvvErrorMessage;
+                            isValidErrorMessage = cardNumberErrorMessage + ' and ' +cvvErrorMessage;
                         } else if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length == 0) {
-                            errorMessage = cardNumberErrorMessage;
+                            isValidErrorMessage = cardNumberErrorMessage;
                         } else if (cardNumberErrorMessage.length == 0 && cvvErrorMessage.length > 0) {
-                            errorMessage = cvvErrorMessage;
+                            isValidErrorMessage = cvvErrorMessage;
                         }
-                        if (errorMessage.length > 0 ) {
-                            self.showError(errorMessage);
+                        if (isValidErrorMessage.length > 0 ) {
+                            self.showError(isValidErrorMessage);
                         }
                         self.isPlaceOrderActionAllowed(true);
                         return false;
@@ -275,6 +274,7 @@ define(
                     getTokens(
                         function () {
                             //onSuccess
+                            //perform your own validation here...
                             self.isPlaceOrderActionAllowed(true);
                             return self.placeOrder('parent');
                         },
