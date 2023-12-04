@@ -247,7 +247,7 @@ define(
                         errorMessage = "Card number and CVV are required";
                     } else if (!self.xCardNumberLength()) {
                         errorMessage = "Card number is required";
-                    } else if (!self.xCvvLength() == false) {
+                    } else if (!self.xCvvLength()) {
                         errorMessage = "CVV is required";
                     }
 
