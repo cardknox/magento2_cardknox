@@ -188,8 +188,6 @@ define(
                             } else {
                                 setIfieldStyle('cvv', data.cvvLength === 3 ? self.validStyle : self.invalidStyle);
                             }
-                        } else if (data.lastIfieldChanged === 'ach') {
-                            setIfieldStyle('ach',  data.achLength === 0 ? self.defaultStyle : data.achIsValid ? validStyle : invalidStyle);
                         }
                     }
                 });
@@ -245,7 +243,7 @@ define(
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
                     let errorMessage = '';
-                    if (self.xCardNumberLength() == false && self.xCvvLength() == false) {
+                    if (!self.xCardNumberLength() && !self.xCvvLength() == false) {
                         errorMessage = "Card number and CVV are required";
                     } else if (self.xCardNumberLength() == false) {
                         errorMessage = "Card number is required";
