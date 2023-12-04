@@ -241,11 +241,13 @@ define(
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
                     let errorMessage = '';
-                    if (!self.xCardNumberLength() && !self.xCvvLength()) {
+                    let isCardNumberEmpty = !self.xCardNumberLength();
+                    let isCvvEmpty = !self.xCvvLength();
+                    if (isCardNumberEmpty && isCvvEmpty) {
                         errorMessage = "Card number and CVV are required";
-                    } else if (!self.xCardNumberLength()) {
+                    } else if (isCardNumberEmpty) {
                         errorMessage = "Card number is required";
-                    } else if (!self.xCvvLength()) {
+                    } else if (isCvvEmpty) {
                         errorMessage = "CVV is required";
                     }
 
