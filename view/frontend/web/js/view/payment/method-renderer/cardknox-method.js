@@ -183,21 +183,26 @@ define(
                  */
                 addIfieldCallback('input', function(data) {
                     if (data.ifieldValueChanged) {
+                        let dataIssuer = data.issuer,
+                            dataLastIfieldChanged = data.lastIfieldChanged,
+                            dataCvvLength = data.cvvLength,
+                            dataCardNumberFormattedLength = data.cardNumberFormattedLength;
+
                         self.cardNumberIsValid(self.validateCardIfPresent(data));
                         self.cvvIsValid(self.validateCVVIfPresent(data));
                         self.xCardNumberLength(data.cardNumberLength);
-                        self.xCvvLength(data.cvvLength);
-                        setIfieldStyle('card-number', data.cardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
+                        self.xCvvLength(dataCvvLength);
+                        setIfieldStyle('card-number', dataCardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
 
-                        if (data.lastIfieldChanged === 'cvv'){
-                            setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
-                        } else if (data.lastIfieldChanged === 'card-number') {
-                            if (data.issuer === 'unknown' || data.cvvLength <= 0) {
+                        if (dataLastIfieldChanged === 'cvv'){
+                            setIfieldStyle('cvv', dataIssuer === 'unknown' || dataCvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
+                        } else if (dataLastIfieldChanged === 'card-number') {
+                            if (dataIssuer === 'unknown' || dataCvvLength <= 0) {
                                 setIfieldStyle('cvv', self.defaultStyle);
-                            } else if (data.issuer === 'amex'){
-                                setIfieldStyle('cvv', data.cvvLength === 4 ? self.validStyle : self.invalidStyle);
+                            } else if (dataIssuer === 'amex'){
+                                setIfieldStyle('cvv', dataCvvLength === 4 ? self.validStyle : self.invalidStyle);
                             } else {
-                                setIfieldStyle('cvv', data.cvvLength === 3 ? self.validStyle : self.invalidStyle);
+                                setIfieldStyle('cvv', dataCvvLength === 3 ? self.validStyle : self.invalidStyle);
                             }
                         }
                     }
@@ -237,13 +242,17 @@ define(
                 }
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
-                    let errorMessage = !self.xCardNumberLength() && !self.xCvvLength()
-                        ? "Card number and CVV are required"
-                        : !self.xCardNumberLength()
-                            ? "Card number is required"
-                            : !self.xCvvLength()
-                                ? "CVV is required"
-                                : '';
+                    let errorMessage = '';
+                    let isCardNumberEmpty = !self.xCardNumberLength();
+                    let isCvvEmpty = !self.xCvvLength();
+                    if (isCardNumberEmpty && isCvvEmpty) {
+                        errorMessage = "Card number and CVV are required";
+                    } else if (isCardNumberEmpty) {
+                        errorMessage = "Card number is required";
+                    } else if (isCvvEmpty) {
+                        errorMessage = "CVV is required";
+                    }
+
                     if (errorMessage.length > 0 ) {
                         self.showError(errorMessage);
                         self.isPlaceOrderActionAllowed(true);
