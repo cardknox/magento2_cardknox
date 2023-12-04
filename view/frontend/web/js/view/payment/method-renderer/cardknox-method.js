@@ -27,7 +27,7 @@ define(
              * @returns {exports.initialize}
              */
             initialize: function () {
-                
+
                 this._super();
                 this.initCardknox();
                 this.vaultEnabler = new VaultEnabler();
@@ -74,7 +74,7 @@ define(
                 return $form.validation() && $form.validation('isValid');
             },
             defaultStyle: {
-                border: '1px solid #adadad',
+                border: '2px solid #adadad',
                 'font-size': '14px',
                 padding: '3px',
                 width: '145px',
@@ -95,10 +95,10 @@ define(
                 height: '25px'
             },
             validateCardIfPresent: function (data) {
-                return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;            
+                return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;
             },
             validateCVVIfPresent: function (data) {
-               return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;     
+               return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;
             },
             validateCVVLengthIfPresent: function(data) {
                 if (data.issuer === 'unknown' || data.cvvLength <= 0) {
@@ -117,7 +117,7 @@ define(
             },
             onloadCallbackV2: function () {
                 var cardknox_recaptcha_widget;
-                setTimeout(function(){ 
+                setTimeout(function(){
                     if ($('#cardknox_recaptcha').length) {
                         // If cardknox recaptcha enabled
                         if (window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == '1') {
@@ -138,6 +138,20 @@ define(
             initCardknox: function () {
                 var self = this;
                 enableLogging();
+
+                /*
+                 * [Optional]
+                 * You can customize the iFields by passing in the appropriate css as JSON using setIfieldStyle(ifieldName, style)
+                 */
+                setIfieldStyle('card-number', self.defaultStyle);
+                setIfieldStyle('cvv', self.defaultStyle);
+
+                /*
+                 * [Required]
+                 * Set your account data using setAccount(ifieldKey, yourSoftwareName, yourSoftwareVersion).
+                 */
+                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.18");
+
                 /*
                  * [Optional]
                  * Use enableAutoFormatting(separator) to automatically format the card number field making it easier to read
@@ -146,55 +160,27 @@ define(
                 enableAutoFormatting();
 
                 /*
-                 * [Required]
-                 * Set your account data using setAccount(ifieldKey, yourSoftwareName, yourSoftwareVersion).
-                 */
-                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.18");
-                
-                /*
-                 * [Optional]
-                 * You can customize the iFields by passing in the appropriate css as JSON using setIfieldStyle(ifieldName, style)
-                 */
-                setIfieldStyle('card-number', self.defaultStyle);
-                setIfieldStyle('cvv', self.defaultStyle);
-                /**
-                 * For google recaptcha
-                */
-
-                // If cardknox recaptcha enabled
-                var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
-                
-                if (isEnabledGoogleReCaptcha == true) {
-                    var selectRecaptchaSource = window.checkoutConfig.payment.cardknox.selectRecaptchaSource;
-                    var recaptchaApiJs = null;
-                    if (selectRecaptchaSource == "google.com") {
-                        recaptchaApiJs = 'https://www.google.com/recaptcha/api.js'; 
-                        require([recaptchaApiJs + '?onload=onloadCallbackV2&render=explicit']);
-                    } 
-                    this.onloadCallbackV2();
-                }
-                /*
                  * [Optional]
                  * Use addIfieldCallback(event, callback) to set callbacks for when the event is triggered inside the ifield
                  * The callback function receives a single parameter with data about the state of the ifields
                  * The data returned can be seen by using alert(JSON.stringify(data));
                  * The available events are ['input', 'click', 'focus', 'dblclick', 'change', 'blur', 'keypress', 'issuerupdated']
                  * ('issuerupdated' is fired when the CVV ifield is updated with card issuer)
-                 * 
+                 *
                  * The below example shows a use case for this, where you want to visually alert the user regarding the validity of the card number, cvv and ach ifields
                  * Cvv styling should be updated on 'issuerupdated' event also as validity will change based on issuer
                  */
                 addIfieldCallback('input', function(data) {
                     if (data.ifieldValueChanged) {
                         self.cardNumberIsValid(self.validateCardIfPresent(data));
+                        self.cvvIsValid(self.validateCVVIfPresent(data));
                         self.xCardNumberLength(data.cardNumberLength);
                         self.xCvvLength(data.cvvLength);
                         setIfieldStyle('card-number', data.cardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
+
                         if (data.lastIfieldChanged === 'cvv'){
-                            self.cvvIsValid(self.validateCVVIfPresent(data));
                             setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
                         } else if (data.lastIfieldChanged === 'card-number') {
-                            self.cvvIsValid(self.validateCVVLengthIfPresent(data));
                             if (data.issuer === 'unknown' || data.cvvLength <= 0) {
                                 setIfieldStyle('cvv', self.defaultStyle);
                             } else if (data.issuer === 'amex'){
@@ -202,13 +188,40 @@ define(
                             } else {
                                 setIfieldStyle('cvv', data.cvvLength === 3 ? self.validStyle : self.invalidStyle);
                             }
+                        } else if (data.lastIfieldChanged === 'ach') {
+                            setIfieldStyle('ach',  data.achLength === 0 ? self.defaultStyle : data.achIsValid ? validStyle : invalidStyle);
                         }
                     }
                 });
-
                 addIfieldCallback('issuerupdated', function (data) {
                     setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
                 });
+
+                /*
+                 * [Optional]
+                 * You can set focus on an ifield by calling focusIfield(ifieldName), in this case a delay is added to ensure the iframe has time to load
+                 */
+                let checkCardLoaded = setInterval(function() {
+                    clearInterval(checkCardLoaded);
+                    focusIfield('card-number');
+                }, 1000);
+
+                /**
+                 * For google recaptcha
+                */
+
+                // If cardknox recaptcha enabled
+                var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
+
+                if (isEnabledGoogleReCaptcha == true) {
+                    var selectRecaptchaSource = window.checkoutConfig.payment.cardknox.selectRecaptchaSource;
+                    var recaptchaApiJs = null;
+                    if (selectRecaptchaSource == "google.com") {
+                        recaptchaApiJs = 'https://www.google.com/recaptcha/api.js';
+                        require([recaptchaApiJs + '?onload=onloadCallbackV2&render=explicit']);
+                    }
+                    this.onloadCallbackV2();
+                }
             },
             /**
              * Prepare data to place order
@@ -267,7 +280,7 @@ define(
                             self.isPlaceOrderActionAllowed(true);
                             return self.placeOrder('parent');
                         },
-                        function () { 
+                        function () {
                             //onError
                             self.showError(document.getElementById('ifieldsError').textContent);
                             self.isPlaceOrderActionAllowed(true);
