@@ -228,10 +228,6 @@ define(
                     setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
                 });
 
-                /*
-                 * [Optional]
-                 * You can set focus on an ifield by calling focusIfield(ifieldName), in this case a delay is added to ensure the iframe has time to load
-                 */
                 let checkCardLoaded = setInterval(function() {
                     clearInterval(checkCardLoaded);
                     focusIfield('card-number');
