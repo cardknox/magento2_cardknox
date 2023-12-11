@@ -1,0 +1,18 @@
+<div class="config-data" data-bind="scope: 'config-data'">
+    <!-- ko if: checkoutConfigData().cart_id > 0 -->
+    	<div data-bind="html: checkoutConfigData().config_data" > </div>
+    <!-- /ko -->
+</div>
+<script type="text/x-magento-init">
+	{
+    	"*": {
+        	"Magento_Ui/js/core/app": {
+            	"components": {
+                	"config-data": {
+                    	"component": "CardknoxDevelopment_Cardknox/js/checkout-config-data"
+                	}
+            	}
+        	}
+    	}
+	}
+</script>

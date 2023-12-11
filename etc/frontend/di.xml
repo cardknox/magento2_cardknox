@@ -49,4 +49,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Customer\CustomerData\SectionPoolInterface">
+        <arguments>
+            <argument name="sectionSourceMap" xsi:type="array">
+                <item name="checkout_config" xsi:type="string">CardknoxDevelopment\Cardknox\CustomerData\CheckoutConfigData</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
