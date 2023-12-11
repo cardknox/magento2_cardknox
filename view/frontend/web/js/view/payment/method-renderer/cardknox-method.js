@@ -34,12 +34,14 @@ define(
         'use strict';
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
-            cvvIsValid:  ko.observable(false),
+            cvvIsValid: ko.observable(false),
+            xCardNumberLength:  ko.observable(false),
+            xCvvLength:  ko.observable(false),
             /**
              * @returns {exports.initialize}
              */
             initialize: function () {
-                
+
                 this._super();
                 this.initCardknox();
                 this.vaultEnabler = new VaultEnabler();
@@ -88,31 +90,28 @@ define(
                 return $form.validation() && $form.validation('isValid');
             },
             defaultStyle: {
-                border: '1px solid #adadad',
-                'font-size': '14px',
+                border: '2px solid #adadad',
                 padding: '3px',
                 width: '145px',
                 height: '25px'
             },
             validStyle: {
                 border: '2px solid green',
-                'font-size': '14px',
                 padding: '3px',
                 width: '145px',
                 height: '25px'
             },
             invalidStyle: {
                 border: '2px solid red',
-                'font-size': '14px',
                 padding: '3px',
                 width: '145px',
                 height: '25px'
             },
             validateCardIfPresent: function(data) {
-                return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;            
+                return data.cardNumberFormattedLength <= 0 || data.cardNumberIsValid ? true : false;
             },
             validateCVVIfPresent: function(data) {
-               return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;     
+               return data.issuer === 'unknown' || data.cvvLength <= 0 || data.cvvIsValid ? true : false;
             },
             validateCVVLengthIfPresent: function(data) {
                 if (data.issuer === 'unknown' || data.cvvLength <= 0) {
@@ -131,7 +130,7 @@ define(
             },
             onloadCallbackV2: function () {
                 var cardknox_recaptcha_widget;
-                setTimeout(function(){ 
+                setTimeout(function(){
                     if ($('#cardknox_recaptcha').length) {
                         // If cardknox recaptcha enabled
                         if (window.checkoutConfig.payment.cardknox.isEnabledReCaptcha == '1') {
@@ -164,7 +163,7 @@ define(
                  * Set your account data using setAccount(ifieldKey, yourSoftwareName, yourSoftwareVersion).
                  */
                 setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.0.18");
-                
+
                 /*
                  * [Optional]
                  * You can customize the iFields by passing in the appropriate css as JSON using setIfieldStyle(ifieldName, style)
@@ -177,14 +176,14 @@ define(
 
                 // If cardknox recaptcha enabled
                 var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
-                
+
                 if (isEnabledGoogleReCaptcha == true) {
                     var selectRecaptchaSource = window.checkoutConfig.payment.cardknox.selectRecaptchaSource;
                     var recaptchaApiJs = null;
                     if (selectRecaptchaSource == "google.com") {
-                        recaptchaApiJs = 'https://www.google.com/recaptcha/api.js'; 
+                        recaptchaApiJs = 'https://www.google.com/recaptcha/api.js';
                         require([recaptchaApiJs + '?onload=onloadCallbackV2&render=explicit']);
-                    } 
+                    }
                     this.onloadCallbackV2();
                 }
                 /*
@@ -194,25 +193,32 @@ define(
                  * The data returned can be seen by using alert(JSON.stringify(data));
                  * The available events are ['input', 'click', 'focus', 'dblclick', 'change', 'blur', 'keypress', 'issuerupdated']
                  * ('issuerupdated' is fired when the CVV ifield is updated with card issuer)
-                 * 
+                 *
                  * The below example shows a use case for this, where you want to visually alert the user regarding the validity of the card number, cvv and ach ifields
                  * Cvv styling should be updated on 'issuerupdated' event also as validity will change based on issuer
                  */
                 addIfieldCallback('input', function(data) {
                     if (data.ifieldValueChanged) {
+                        let dataIssuer = data.issuer,
+                            dataLastIfieldChanged = data.lastIfieldChanged,
+                            dataCvvLength = data.cvvLength,
+                            dataCardNumberFormattedLength = data.cardNumberFormattedLength;
+
                         self.cardNumberIsValid(self.validateCardIfPresent(data));
-                        setIfieldStyle('card-number', data.cardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
-                        if (data.lastIfieldChanged === 'cvv'){
-                            self.cvvIsValid(self.validateCVVIfPresent(data));
-                            setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
-                        } else if (data.lastIfieldChanged === 'card-number') {
-                            self.cvvIsValid(self.validateCVVLengthIfPresent(data));
-                            if (data.issuer === 'unknown' || data.cvvLength <= 0) {
+                        self.cvvIsValid(self.validateCVVIfPresent(data));
+                        self.xCardNumberLength(data.cardNumberLength);
+                        self.xCvvLength(dataCvvLength);
+                        setIfieldStyle('card-number', dataCardNumberFormattedLength <= 0 ? self.defaultStyle : data.cardNumberIsValid ? self.validStyle : self.invalidStyle);
+
+                        if (dataLastIfieldChanged === 'cvv'){
+                            setIfieldStyle('cvv', dataIssuer === 'unknown' || dataCvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
+                        } else if (dataLastIfieldChanged === 'card-number') {
+                            if (dataIssuer === 'unknown' || dataCvvLength <= 0) {
                                 setIfieldStyle('cvv', self.defaultStyle);
-                            } else if (data.issuer === 'amex'){
-                                setIfieldStyle('cvv', data.cvvLength === 4 ? self.validStyle : self.invalidStyle);
+                            } else if (dataIssuer === 'amex'){
+                                setIfieldStyle('cvv', dataCvvLength === 4 ? self.validStyle : self.invalidStyle);
                             } else {
-                                setIfieldStyle('cvv', data.cvvLength === 3 ? self.validStyle : self.invalidStyle);
+                                setIfieldStyle('cvv', dataCvvLength === 3 ? self.validStyle : self.invalidStyle);
                             }
                         }
                     }
@@ -221,6 +227,11 @@ define(
                 addIfieldCallback('issuerupdated', function (data) {
                     setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
                 });
+
+                let checkCardLoaded = setInterval(function() {
+                    clearInterval(checkCardLoaded);
+                    focusIfield('card-number');
+                }, 1000);
             },
             /**
              * Prepare data to place order
@@ -243,19 +254,35 @@ define(
                 }
                 if (self.validate()) {
                     self.isPlaceOrderActionAllowed(false);
+                    let errorMessage = '';
+                    let isCardNumberEmpty = !self.xCardNumberLength();
+                    let isCvvEmpty = !self.xCvvLength();
+                    if (isCardNumberEmpty && isCvvEmpty) {
+                        errorMessage = "Card number and CVV are required";
+                    } else if (isCardNumberEmpty) {
+                        errorMessage = "Card number is required";
+                    } else if (isCvvEmpty) {
+                        errorMessage = "CVV is required";
+                    }
+
+                    if (errorMessage.length > 0 ) {
+                        self.showError(errorMessage);
+                        self.isPlaceOrderActionAllowed(true);
+                        return false;
+                    }
                     if (!self.cardNumberIsValid() || !self.cvvIsValid()) {
                         let cardNumberErrorMessage = !this.cardNumberIsValid() ? "Invalid card" : "";
                         let cvvErrorMessage = !this.cvvIsValid() ? "Invalid CVV" : "";
-                        let errorMessage = '';
+                        let isValidErrorMessage = '';
                         if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length > 0){
-                            errorMessage = cardNumberErrorMessage + ' and ' +cvvErrorMessage;
+                            isValidErrorMessage = cardNumberErrorMessage + ' and ' +cvvErrorMessage;
                         } else if (cardNumberErrorMessage.length > 0 && cvvErrorMessage.length == 0) {
-                            errorMessage = cardNumberErrorMessage;
+                            isValidErrorMessage = cardNumberErrorMessage;
                         } else if (cardNumberErrorMessage.length == 0 && cvvErrorMessage.length > 0) {
-                            errorMessage = cvvErrorMessage;
+                            isValidErrorMessage = cvvErrorMessage;
                         }
-                        if (errorMessage.length > 0 ) {
-                            self.showError(errorMessage);
+                        if (isValidErrorMessage.length > 0 ) {
+                            self.showError(isValidErrorMessage);
                         }
                         self.isPlaceOrderActionAllowed(true);
                         return false;
@@ -264,16 +291,6 @@ define(
                         function () {
                             //onSuccess
                             //perform your own validation here...
-                            if (document.getElementsByName("xCardNum")[0].value === '') {
-                                self.showError("Card Number Required");
-                                self.isPlaceOrderActionAllowed(true);
-                                return false
-                            }
-                            if (document.getElementsByName("xCVV")[0].value === '') {
-                                self.showError("CVV Required");
-                                self.isPlaceOrderActionAllowed(true);
-                                return false
-                            }
                             self.isPlaceOrderActionAllowed(true);
                             
                             /**
@@ -314,7 +331,7 @@ define(
                                 return true;
                             }
                         },
-                        function () { 
+                        function () {
                             //onError
                             self.showError(document.getElementById('ifieldsError').textContent);
                             self.isPlaceOrderActionAllowed(true);
