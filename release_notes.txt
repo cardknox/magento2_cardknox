@@ -1,3 +1,11 @@
+1.0.19
+- Update the plugin to the latest version of iFields 2.15.2309.2601
+- Allow duplicate transaction for all cardknox payement methods
+- ApplePay will be hidden if ApplePay is not available
+- Fix invalid checkout error message
+- Fix cardnumber and cvv auto-fill issue
+- Fix CheckoutConfig data get into minicart
+
 1.0.18
 - Compatible with magento v2.4.6 & php 8.2
 - Added configuration select recaptcha source: google.com or recaptcha.net
@@ -6,3 +14,56 @@
 - Compatible with magento v2.4.6 & php 8.1
 - Security updates
 - Fix PHPUnit test failed
+
+1.0.15
+- Enabled split capture
+- Fix payment from applicable countries not working
+- Update the plugin to the latest version of iFields 2.14.2211.1101
+- Throw error using error object instead of string
+- Fix Googlepay not working cart page
+- Added issuerupdated event to cc method
+- Fix ability to disable GooglePay from admin configuration
+
+1.0.13
+- Support for Google Pay
+- Minor updates
+
+1.0.12
+- Compatible with Magento Open Source : 2.1 2.2 2.3 2.4
+- Show image that explains what the CVV is.
+- Validate CC data before submitting the request to avoid declined transactions.
+- Added CSP exception for using IFields
+- Fix Magento error messaging not visible enough
+- Auto void Timeout transactions
+- Fix for saving card in older versions of plugin
+- Support for Magento 2.4
+- Added reCaptcha to checkout
+
+1.0.9
+- Compatible with Magento Open Source : 2.1 2.2 2.3
+- Update to version 2.5.1905 of iFields
+- Fix for null parsing in response
+- Additional logging
+- Partial credit memo should not close invoice
+- Properly set reference number for refunds
+- Fix for table prefixes when tokens are disabled
+- Additional validation for Admin checkout
+
+1.0.3
+- validate checkout form before showing spinning wheel to avoid getting stuck at spinning wheel. (admin)
+- increase timeout for iFields to avoid timeouts when generating a single use token. (front end)
+- iFields version 2.3.1808.0101
+
+1.0.1
+- fixed bug if response does not return a expiration date
+- fixed issue when merging JS files
+- fixed UI to show card and cvv as required
+- fixed bug to avoid overriding the AVS and CVV response when capturing online
+- update batch number after capturing online
+- updated installation guide
+
+1.0.0
+- Compatible with Magento Open Source : 2.1 2.2
+- require CVV on store front
+- added vault integration
+- fixed partial refund to use parent transaction id
