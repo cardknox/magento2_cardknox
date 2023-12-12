@@ -55,11 +55,11 @@ class GooglePayBaseRequest implements BuilderInterface
 
         $order = $paymentDO->getOrder();
         $xSoftwareName = 'Magento ' . $this->productMetadata->getEdition() . " ". $this->productMetadata->getVersion();
-        
+
         return [
             'xVersion' => '4.5.8',
             'xSoftwareName' => $xSoftwareName,
-            'xSoftwareVersion' => '1.0.18',
+            'xSoftwareVersion' => '1.0.19',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $order->getStoreId()
