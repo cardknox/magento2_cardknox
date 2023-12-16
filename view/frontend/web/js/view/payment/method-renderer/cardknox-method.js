@@ -203,7 +203,6 @@ define(
                             dataLastIfieldChanged = data.lastIfieldChanged,
                             dataCvvLength = data.cvvLength,
                             dataCardNumberFormattedLength = data.cardNumberFormattedLength;
-
                         self.cardNumberIsValid(self.validateCardIfPresent(data));
                         self.cvvIsValid(self.validateCVVIfPresent(data));
                         self.xCardNumberLength(data.cardNumberLength);
@@ -226,6 +225,12 @@ define(
 
                 addIfieldCallback('issuerupdated', function (data) {
                     setIfieldStyle('cvv', data.issuer === 'unknown' || data.cvvLength <= 0 ? self.defaultStyle : data.cvvIsValid ? self.validStyle : self.invalidStyle);
+                    let issuerUpdatedData = data,
+                        issuerUpdatedDataCvvLength = issuerUpdatedData.cvvLength;
+                    self.cardNumberIsValid(self.validateCardIfPresent(issuerUpdatedData));
+                    self.cvvIsValid(self.validateCVVIfPresent(issuerUpdatedData));
+                    self.xCardNumberLength(issuerUpdatedData.cardNumberLength);
+                    self.xCvvLength(issuerUpdatedDataCvvLength);
                 });
 
                 let checkCardLoaded = setInterval(function() {
