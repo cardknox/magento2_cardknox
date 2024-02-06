@@ -32,7 +32,7 @@
                     </label>
                     <div class="control">
                         <iframe data-ifields-id="card-number" data-ifields-placeholder="Card Number"
-                                src="https://cdn.cardknox.com/ifields/2.15.2309.2601/ifield.htm" frameBorder="0"
+                                src="https://cdn.cardknox.com/ifields/2.15.2401.3101/ifield.htm" frameBorder="0"
                                 height="35"></iframe>
                         <input data-ifields-id="card-number-token" name="xCardNum" type="hidden">
                     </div>
@@ -75,12 +75,12 @@
                     </div>
                 </div>
                 <div class="field number required" data-bind="attr: {id: getCode() + '_cc_type_cvv_div'}">
-                    <label data-bind="attr: {for: getCode() + '_cvv'}" class="label">    
+                    <label data-bind="attr: {for: getCode() + '_cvv'}" class="label">
                         <span><!-- ko i18n: 'Card Verification Number'--><!-- /ko --></span>
                     </label>
                     <div class="control _with-tooltip">
                         <iframe data-ifields-id="cvv" data-ifields-placeholder="CVV"
-                        src="https://cdn.cardknox.com/ifields/2.15.2309.2601/ifield.htm" frameBorder="0"
+                        src="https://cdn.cardknox.com/ifields/2.15.2401.3101/ifield.htm" frameBorder="0"
                         height="35"></iframe>
                         <div class="field-tooltip toggle">
                             <span class="field-tooltip-action action-cvv"
@@ -93,7 +93,7 @@
                                     data-target="dropdown"
                                     data-bind="html: getCvvImageHtml()"></div>
                         </div>
-                    </div>      
+                    </div>
                     <input data-ifields-id="cvv-token" name="xCVV" type="hidden">
                     <label data-ifields-id="card-data-error" id="ifieldsError"></label>
                 </div>
