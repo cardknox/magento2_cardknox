@@ -78,6 +78,7 @@
             <cardknox_apple_pay>
                 <model>CardknoxApplePayFacade</model>
                 <cardknox_applepay_active>0</cardknox_applepay_active>
+                <cardknox_applepay_enable_cart>0</cardknox_applepay_enable_cart>
                 <merchant_identifier>merchant.cardknox.com</merchant_identifier>
                 <title>Apple Pay</title>
                 <environment>TEST</environment>

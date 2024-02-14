@@ -4,7 +4,7 @@
         <referenceContainer name="checkout.cart.methods">
             <block class="Magento\Checkout\Block\Cart\Totals" 
                    name="checkout.cart.methods.onepage.top" 
-                   template="CardknoxDevelopment_Cardknox::cart/GooglePay.phtml" 
+                   template="CardknoxDevelopment_Cardknox::cart/CkPayButtons.phtml" 
                    after="checkout.cart.methods.onepage.bottom">
                 <arguments>
                     <argument name="view_model" xsi:type="object">CardknoxDevelopment\Cardknox\ViewModel\Data</argument>

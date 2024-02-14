@@ -3,7 +3,9 @@
 /** @var $viewModel \CardknoxDevelopment\Cardknox\ViewModel\Data */
 $viewModel = $block->getViewModel();
 $isActiveGooglePay = $viewModel->isActiveGooglePay();
+$isEnabledApplePayOnCartPage = $viewModel->isEnabledApplyPayOnCartPage();
 
+// For GooglePay
 if ($isActiveGooglePay) : ?>
     <div id="googlepay-btn-cart-summary" data-bind="scope: 'googlepay-btn-cart-summary'">
         <!-- ko template: getTemplate() --><!-- /ko -->
@@ -16,6 +18,27 @@ if ($isActiveGooglePay) : ?>
                         "googlepay-btn-cart-summary": {
                             "component": "CardknoxDevelopment_Cardknox/js/view/cart/google-pay",
                             "template" : "CardknoxDevelopment_Cardknox/cart/google-pay-btn"
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<?php endif;?>
+<?php
+// For ApplePay
+if($isEnabledApplePayOnCartPage): ?>
+    <div id="applepay-btn-cart-summary" data-bind="scope: 'applepay-btn-cart-summary'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+    </div>
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+                        "applepay-btn-cart-summary": {
+                            "component": "CardknoxDevelopment_Cardknox/js/view/cart/apple-pay",
+                            "template" : "CardknoxDevelopment_Cardknox/cart/apple-pay-btn"
                         }
                     }
                 }

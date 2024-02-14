@@ -3,7 +3,7 @@ namespace CardknoxDevelopment\Cardknox\ViewModel;
 
 class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
 {
-    
+
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
@@ -12,6 +12,7 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     public const XPATH_FIELD_GOOGLEPAY_ENABLED = 'payment/cardknox_google_pay/active';
     public const XPATH_FIELD_CC_SELECT_RECAPTCHA_SOURCE = 'payment/cardknox/select_recaptcha_source';
     public const IS_ENABLE_GOOGLE_REPCAPTCHA = "payment/cardknox/recaptchaEnabled";
+    public const APPLEPAY_ENABLE_ON_CARTPAGE = 'payment/cardknox_apple_pay/cart_page_enable';
 
 
     /**
@@ -23,7 +24,7 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     {
         $this->scopeConfig = $scopeConfig;
     }
- 
+
     /**
      * Check google pay payment method enable function
      *
@@ -61,6 +62,19 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     {
         return (bool) $this->scopeConfig->getValue(
             self::XPATH_FIELD_CC_SELECT_RECAPTCHA_SOURCE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) ?? false;
+    }
+
+    /**
+     * Check Cardknox ApplePay enable function
+     *
+     * @return boolean
+     */
+    public function isEnabledApplyPayOnCartPage(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::APPLEPAY_ENABLE_ON_CARTPAGE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         ) ?? false;
     }
