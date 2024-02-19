@@ -99,9 +99,9 @@ define([
          * Sets shipping address for quote
          */
         setShippingAddress: function (data) {
-            var regionData = null;
-            var email = data.shippingContact.emailAddress;
-            var street = data.shippingContact.addressLines.filter(function(line) {
+            let regionData = null;
+            let email = data.shippingContact.emailAddress;
+            let street = data.shippingContact.addressLines.filter(function(line) {
                 return line; // This will remove any falsy values: undefined, null, "", 0, false, NaN
             }).join(" ");
 
@@ -109,15 +109,15 @@ define([
             regionData = this.getRegionData(data.shippingContact.administrativeArea, data.shippingContact.countryCode);
             regionData = JSON.parse(regionData);
             // Remove country code from telephone
-            var telephone = data.shippingContact.phoneNumber;
+            let telephone = data.shippingContact.phoneNumber;
             telephone = telephone.substring(telephone.indexOf(" ") + 1);
 
             // Create name array of address
-            var firstname = data.shippingContact.givenName;
-            var lastname = data.shippingContact.familyName;
-            var middlename = null;
+            let firstname = data.shippingContact.givenName;
+            let lastname = data.shippingContact.familyName;
+            let middlename = null;
 
-            var shippingAddress = {
+            let shippingAddress = {
                 firstname: firstname,
                 lastname: lastname,
                 middlename: middlename,
@@ -150,24 +150,24 @@ define([
          * Sets billing address for quote
          */
         setBillingAddress: function (data) {
-            var regionData = null;
-            var email = data.shippingContact.emailAddress;
-            var street = data.billingContact.addressLines.filter(function(line) {
+            let regionData = null;
+            let email = data.shippingContact.emailAddress;
+            let street = data.billingContact.addressLines.filter(function(line) {
                 return line; // This will remove any falsy values: undefined, null, "", 0, false, NaN
             }).join(" ");
             // Get region name and id
             regionData = this.getRegionData(data.billingContact.administrativeArea, data.billingContact.countryCode);
             regionData = JSON.parse(regionData);
             // Remove country code from telephone
-            var telephone = data.shippingContact.phoneNumber;
+            let telephone = data.shippingContact.phoneNumber;
             telephone = telephone.substring(telephone.indexOf(" ") + 1);
 
             // Create name array of address
-            var firstname = data.billingContact.givenName;
-            var lastname = data.billingContact.familyName;
-            var middlename = null;
+            let firstname = data.billingContact.givenName;
+            let lastname = data.billingContact.familyName;
+            let middlename = null;
 
-            var billingAddress = {
+            let billingAddress = {
                 firstname: firstname,
                 lastname: lastname,
                 middlename: middlename,
@@ -335,13 +335,13 @@ define([
          * Get regions by region code or name
          */
         getRegionData: function (administrativeArea, countryCode) {
-            var serviceUrl, payload;
+            let serviceUrl, payload;
             payload = {
                 region: administrativeArea,
                 country_id: countryCode
             };
             serviceUrl = urlBuilder.build('/cardknox/index/countryregion');
-            var response = null;
+            let response = null;
             $.ajax({
                 url: serviceUrl,
                 type: "POST",

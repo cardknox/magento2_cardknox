@@ -4,7 +4,6 @@
 define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,ifields,quote) {
     'use strict';
     let applePayConfig = window.checkoutConfig.payment.cardknox_apple_pay;
-    let quoteData = window.checkoutConfig.quoteData;
     let applePay = '';
 
     // Apple pay object
@@ -49,7 +48,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         validateApplePayMerchant: function () {
             return new Promise((resolve, reject) => {
                 try {
-                    var xhr = new XMLHttpRequest();
+                    let xhr = new XMLHttpRequest();
                     xhr.open("POST", "https://api.cardknox.com/applepay/validate");
                     xhr.onload = function () {
                         if (this.status >= 200 && this.status < 300) {
@@ -133,14 +132,13 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                             console.log(response);
                             const resp = JSON.parse(response);
                             if (!resp)
-                                throw "Invalid response: "+ response;
+                                throw new Error("Invalid response: " + response);
                             if (resp.xError) {
                                 throw resp;
                             }
                             resolve(response);
                         } catch (err) {
                             throw err;
-                            // reject(err);
                         }
                     })
                     .catch((err) => {
@@ -191,7 +189,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             let appToken = applePayload.token.paymentData.data;
             if (appToken) {
                 let xcardnum = btoa(JSON.stringify(applePayload.token.paymentData));
-                if (window.checkoutConfig.isCustomerLoggedIn == false) {
+                if (!window.checkoutConfig.isCustomerLoggedIn) {
                     // Check lastname is exist in shipping address from applepay response
                     isExistLastNameShippingAddress(applePayload);
                     // Check lastname is exist in billing address from applepay response
@@ -223,7 +221,6 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             
             if (resp.status === iStatus.success) {
                 showHide(this.buttonOptions.buttonContainer, true);
-                // showHide("lbAPPayload", true);
             } else if (resp.reason) {
                 jQuery(".applepay-error").html("<div>"+resp.reason+"</div>").show();
                 console.log(resp.reason);
@@ -243,7 +240,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
     }
     function getAmount () {
         let totals = quote.totals();
-        let base_grand_total = (totals ? totals : quote)['base_grand_total'];
+        let base_grand_total = (totals || quote)['base_grand_total'];
         return parseFloat(base_grand_total).toFixed(2);
     }
     function isExistLastNameShippingAddress(data) {
