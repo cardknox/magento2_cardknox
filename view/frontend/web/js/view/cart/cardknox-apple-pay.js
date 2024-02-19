@@ -75,7 +75,6 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         },        
 
         onValidateMerchant: function() {
-            let consoleErrorMsg = "";
             return new Promise((resolve, reject) => {
                 try {
                     this._validateApplePayMerchant()
@@ -84,17 +83,14 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                             console.log(_response);
                             resolve(_response);
                         } catch (err) {
-                            consoleErrorMsg = "validateApplePayMerchant exception.", JSON.stringify(err);
-                            _errorOnValidateMerchant(consoleErrorMsg, err);
+                            _errorOnValidateMerchant("validateApplePayMerchant exception." + JSON.stringify(err), err);
                         }
                     })
                     .catch((err) => {
-                        consoleErrorMsg = "validateApplePayMerchant error.", JSON.stringify(err);
-                        _errorOnValidateMerchant(consoleErrorMsg, err);
+                        _errorOnValidateMerchant("validateApplePayMerchant error." + JSON.stringify(err), err);
                     });
                 } catch (err) {
-                    consoleErrorMsg = "onValidateMerchant error.", JSON.stringify(err);
-                    _errorOnValidateMerchant(consoleErrorMsg, err);
+                    _errorOnValidateMerchant("onValidateMerchant error." + JSON.stringify(err), err);
                 }
             });
         },
