@@ -75,25 +75,26 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         },        
 
         onValidateMerchant: function() {
+            let consoleErrorMsg = "";
             return new Promise((resolve, reject) => {
                 try {
                     this._validateApplePayMerchant()
-                    .then((response) => {
+                    .then((_response) => {
                         try {
-                            console.log(response);
-                            resolve(response);
+                            console.log(_response);
+                            resolve(_response);
                         } catch (err) {
-                            console.error("validateApplePayMerchant exception.", JSON.stringify(err));
-                            reject(err);
+                            consoleErrorMsg = "validateApplePayMerchant exception.", JSON.stringify(err);
+                            _errorOnValidateMerchant(consoleErrorMsg, err);
                         }
                     })
                     .catch((err) => {
-                        console.error("validateApplePayMerchant error.", JSON.stringify(err));
-                        reject(err);
+                        consoleErrorMsg = "validateApplePayMerchant error.", JSON.stringify(err);
+                        _errorOnValidateMerchant(consoleErrorMsg, err);
                     });
                 } catch (err) {
-                    console.error("onValidateMerchant error.", JSON.stringify(err));
-                    reject(err);
+                    consoleErrorMsg = "onValidateMerchant error.", JSON.stringify(err);
+                    _errorOnValidateMerchant(consoleErrorMsg, err);
                 }
             });
         },
@@ -229,6 +230,11 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         if (elem) {
             toShow ? elem.classList.remove("hidden") : elem.classList.add("hidden");
         }
+    }
+
+    function _errorOnValidateMerchant(consoleErrorMsg, err) {
+        console.error(consoleErrorMsg);
+        reject(err);
     }
 
     function _errorShowMessage(err) {
