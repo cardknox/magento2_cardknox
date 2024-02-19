@@ -3,9 +3,9 @@
  **/
 define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,ifields,quote) {
     'use strict';
-    var applePayConfig = window.checkoutConfig.payment.cardknox_apple_pay;
-    var quoteData = window.checkoutConfig.quoteData;
-    var applePay = '';
+    let applePayConfig = window.checkoutConfig.payment.cardknox_apple_pay;
+    let quoteData = window.checkoutConfig.quoteData;
+    let applePay = '';
 
     // Apple pay object
     window.apRequest = {
@@ -57,26 +57,23 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                             resolve(xhr.response);
                         } else {
                             console.error("validateApplePayMerchant", JSON.stringify(xhr.response), this.status);
-                            reject({
-                                status: this.status,
-                                statusText: xhr.response
-                            });
+                            reject(new Error("Failed to validate Apple Pay Merchant: " + xhr.statusText));
                         }
                     };
                     xhr.onerror = function () {
                         console.error("validateApplePayMerchant", xhr.statusText, this.status);
-                        reject({
-                            status: this.status,
-                            statusText: xhr.statusText
-                        });
+                        reject(new Error("Network Error: " + xhr.statusText));
                     };
                     xhr.setRequestHeader("Content-Type", "application/json");
                     xhr.send();
                 } catch (err) {
-                    setTimeout(function () { console.log("getApplePaySession error: " + exMsg(err)) }, 100);
+                    // Correctly pass Error object to reject
+                    reject(new Error("Exception in validateApplePayMerchant: " + err.message));
+                    // Ensure exMsg function exists or use err.message directly
+                    setTimeout(function () { console.log("getApplePaySession error: " + err.message) }, 100);
                 }
             });
-        },
+        },        
 
         onValidateMerchant: function() {
             return new Promise((resolve, reject) => {
@@ -103,7 +100,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         },
 
         handleAPError: function(err) {
-            if (err && err.xRefNum) {
+            if (err?.xRefNum) {
                 setAPPayload("There was a problem with your order ("+err.xRefNum+")");
             } else {
                 setAPPayload("There was a problem with your order ("+exMsg(err)+")");
@@ -118,13 +115,10 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                     const resp = self.getTransactionInfo(null, null, paymentMethod.type);
                     resolve(resp);                            
                 } catch (err) {
-                    const apErr = {
-                        code: "-102",
-                        contactField: "",
-                        message: exMsg(err)
-                    }
                     console.error("onPaymentMethodSelected error.", exMsg(err));
-                    reject({errors: [err]});
+                    const error = new Error("onPaymentMethodSelected error: " + exMsg(err));
+                    error.originalError = err;
+                    reject(error);
                 }
             })                
         },
@@ -174,7 +168,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                             window.ckApplePay.updateAmount();
                             resolve(iStatus.success);
                         } else {
-                            var err = 'Please select a shipping method.';
+                            let err = 'Please select a shipping method.';
                             jQuery(".applepay-error").html("<div>"+err+" </div>").show();
                             setTimeout(function () { 
                                 jQuery(".applepay-error").html("").hide();
@@ -194,9 +188,9 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
 
         authorize: function(applePayload, totalAmount) {
             console.log(applePayload)
-            var appToken = applePayload.token.paymentData.data;
+            let appToken = applePayload.token.paymentData.data;
             if (appToken) {
-                var xcardnum = btoa(JSON.stringify(applePayload.token.paymentData));
+                let xcardnum = btoa(JSON.stringify(applePayload.token.paymentData));
                 if (window.checkoutConfig.isCustomerLoggedIn == false) {
                     // Check lastname is exist in shipping address from applepay response
                     isExistLastNameShippingAddress(applePayload);
@@ -248,12 +242,12 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         }
     }
     function getAmount () {
-        var totals = quote.totals();
-        var base_grand_total = (totals ? totals : quote)['base_grand_total'];
+        let totals = quote.totals();
+        let base_grand_total = (totals ? totals : quote)['base_grand_total'];
         return parseFloat(base_grand_total).toFixed(2);
     }
     function isExistLastNameShippingAddress(data) {
-        var lastname = data.shippingContact.familyName;
+        let lastname = data.shippingContact.familyName;
         if (!lastname || lastname.trim().length === 0) {
             jQuery(".applepay-error").html("<div>Please check the shipping address information. Lastname is required. Enter and try again.</div>").show();
             setTimeout(function () { 
@@ -263,7 +257,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         }
     }
     function isExistLastNameBillingAddress(data) {
-        var lastname = data.billingContact.familyName;
+        let lastname = data.billingContact.familyName;
         if (!lastname || lastname.trim().length === 0) {
             jQuery(".applepay-error").html("<div>Please check the billing address information. Lastname is required. Enter and try again.</div>").show();
             setTimeout(function () { 
@@ -276,7 +270,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         console.log(value);
     }
     function getApButtonColor(applePayConfig) {
-        var apButtonColor = APButtonColor.black;
+        let apButtonColor = APButtonColor.black;
         switch(applePayConfig.button) {
             case "black":
                 apButtonColor = APButtonColor.black;
@@ -294,7 +288,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         return apButtonColor;
     }
     function getApButtonType(applePayConfig) {
-        var apButtonType = APButtonType.pay;
+        let apButtonType = APButtonType.pay;
         switch(applePayConfig.type) {
             case "pay":
                 apButtonType = APButtonType.pay;
@@ -307,9 +301,6 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 break;
             case "order":
                 apButtonType = APButtonType.order;
-                break;
-            case "donate":
-                apButtonType = APButtonType.donate;
                 break;
             case "donate":
                 apButtonType = APButtonType.donate;
