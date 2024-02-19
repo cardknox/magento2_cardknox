@@ -37,6 +37,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 console.error("getTransactionInfo error ", exMsg(err));
             }
         },
+
         onGetTransactionInfo: function () {
             try {
                 return this.getTransactionInfo();
@@ -44,6 +45,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 console.error("onGetTransactionInfo error ", exMsg(err));
             }
         },
+
         validateApplePayMerchant: function () {
             return new Promise((resolve, reject) => {
                 try {
@@ -75,6 +77,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 }
             });
         },
+
         onValidateMerchant: function() {
             return new Promise((resolve, reject) => {
                 try {
@@ -98,6 +101,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 }
             });
         },
+
         handleAPError: function(err) {
             if (err && err.xRefNum) {
                 setAPPayload("There was a problem with your order ("+err.xRefNum+")");
@@ -105,6 +109,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 setAPPayload("There was a problem with your order ("+exMsg(err)+")");
             }
         },
+
         onPaymentMethodSelected: function(paymentMethod) {
             const self = this;
             return new Promise((resolve, reject) => {
@@ -123,6 +128,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 }
             })                
         },
+
         onPaymentAuthorize: function(applePayload) {
             const amt = getAmount();
             return new Promise((resolve, reject) => {
@@ -155,14 +161,52 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 }
             });
         },
+
+        onBeforeProcessPayment: function () {
+            return new Promise(function (resolve, reject) {
+                try {
+                    if (applePay.validate() &&
+                        applePay.additionalValidator()
+                    ) {
+                        // Check shipping method is selected or not in cart summary
+                        if ( quote.shippingMethod() !== null && quote.shippingMethod() !== undefined) {
+                            // update amount dynamically
+                            window.ckApplePay.updateAmount();
+                            resolve(iStatus.success);
+                        } else {
+                            var err = 'Please select a shipping method.';
+                            jQuery(".applepay-error").html("<div>"+err+" </div>").show();
+                            setTimeout(function () { 
+                                jQuery(".applepay-error").html("").hide();
+                            }, 4000);
+                            reject(err);
+                        }
+                    }
+                } catch (err) {
+                    jQuery(".applepay-error").html("<div> "+err+"</div>").show();
+                    setTimeout(function () { 
+                        jQuery(".applepay-error").html("").hide();
+                    }, 4000);
+                    reject(err);
+                }
+            });
+        },
+
         authorize: function(applePayload, totalAmount) {
             console.log(applePayload)
             var appToken = applePayload.token.paymentData.data;
             if (appToken) {
-                var xcardnum = btoa(JSON.stringify(applePayload.token.paymentData))
-                return applePay.startPlaceOrder(xcardnum, totalAmount);
+                var xcardnum = btoa(JSON.stringify(applePayload.token.paymentData));
+                if (window.checkoutConfig.isCustomerLoggedIn == false) {
+                    // Check lastname is exist in shipping address from applepay response
+                    isExistLastNameShippingAddress(applePayload);
+                    // Check lastname is exist in billing address from applepay response
+                    isExistLastNameBillingAddress(applePayload);
+                }
+                return applePay.startPlaceOrder(xcardnum, totalAmount, applePayload);
             }
         },
+
         initAP: function() {
             return {
                 buttonOptions: this.buttonOptions,
@@ -173,6 +217,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 onGetShippingMethods: "apRequest.onGetShippingMethods",
                 onPaymentMethodSelected: "apRequest.onPaymentMethodSelected",
                 onValidateMerchant: "apRequest.onValidateMerchant",
+                onBeforeProcessPayment: "apRequest.onBeforeProcessPayment",
                 onPaymentAuthorize: "apRequest.onPaymentAuthorize",
                 onPaymentComplete: "apRequest.onPaymentComplete",
                 onAPButtonLoaded: "apRequest.apButtonLoaded",
@@ -206,6 +251,26 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         var totals = quote.totals();
         var base_grand_total = (totals ? totals : quote)['base_grand_total'];
         return parseFloat(base_grand_total).toFixed(2);
+    }
+    function isExistLastNameShippingAddress(data) {
+        var lastname = data.shippingContact.familyName;
+        if (!lastname || lastname.trim().length === 0) {
+            jQuery(".applepay-error").html("<div>Please check the shipping address information. Lastname is required. Enter and try again.</div>").show();
+            setTimeout(function () { 
+                jQuery(".applepay-error").html("").hide();
+            }, 4000);
+            throw new Error("Please check the shipping address information. Lastname is required. Enter and try again.");
+        }
+    }
+    function isExistLastNameBillingAddress(data) {
+        var lastname = data.billingContact.familyName;
+        if (!lastname || lastname.trim().length === 0) {
+            jQuery(".applepay-error").html("<div>Please check the billing address information. Lastname is required. Enter and try again.</div>").show();
+            setTimeout(function () { 
+                jQuery(".applepay-error").html("").hide();
+            }, 4000);
+            throw new Error("Please check the billing address information. Lastname is required. Enter and try again.");
+        }
     }
     function setAPPayload(value) {
         console.log(value);

@@ -47,11 +47,11 @@ class OrderManagement
         $method = $paymentQuote->getMethodInstance()->getCode();
         
         $shipping_address_firstname = $paymentQuote->getAdditionalInformation('shippingAddressFirstname');
-        if ($quoteId && $method == "cardknox_google_pay" && $shipping_address_firstname !== null) {
+        if ($quoteId && $method == "cardknox_google_pay" && $shipping_address_firstname !== null || $method == "cardknox_apple_pay" && $shipping_address_firstname !== null) {
             $this->modifyShippingAddress($shippingAddress, $shipping_address_firstname);
         }
         
-        if ($quoteId && $method == "cardknox_google_pay") {
+        if ($quoteId && $method == "cardknox_google_pay" || $method == "cardknox_apple_pay") {
             $this->updateQuoteAddress($shippingAddress, $billingAddress);
             $this->updateTelephone($shippingAddress, $billingAddress);
         }
@@ -78,11 +78,11 @@ class OrderManagement
             $method = $payment->getMethodInstance()->getCode();
             
             $shipping_address_firstname = $payment->getAdditionalInformation('shippingAddressFirstname');
-            if ($method == "cardknox_google_pay" && $shipping_address_firstname !== null) {
+            if ($method == "cardknox_google_pay" && $shipping_address_firstname !== null || $method == "cardknox_apple_pay" && $shipping_address_firstname !== null) {
                 $this->modifyShippingAddress($shippingAddress, $shipping_address_firstname);
             }
             
-            if ($method == "cardknox_google_pay") {
+            if ($method == "cardknox_google_pay" || $method == "cardknox_apple_pay") {
                 $this->updateQuoteAddress($shippingAddress, $billingAddress);
                 $this->updateTelephone($shippingAddress, $billingAddress);
             }

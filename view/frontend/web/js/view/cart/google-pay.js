@@ -176,7 +176,11 @@ define([
             this.setPaymentMethodNonce(nonce);
             this.isPlaceOrderActionAllowed(true);
             saveShipping.saveShippingInformation();
-            this.placeOrder();
+
+            // Getting All Response Then call PlaceOrder function
+            setTimeout(() => {
+                this.placeOrder();
+            }, 1000);
         },
         /**
          * Save nonce
