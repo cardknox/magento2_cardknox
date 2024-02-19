@@ -134,11 +134,11 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                             if (!resp)
                                 throw new Error("Invalid response: " + response);
                             if (resp.xError) {
-                                throw resp;
+                                throw new Error("Error from response: " + JSON.stringify(resp));
                             }
                             resolve(response);
                         } catch (err) {
-                            throw err;
+                            reject(err);
                         }
                     })
                     .catch((err) => {
@@ -267,7 +267,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         console.log(value);
     }
     function getApButtonColor(applePayConfig) {
-        let apButtonColor = APButtonColor.black;
+        let apButtonColor = '';
         switch(applePayConfig.button) {
             case "black":
                 apButtonColor = APButtonColor.black;
@@ -285,7 +285,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         return apButtonColor;
     }
     function getApButtonType(applePayConfig) {
-        let apButtonType = APButtonType.pay;
+        let apButtonType = '';
         switch(applePayConfig.type) {
             case "pay":
                 apButtonType = APButtonType.pay;
