@@ -1,3 +1,4 @@
+/* eslint max-params: ["error", 15] */
 define([
     'Magento_Checkout/js/view/payment/default',
     'Magento_Checkout/js/model/quote',

@@ -22,14 +22,14 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         shippingMethod: null,
         creditType: null,
 
-        getTransactionInfo: function () {
+        _getTransactionInfo: function () {
             try {
-                const amt = getAmount();
+                const apAmt = _getAmount();
                 return {
                     total: {
                             type:  'final',
                             label: 'Total',
-                            amount: amt.toString(),
+                            amount: apAmt.toString(),
                         }
                 };
             } catch (err) {
@@ -39,7 +39,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
 
         onGetTransactionInfo: function () {
             try {
-                return this.getTransactionInfo();
+                return this._getTransactionInfo();
             } catch (err) {
                 console.error("onGetTransactionInfo error ", exMsg(err));
             }
@@ -123,7 +123,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         },
 
         onPaymentAuthorize: function(applePayload) {
-            const amt = getAmount();
+            const amt = _getAmount();
             return new Promise((resolve, reject) => {
                 try {
                     this.authorize(applePayload, amt.toString())
@@ -238,7 +238,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             toShow ? elem.classList.remove("hidden") : elem.classList.add("hidden");
         }
     }
-    function getAmount () {
+    function _getAmount () {
         let totals = quote.totals();
         let base_grand_total = (totals || quote)['base_grand_total'];
         return parseFloat(base_grand_total).toFixed(2);
