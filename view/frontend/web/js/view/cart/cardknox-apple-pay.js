@@ -108,7 +108,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             return new Promise((resolve, reject) => {
                 try {
                     console.log("paymentMethod", JSON.stringify(paymentMethod));
-                    const resp = self.getTransactionInfo(null, null, paymentMethod.type);
+                    const resp = self._getTransactionInfo(null, null, paymentMethod.type);
                     resolve(resp);                            
                 } catch (err) {
                     console.error("onPaymentMethodSelected error.", exMsg(err));

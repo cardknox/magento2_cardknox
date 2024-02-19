@@ -195,7 +195,7 @@ define([
             quote.guestEmail = email;
         },
 
-        _getCode: function () {
+        getCode: function () {
             return METHOD_ID;
         },
 
@@ -206,7 +206,7 @@ define([
          */
         getData: function () {
             let data = {
-                'method': this._getCode(),
+                'method': this.getCode(),
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
                     'xAmount': this.xAmount,
