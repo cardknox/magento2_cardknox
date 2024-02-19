@@ -45,7 +45,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             }
         },
 
-        validateApplePayMerchant: function () {
+        _validateApplePayMerchant: function () {
             return new Promise((resolve, reject) => {
                 try {
                     let xhr = new XMLHttpRequest();
@@ -77,7 +77,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         onValidateMerchant: function() {
             return new Promise((resolve, reject) => {
                 try {
-                    this.validateApplePayMerchant()
+                    this._validateApplePayMerchant()
                     .then((response) => {
                         try {
                             console.log(response);
@@ -167,19 +167,11 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                             resolve(iStatus.success);
                         } else {
                             let err = 'Please select a shipping method.';
-                            jQuery(".applepay-error").html("<div>"+err+" </div>").show();
-                            setTimeout(function () { 
-                                jQuery(".applepay-error").html("").hide();
-                            }, 4000);
-                            reject(err);
+                            _errorShowMessage(err);
                         }
                     }
                 } catch (err) {
-                    jQuery(".applepay-error").html("<div> "+err+"</div>").show();
-                    setTimeout(function () { 
-                        jQuery(".applepay-error").html("").hide();
-                    }, 4000);
-                    reject(err);
+                    _errorShowMessage(err);
                 }
             });
         },
@@ -220,7 +212,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             if (!resp) return;
             
             if (resp.status === iStatus.success) {
-                showHide(this.buttonOptions.buttonContainer, true);
+                _showHide(this.buttonOptions.buttonContainer, true);
             } else if (resp.reason) {
                 jQuery(".applepay-error").html("<div>"+resp.reason+"</div>").show();
                 console.log(resp.reason);
@@ -230,7 +222,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         }
     };
 
-    function showHide(elem, toShow) {
+    function _showHide(elem, toShow) {
         if (typeof(elem) === "string") {
             elem = document.getElementById(elem);
         }
@@ -238,6 +230,15 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             toShow ? elem.classList.remove("hidden") : elem.classList.add("hidden");
         }
     }
+
+    function _errorShowMessage(err) {
+        jQuery(".applepay-error").html("<div> "+err+"</div>").show();
+        setTimeout(function () { 
+            jQuery(".applepay-error").html("").hide();
+        }, 4000);
+        reject(err);
+    }
+
     function _getAmount () {
         let totals = quote.totals();
         let base_grand_total = (totals || quote)['base_grand_total'];

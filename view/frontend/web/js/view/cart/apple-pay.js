@@ -1,4 +1,4 @@
-/* eslint max-params: ["error", 15] */
+/* eslint-disable max-params */
 define([
     'Magento_Checkout/js/view/payment/default',
     'Magento_Checkout/js/model/quote',
@@ -356,3 +356,4 @@ define([
         }
     });
 });
+/* eslint-enable max-params */
