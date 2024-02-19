@@ -223,7 +223,7 @@ define([
                 setDebugEnv(true);
             }
 
-            cardknoxApplePay.init(this);
+            cardknoxApplePay.initApplePay(this);
         },
 
         isSupportedApplePay: function () {

@@ -318,13 +318,13 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         return apButtonType;
     }
     return {
-        init: function (parent) {
+        initApplePay: function (parent) {
             // No parent
             if (!parent) {
                 return;
             }
             applePay = parent;
-            if (applePayConfig.merchantIdentifier == "" || applePayConfig.merchantIdentifier == null || applePayConfig.merchantIdentifier.length == 0) {
+            if (!applePayConfig.merchantIdentifier) {
                 jQuery(".applepay-error").html("<div>Please contact support. Failed to initialize Apple Pay. </div>").show();
             } else {
                 jQuery('#ap-container').attr('data-ifields-oninit',"window.apRequest.initAP");
