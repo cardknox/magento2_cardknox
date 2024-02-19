@@ -1,4 +1,3 @@
-/* eslint-disable max-params */
 define([
     'Magento_Checkout/js/view/payment/default',
     'Magento_Checkout/js/model/quote',
@@ -44,7 +43,7 @@ define([
             paymentMethodNonce: null,
             xAmount: null
         },
-        isAllowDuplicateTransaction: koForAP.observable(false),
+        _isAllowDuplicateTransaction: koForAP.observable(false),
         /**
          * @return {exports}
          */
@@ -196,7 +195,7 @@ define([
             quote.guestEmail = email;
         },
 
-        getCode: function () {
+        _getCode: function () {
             return METHOD_ID;
         },
 
@@ -207,12 +206,12 @@ define([
          */
         getData: function () {
             let data = {
-                'method': this.getCode(),
+                'method': this._getCode(),
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
                     'xAmount': this.xAmount,
                     'xPaymentAction': window.checkoutConfig.payment.cardknox_apple_pay.xPaymentAction,
-                    'isAllowDuplicateTransaction': this.getAllowDuplicateTransactionApay()
+                    'isAllowDuplicateTransaction': this._getAllowDuplicateTransactionApay()
                 }
             };
             data['additional_data'] = _.extend(data['additional_data'], this.additionalData);
@@ -234,7 +233,7 @@ define([
         /**
          * @return {Boolean}
          */
-         validate: function () {
+         _validate: function () {
             return true;
         },
 
@@ -248,7 +247,7 @@ define([
         /**
          * Get Allow Duplicate Transaction Apay
          */
-        getAllowDuplicateTransactionApay: function () {
+        _getAllowDuplicateTransactionApay: function () {
             let isAllowDuplicateTransactionApay = false;
             if ($('#is_allow_duplicate_transaction_apay').length) {
                 if($("#is_allow_duplicate_transaction_apay").prop('checked')){
@@ -261,7 +260,7 @@ define([
         /**
          * @return {*}
          */
-        getPlaceOrderDeferredObject: function () {
+        _getPlaceOrderDeferredObject: function () {
             return $.when(
                 placeOrderActionAP(this.getData(), this.messageContainer)
             );
@@ -277,13 +276,13 @@ define([
                 event.preventDefault();
             }
 
-            if (this.validate() &&
+            if (this._validate() &&
                 additionalValidators.validate() &&
                 this.isPlaceOrderActionAllowed() === true
             ) {
                 this.isPlaceOrderActionAllowed(false);
 
-                this.getPlaceOrderDeferredObject()
+                this._getPlaceOrderDeferredObject()
                     .done(
                         function () {
                             self.afterPlaceOrder();
@@ -304,11 +303,11 @@ define([
                             if (response?.responseJSON?.message) {
                                 errorMessage = response.responseJSON.message;
                             }
-                            self.showPaymentError(errorMessage);
+                            self._showPaymentError(errorMessage);
                             if (errorMessage == 'Duplicate Transaction') {
-                                self.isAllowDuplicateTransaction(true);
+                                self._isAllowDuplicateTransaction(true);
                             } else {
-                                self.isAllowDuplicateTransaction(false);
+                                self._isAllowDuplicateTransaction(false);
                             }
                         }
                     );;
@@ -322,7 +321,7 @@ define([
         /**
          * Show Payment Error
          */
-        showPaymentError: function (message) {
+        _showPaymentError: function (message) {
             $(".applepay-error").html("<div> "+message+" </div>").show();
             setTimeout(function () { 
                 $(".applepay-error").html("").hide();
@@ -356,4 +355,3 @@ define([
         }
     });
 });
-/* eslint-enable max-params */
