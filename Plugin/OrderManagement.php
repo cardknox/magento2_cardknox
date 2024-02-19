@@ -47,7 +47,8 @@ class OrderManagement
         $method = $paymentQuote->getMethodInstance()->getCode();
         
         $shipping_address_firstname = $paymentQuote->getAdditionalInformation('shippingAddressFirstname');
-        if ($quoteId && $method == "cardknox_google_pay" && $shipping_address_firstname !== null || $method == "cardknox_apple_pay" && $shipping_address_firstname !== null) {
+        if ($quoteId && $shipping_address_firstname !== null &&
+            ($method == "cardknox_google_pay" || $method == "cardknox_apple_pay")) {
             $this->modifyShippingAddress($shippingAddress, $shipping_address_firstname);
         }
         
@@ -78,7 +79,8 @@ class OrderManagement
             $method = $payment->getMethodInstance()->getCode();
             
             $shipping_address_firstname = $payment->getAdditionalInformation('shippingAddressFirstname');
-            if ($method == "cardknox_google_pay" && $shipping_address_firstname !== null || $method == "cardknox_apple_pay" && $shipping_address_firstname !== null) {
+            if ($shipping_address_firstname !== null &&
+                ($method == "cardknox_google_pay" || $method == "cardknox_apple_pay")) {
                 $this->modifyShippingAddress($shippingAddress, $shipping_address_firstname);
             }
             
