@@ -207,14 +207,14 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         },
         apButtonLoaded: function (resp) {
             if (!resp) return;
-            
+
             if (resp.status === iStatus.success) {
                 _showHide(this.buttonOptions.buttonContainer, true);
             } else if (resp.reason) {
                 jQuery(".applepay-error").html("<div>"+resp.reason+"</div>").show();
                 console.log(resp.reason);
             } else if(resp.status == -100){
-                jQuery(".applepay-error").html("<div> Apple Pay initialization failed. Apple Pay not supported.</div>").show();
+                console.error("Apple Pay initialization failed. Apple Pay not supported");
             }
         }
     };
@@ -235,7 +235,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
 
     function _errorShowMessage(err) {
         jQuery(".applepay-error").html("<div> "+err+"</div>").show();
-        setTimeout(function () { 
+        setTimeout(function () {
             jQuery(".applepay-error").html("").hide();
         }, 4000);
         reject(err);
@@ -250,7 +250,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         let lastname = data.shippingContact.familyName;
         if (!lastname || lastname.trim().length === 0) {
             jQuery(".applepay-error").html("<div>Please check the shipping address information. Lastname is required. Enter and try again.</div>").show();
-            setTimeout(function () { 
+            setTimeout(function () {
                 jQuery(".applepay-error").html("").hide();
             }, 4000);
             throw new Error("Please check the shipping address information. Lastname is required. Enter and try again.");
@@ -260,7 +260,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         let lastname = data.billingContact.familyName;
         if (!lastname || lastname.trim().length === 0) {
             jQuery(".applepay-error").html("<div>Please check the billing address information. Lastname is required. Enter and try again.</div>").show();
-            setTimeout(function () { 
+            setTimeout(function () {
                 jQuery(".applepay-error").html("").hide();
             }, 4000);
             throw new Error("Please check the billing address information. Lastname is required. Enter and try again.");
