@@ -245,6 +245,14 @@
                             <field id="cardknox_applepay_active">1</field>
                         </depends>
                     </field>
+                    <field id="cardknox_applepay_enable_cart" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enable Apple Pay on Cart Page</label>
+                        <config_path>payment/cardknox_apple_pay/cart_page_enable</config_path>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <depends>
+                            <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
                     <field id="allowspecific" translate="label" type="allowspecific" showInDefault="9"
                         showInWebsite="1" showInStore="0" sortOrder="70">
                         <label>Payment From Applicable Countries</label>

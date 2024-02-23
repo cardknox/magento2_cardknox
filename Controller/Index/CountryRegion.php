@@ -48,7 +48,7 @@ class CountryRegion extends \Magento\Framework\App\Action\Action
         $region = [];
         $response = ['region' => $region];
         if (!empty($countryCode) && !empty($regionCodeOrName)) {
-            if (!in_array($countryCode, ['US', 'CA'])) {
+            if (!in_array($countryCode, ['US', 'CA', 'AU'])) {
                 $region = $this->addressHelper->getRegionByName($regionCodeOrName, $countryCode);
             } else {
                 $region = $this->addressHelper->getRegionByCode($regionCodeOrName, $countryCode);

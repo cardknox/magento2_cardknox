@@ -23,6 +23,7 @@ class ApplePayConfig
     public const CARDKNOX_TOKEN_KEY = 'cardknox_token_key';
     public const KEY_CC_TYPES_CARDKNOX_MAPPER = 'cctypes_cardknox_mapper';
     public const APPLEPAY_PAYMENT_ACTION = 'payment/cardknox_apple_pay/payment_action';
+    public const APPLEPAY_ENABLE_ON_CARTPAGE = 'payment/cardknox_apple_pay/cardknox_applepay_enable_cart';
 
     /**
      * @var ScopeConfigInterface
@@ -33,7 +34,7 @@ class ApplePayConfig
      * @var mixed
      */
     public $pathPattern;
-    
+
     /**
      * @param ScopeConfigInterface $scopeConfig
      * @param string $pathPattern
@@ -131,5 +132,15 @@ class ApplePayConfig
     public function getGPayPaymentAction()
     {
         return $this->getValue(self::APPLEPAY_PAYMENT_ACTION);
+    }
+
+    /**
+     * Check ApplePay is enable for cart page function
+     *
+     * @return boolean
+     */
+    public function isEnabledApplyPayOnCartPage()
+    {
+        return (bool) $this->getValue(self::APPLEPAY_ENABLE_ON_CARTPAGE);
     }
 }
