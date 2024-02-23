@@ -37,7 +37,6 @@ define([
 
     return Component.extend({
         defaults: {
-            // template: 'CardknoxDevelopment_Cardknox/cart/apple-pay-btn',
             redirectAfterPlaceOrder: true,
             grandTotalAmount: 0,
             paymentMethodNonce: null,
