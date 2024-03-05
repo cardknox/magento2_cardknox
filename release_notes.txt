@@ -1,3 +1,6 @@
+1.0.21
+- Add ApplePay to cart page
+
 1.0.20
 - Update the plugin to the latest version of iFields 2.15.2401.3101
 - Fix Allow duplicate transaction checkbox not clickable
