@@ -66,12 +66,6 @@ class BaseRequest implements BuilderInterface
         $version = $this->productMetadata->getVersion();
         $ipAddress = $this->helper->getIpAddress();
 
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/ipAddress.log');
-        $logger = new \Zend_Log();
-        $logger->addWriter($writer);
-        $logger->info("ipAddress ". $ipAddress);
-        $logger->info("orderRemoteIp ". $order->getRemoteIp());
-
         return [
             'xVersion' => '4.5.8',
             'xSoftwareName' => 'Magento ' . $edition . " ". $version,
