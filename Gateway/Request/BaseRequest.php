@@ -10,6 +10,7 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Framework\App\ProductMetadataInterface;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class BaseRequest implements BuilderInterface
 {
@@ -24,15 +25,23 @@ class BaseRequest implements BuilderInterface
     private $productMetadata;
 
     /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
      * @param ConfigInterface $config
      * @param ProductMetadataInterface $productMetadata
+     * @param Data $helper
      */
     public function __construct(
         ConfigInterface $config,
-        ProductMetadataInterface $productMetadata
+        ProductMetadataInterface $productMetadata,
+        Data $helper
     ) {
         $this->config = $config;
         $this->productMetadata = $productMetadata;
+        $this->helper = $helper;
     }
 
     /**
@@ -55,6 +64,14 @@ class BaseRequest implements BuilderInterface
         $order = $paymentDO->getOrder();
         $edition = $this->productMetadata->getEdition();
         $version = $this->productMetadata->getVersion();
+        $ipAddress = $this->helper->getIpAddress();
+
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/ipAddress.log');
+        $logger = new \Zend_Log();
+        $logger->addWriter($writer);
+        $logger->info("ipAddress ". $ipAddress);
+        $logger->info("orderRemoteIp ". $order->getRemoteIp());
+
         return [
             'xVersion' => '4.5.8',
             'xSoftwareName' => 'Magento ' . $edition . " ". $version,
@@ -63,7 +80,7 @@ class BaseRequest implements BuilderInterface
                 'cardknox_transaction_key',
                 $order->getStoreId()
             ),
-            'xIP' => $order->getRemoteIp(),
+            'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
             'xSupports64BitRefnum' => true,
         ];
     }

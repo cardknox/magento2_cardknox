@@ -56,4 +56,26 @@ class Data extends AbstractHelper
             \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE
         );
     }
+    /**
+     * Get Client IP address
+     *
+     * @return string|null
+     */
+    public function getIpAddress()
+    {
+        //phpcs:disable
+        $ipAddress = null;
+        // if user from the share internet
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ipAddress = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            //if user is from the proxy
+            $ipAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            //if user is from the remote address
+            $ipAddress = $_SERVER['REMOTE_ADDR'];
+        }
+        //phpcs:enable
+        return $ipAddress;
+    }
 }
