@@ -11,6 +11,7 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
 
 class GooglePayBaseRequest implements BuilderInterface
 {
@@ -25,15 +26,23 @@ class GooglePayBaseRequest implements BuilderInterface
     private $productMetadata;
 
     /**
+     * @var Helper
+     */
+    private $dataHelper;
+
+    /**
      * @param ProductMetadataInterface $productMetadata
      * @param Config $config
+     * @param Data $dataHelper
      */
     public function __construct(
         ProductMetadataInterface $productMetadata,
-        Config $config
+        Config $config,
+        Helper $dataHelper
     ) {
         $this->productMetadata = $productMetadata;
         $this->config = $config;
+        $this->dataHelper = $dataHelper;
     }
 
     /**
@@ -55,7 +64,7 @@ class GooglePayBaseRequest implements BuilderInterface
 
         $order = $paymentDO->getOrder();
         $xSoftwareName = 'Magento ' . $this->productMetadata->getEdition() . " ". $this->productMetadata->getVersion();
-
+        $_ipAddress = $this->dataHelper->getIpAddress();
         return [
             'xVersion' => '4.5.8',
             'xSoftwareName' => $xSoftwareName,
@@ -65,7 +74,7 @@ class GooglePayBaseRequest implements BuilderInterface
                 $order->getStoreId()
             ),
             'xDigitalWalletType' => 'GooglePay',
-            'xIP' => $order->getRemoteIp(),
+            'xIP' => $_ipAddress ? $_ipAddress : $order->getRemoteIp(),
         ];
     }
 }
