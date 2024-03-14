@@ -8,7 +8,7 @@
 
 1.0.19
 - Update the plugin to the latest version of iFields 2.15.2309.2601
-- Allow duplicate transaction for all cardknox payement methods
+- Allow duplicate transaction for all cardknox payment methods
 - ApplePay will be hidden if ApplePay is not available
 - Fix invalid checkout error message
 - Fix cardnumber and cvv auto-fill issue
