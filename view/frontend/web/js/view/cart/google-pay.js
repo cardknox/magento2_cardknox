@@ -13,7 +13,9 @@ define([
     'Magento_Checkout/js/action/create-billing-address',
     'Magento_Checkout/js/action/create-shipping-address',
     'mage/url',
-    'Magento_Checkout/js/model/shipping-save-processor/default'
+    'Magento_Checkout/js/model/shipping-save-processor/default',
+    'Magento_Checkout/js/action/select-shipping-method',
+    'Magento_Customer/js/customer-data'
 ], function(
     $,
     Component,
@@ -29,7 +31,9 @@ define([
     createBillingAddress,
     createShippingAddress,
     urlBuilder,
-    saveShipping
+    saveShipping,
+    selectShippingMethodAction,
+    customerData
 ) {
     'use strict';
     return Component.extend({
@@ -40,11 +44,11 @@ define([
             this._super();
             this.customerIsLoggedIn();
         },
-        
+
         customerIsLoggedIn: function () {
             return customer.isLoggedIn();
         },
-        initFrame: function () {        
+        initFrame: function () {
             if (/[?&](is)?debug/i.test(window.location.search)){
                 setDebugEnv(true);
             }
@@ -67,12 +71,17 @@ define([
          * @returns {Object}
          */
         getData: function () {
-            var shipping_address_firstname = null;
+            let shipping_address_firstname = null;
 
-            if (!this.customerIsLoggedIn()) {
-                shipping_address_firstname = quote.shippingAddress().firstname;
+            if (!quote.isVirtual()) {
+                if (!this.customerIsLoggedIn()) {
+                    shipping_address_firstname = quote.shippingAddress().firstname;
+                }
+            } else {
+                shipping_address_firstname = quote.billingAddress().firstname;
             }
-            var data = {
+
+            let data = {
                 'method': this.getCode(),
                 'additional_data': {
                     'xCardNum': this.paymentMethodNonce,
@@ -92,7 +101,7 @@ define([
         validate: function () {
             return true;
         },
-        
+
         additionalValidator: function () {
             return additionalValidators.validate();
         },
@@ -101,7 +110,7 @@ define([
          * Place order.
          */
         placeOrder: function (data, event) {
-            var self = this;
+            let self = this;
 
             if (event) {
                 event.preventDefault();
@@ -130,8 +139,8 @@ define([
                         function (response) {
                             self.isPlaceOrderActionAllowed(true);
 
-                            var error_message = "Unable to process the order. Please try again.";
-                            if (response && response.responseJSON && response.responseJSON.message) {
+                            let error_message = "Unable to process the order. Please try again.";
+                            if (response?.responseJSON?.message) {
                                 error_message = response.responseJSON.message;
                             }
                             self.showPaymentError(error_message);
@@ -146,10 +155,10 @@ define([
 
         showPaymentError: function (message) {
             $(".gpay-error").html("<div> "+message+" </div>").show();
-            setTimeout(function () { 
+            setTimeout(function () {
                 $(".gpay-error").html("").hide();
             }, 5000);
-            
+
             fullScreenLoader.stopLoader();
             $('.checkout-cart-index .loading-mask').attr('style','display:none');
         },
@@ -168,56 +177,64 @@ define([
          */
         startPlaceOrder: function (nonce, xAmount, paymentResponse) {
             $("body").trigger('processStart');
-            if (!this.customerIsLoggedIn()) {
-                // Sets shipping and billing address for guest
-                this.onPaymentMethodReceived(paymentResponse);
-            }
+
             this.xAmount = xAmount ;
+            this.setShippingBillingAddress(paymentResponse);
             this.setPaymentMethodNonce(nonce);
             this.isPlaceOrderActionAllowed(true);
-            saveShipping.saveShippingInformation();
+            if (!quote.isVirtual()) {
+                this._setShippingMethod(paymentResponse);
+                saveShipping.saveShippingInformation();
+            }
 
             // Getting All Response Then call PlaceOrder function
             setTimeout(() => {
                 this.placeOrder();
             }, 1000);
         },
+
         /**
          * Save nonce
          */
         setPaymentMethodNonce: function (nonce) {
             this.paymentMethodNonce = nonce;
         },
+
         /**
          * Sets shipping and billing address
          *
          * @param {Object} payload
          */
-        onPaymentMethodReceived: function (payload) {
-            this.setShippingAddress(payload);
-            this.setBillingAddress(payload);
+        setShippingBillingAddress: function (payload) {
+            if (quote.isVirtual()) {
+                this.setBillingAddress(payload);
+            } else {
+                this.setShippingAddress(payload);
+                this.setBillingAddress(payload);
+            }
         },
+
         /**
          * Sets shipping address for quote
          */
         setShippingAddress: function (data) {
-            var regionData = null;
-            var email = data.paymentData.email;
-            var address = data.paymentData.shippingAddress;
-            var street = address.address1 + " "+address.address2+" "+address.address3;
+            let regionData = null;
+            let email = data.paymentData.email;
+            let address = data.paymentData.shippingAddress;
+            let street = address.address1 + " "+address.address2+" "+address.address3;
             // Get region name and id
             regionData = this.getRegionData(address.administrativeArea, address.countryCode);
             regionData = JSON.parse(regionData);
             // Remove country code from telephone
-            var telephone = data.paymentData.paymentMethodData.info.billingAddress.phoneNumber;
+            let telephone = data.paymentData.paymentMethodData.info.billingAddress.phoneNumber;
             telephone = telephone.substring(telephone.indexOf(" ") + 1);
 
             // Create name array of address
-            var addressNameArray = []; 
+            let addressNameArray = [];
             addressNameArray = address.name.replace("[","").replace("]","").split(' ');
-            var firstname = addressNameArray[0];
-            var lastname = null;
-            var middlename = null;
+            let firstname = addressNameArray[0];
+            let lastname = null;
+            let middlename = null;
 
             if (addressNameArray.length == 2 ) {
                 lastname = addressNameArray[1];
@@ -225,7 +242,7 @@ define([
                 lastname = addressNameArray[2];
                 middlename = addressNameArray[1];
             }
-            var shippingAddress = {
+            let shippingAddress = {
                 firstname: firstname,
                 lastname: lastname,
                 middlename: middlename,
@@ -258,23 +275,23 @@ define([
          * Sets billing address for quote
          */
         setBillingAddress: function (data) {
-            var regionData = null;
-            var email = data.paymentData.email;
-            var address = data.paymentData.paymentMethodData.info.billingAddress;
-            var street = address.address1 + " "+address.address2+" "+address.address3;
+            let regionData = null;
+            let email = data.paymentData.email;
+            let address = data.paymentData.paymentMethodData.info.billingAddress;
+            let street = address.address1 + " "+address.address2+" "+address.address3;
             // Get region name and id
             regionData = this.getRegionData(address.administrativeArea, address.countryCode);
             regionData = JSON.parse(regionData);
             // Remove country code from telephone
-            var telephone = address.phoneNumber;
+            let telephone = address.phoneNumber;
             telephone = telephone.substring(telephone.indexOf(" ") + 1);
 
             // Create name array of address
-            var addressNameArray  = [];
+            let addressNameArray  = [];
             addressNameArray = address.name.replace("[","").replace("]","").split(' ');
-            var firstname = addressNameArray[0];
-            var lastname = null;
-            var middlename = null;
+            let firstname = addressNameArray[0];
+            let lastname = null;
+            let middlename = null;
 
             if (addressNameArray.length == 2 ) {
                 lastname = addressNameArray[1];
@@ -283,7 +300,7 @@ define([
                 middlename = addressNameArray[1];
             }
 
-            var billingAddress = {
+            let billingAddress = {
                 firstname: firstname,
                 lastname: lastname,
                 middlename: middlename,
@@ -303,7 +320,7 @@ define([
                 region_code: regionData.region.code,
                 region: regionData.region.name,
                 countryId: address.countryCode,
-                telephone: address.phoneNumber,
+                telephone: telephone,
                 postcode: address.postalCode
             };
             billingAddress = createBillingAddress(billingAddress);
@@ -315,13 +332,13 @@ define([
          * Get regions by region code or name
          */
         getRegionData: function (administrativeArea, countryCode) {
-            var serviceUrl, payload;
+            let serviceUrl, payload;
             payload = {
                 region: administrativeArea,
                 country_id: countryCode
             };
             serviceUrl = urlBuilder.build('/cardknox/index/countryregion');
-            var response = null;
+            let response = null;
             $.ajax({
                 url: serviceUrl,
                 type: "POST",
@@ -332,6 +349,26 @@ define([
                 }
             });
             return response;
+        },
+
+        _setShippingMethod: function (paymentResponse) {
+            let shippingOptionDataRes = paymentResponse.paymentData;
+            if (shippingOptionDataRes.hasOwnProperty('shippingOptionData')) {
+                    if (typeof shippingOptionDataRes.shippingOptionData.id !== 'undefined' ) {
+                    let fullShippigName = shippingOptionDataRes.shippingOptionData.id;
+                    let shippingMethodArray = fullShippigName.split("__");
+                    let shippingCarrierCode = shippingMethodArray[0];
+                    let shippingMethodCode = shippingMethodArray[1];
+
+                    // Create the shipping method object
+                    let shippingMethod = {
+                        'carrier_code': shippingCarrierCode,
+                        'method_code': shippingMethodCode
+                    };
+
+                    selectShippingMethodAction(shippingMethod);
+                }
+            }
         },
     });
 });

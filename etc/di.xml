@@ -593,4 +593,8 @@
         </arguments>
     </virtualType>
 
+    <!-- Calculate tax -->
+    <preference for="CardknoxDevelopment\Cardknox\Api\GuestTaxCalculatorInterface" type="CardknoxDevelopment\Cardknox\Model\GuestTaxCalculator" />
+    <preference for="CardknoxDevelopment\Cardknox\Api\TaxCalculatorInterface" type="CardknoxDevelopment\Cardknox\Model\TaxCalculator" />
+
 </config>
