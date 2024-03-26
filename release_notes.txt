@@ -1,3 +1,9 @@
+1.0.22
+- feat: add shipping methods to GooglePay & ApplePay popup on cart page
+- feat: add tax & discount to summary in GooglePay & ApplePay Popup on cart page
+- fix: GooglePay & ApplePay not working if a quote has only a virtual product on cart page
+- remove customer login condition for adding shipping & billing address when order place on cart page
+
 1.0.21
 - Add ApplePay to cart page
 - Fix retrieving the Client's IP Address

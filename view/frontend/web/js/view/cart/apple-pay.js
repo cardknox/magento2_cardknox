@@ -13,7 +13,8 @@ define([
     'mage/url',
     'Magento_Checkout/js/action/create-shipping-address',
     'Magento_Checkout/js/action/create-billing-address',
-    'Magento_Checkout/js/model/shipping-save-processor/default'
+    'Magento_Checkout/js/model/shipping-save-processor/default',
+    'Magento_Checkout/js/action/select-shipping-method'
 ], function (
     Component,
     quote,
@@ -29,7 +30,8 @@ define([
     urlBuilder,
     createShippingAddress,
     createBillingAddress,
-    saveShipping
+    saveShipping,
+    selectShippingMethodAction
 ) {
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
@@ -60,17 +62,18 @@ define([
         /**
          * Apple pay place order method
          */
-        startPlaceOrder: function (nonce, xAmount, applePayload) {
+        startPlaceOrder: function (nonce, xAmount, applePayload, lastSelectedShippingMethod) {
             $("body").trigger('processStart');
-            if (!this.customerIsLoggedIn()) {
-                // Sets shipping and billing address for guest
-                this.onPaymentMethodReceived(applePayload);
-            }
+
             this.xAmount = xAmount ;
+            this._setShippingBillingAddress(applePayload);
             this.setPaymentMethodNonce(nonce);
             this.isPlaceOrderActionAllowed(true);
-            saveShipping.saveShippingInformation();
-            
+            if (!quote.isVirtual()) {
+                this._setShippingMethod(lastSelectedShippingMethod);
+                saveShipping.saveShippingInformation();
+            }
+
             // Getting All Response Then call PlaceOrder function
             setTimeout(() => {
                 this.placeOrder();
@@ -89,9 +92,13 @@ define([
          *
          * @param {Object} payload
          */
-        onPaymentMethodReceived: function (payload) {
-            this.setShippingAddress(payload);
-            this.setBillingAddress(payload);
+        _setShippingBillingAddress: function (payload) {
+            if (quote.isVirtual()) {
+                this.setBillingAddress(payload);
+            } else {
+                this.setShippingAddress(payload);
+                this.setBillingAddress(payload);
+            }
         },
 
         /**
@@ -228,7 +235,7 @@ define([
         isSupportedApplePay: function () {
             return window.ApplePaySession && ApplePaySession.canMakePayments();
         },
-    
+
         /**
          * @return {Boolean}
          */
@@ -242,7 +249,7 @@ define([
         additionalValidator: function () {
             return additionalValidators.validate();
         },
-    
+
         /**
          * Get Allow Duplicate Transaction Apay
          */
@@ -322,10 +329,10 @@ define([
          */
         _showPaymentError: function (message) {
             $(".applepay-error").html("<div> "+message+" </div>").show();
-            setTimeout(function () { 
+            setTimeout(function () {
                 $(".applepay-error").html("").hide();
             }, 5000);
-            
+
             fullScreenLoaderAP.stopLoader();
             $('.checkout-cart-index .loading-mask').attr('style','display:none');
         },
@@ -351,6 +358,25 @@ define([
                 }
             });
             return response;
-        }
+        },
+
+        _setShippingMethod: function (lastSelectedShippingMethod) {
+            if (lastSelectedShippingMethod != '') {
+            let shippingOptionDataRes = lastSelectedShippingMethod.identifier;
+                if (typeof shippingOptionDataRes !== 'undefined' ) {
+                let shippingMethodArray = shippingOptionDataRes.split("__");
+                let shippingCarrierCode = shippingMethodArray[0];
+                let shippingMethodCode = shippingMethodArray[1];
+
+                // Create the shipping method object
+                let shippingMethod = {
+                    'carrier_code': shippingCarrierCode,
+                    'method_code': shippingMethodCode
+                };
+
+                selectShippingMethodAction(shippingMethod);
+            }
+            }
+        },
     });
 });
