@@ -55,13 +55,11 @@ define([
 
                 if (!this.shippingMethod) {
                     const shippingOptions = this._getShippingMethods();
-                    console.log("shippingOptions: ", shippingOptions);
                     this.shippingMethod = shippingOptions[0] || {};
                 }
 
                 this.creditType = creditType || this.creditType;
                 const amt = getSubTotal();
-                console.log("shippingOptions: ", amt);
                 const lineItems = [
                     {
                         "label": "Subtotal",
@@ -92,8 +90,6 @@ define([
                 });
                 totalAmt = roundTo(totalAmt, 2);
 
-                console.log("shippingOptions: ", totalAmt);
-
                 this.totalAmount = totalAmt;
                 return {
                     lineItems: lineItems,
@@ -113,7 +109,6 @@ define([
         },
 
         onGetTransactionInfo: function (paymentData) {
-            console.log('onGetTransactionInfo Data: ', paymentData);
             try {
                 const totalAmt = _getAmount();
 
@@ -160,7 +155,6 @@ define([
 
         onShippingContactSelected: function (shippingContact) {
             const self = this;
-            console.log('onShippingContactSelected shippingContact: ', shippingContact);
             return new Promise(function (resolve, reject) {
                 try {
                     const address = self._constructAddressFromShippingContact(shippingContact);
@@ -216,7 +210,6 @@ define([
             const self = this;
             let resp = {};
 
-            console.log('address will validate: ', address);
             if (!applePay._validate(address.countryId)) {
                 const apErr = {
                     code: APErrorCode.shippingContactInvalid,
@@ -387,8 +380,6 @@ define([
         },
 
         authorize: function(applePayload, totalAmount) {
-            console.log("applePayload----", applePayload)
-            console.log("lastSelectedShippingMethod----", lastSelectedShippingMethod)
             let appToken = applePayload.token.paymentData.data;
             if (appToken) {
                 let xcardnum = btoa(JSON.stringify(applePayload.token.paymentData));
