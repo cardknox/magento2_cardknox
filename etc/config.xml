@@ -74,6 +74,8 @@
                 <environment>TEST</environment>
                 <button_style>white</button_style>
                 <allowspecific>0</allowspecific>
+                <gp_button_type>pay</gp_button_type>
+                <cardknox_googlepay_enable_cart>0</cardknox_googlepay_enable_cart>
             </cardknox_google_pay>
             <cardknox_apple_pay>
                 <model>CardknoxApplePayFacade</model>

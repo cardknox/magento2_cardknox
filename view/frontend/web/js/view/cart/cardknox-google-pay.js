@@ -32,7 +32,7 @@ define([
         },
         buttonOptions: {
             buttonColor: gPayConfig.button ? gPayConfig.button : "default",
-            buttonType: GPButtonType.pay,
+            buttonType: gPayConfig.buttonType ? gPayConfig.buttonType : "buy",
             buttonSizeMode: GPButtonSizeMode.fill
         },
 

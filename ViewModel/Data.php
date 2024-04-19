@@ -10,10 +10,11 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     protected $scopeConfig;
 
     public const XPATH_FIELD_GOOGLEPAY_ENABLED = 'payment/cardknox_google_pay/active';
+    public const XPATH_FIELD_APPLEPAY_ENABLED = 'payment/cardknox_apple_pay/active';
     public const XPATH_FIELD_CC_SELECT_RECAPTCHA_SOURCE = 'payment/cardknox/select_recaptcha_source';
     public const IS_ENABLE_GOOGLE_REPCAPTCHA = "payment/cardknox/recaptchaEnabled";
     public const APPLEPAY_ENABLE_ON_CARTPAGE = 'payment/cardknox_apple_pay/cart_page_enable';
-
+    public const GOOGLEPAY_ENABLE_ON_CARTPAGE = 'payment/cardknox_google_pay/cart_page_enable';
 
     /**
      * __construct function
@@ -34,6 +35,19 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     {
         return (bool) $this->scopeConfig->getValue(
             self::XPATH_FIELD_GOOGLEPAY_ENABLED,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) ?? false;
+    }
+
+    /**
+     * Check apple pay payment method enable function
+     *
+     * @return bool
+     */
+    public function isActiveApplePay(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::XPATH_FIELD_APPLEPAY_ENABLED,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         ) ?? false;
     }
@@ -75,6 +89,18 @@ class Data implements \Magento\Framework\View\Element\Block\ArgumentInterface
     {
         return (bool) $this->scopeConfig->getValue(
             self::APPLEPAY_ENABLE_ON_CARTPAGE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) ?? false;
+    }
+    /**
+     * Check Cardknox GooglePay enable function
+     *
+     * @return boolean
+     */
+    public function isEnabledGooglePayOnCartPage(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::GOOGLEPAY_ENABLE_ON_CARTPAGE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         ) ?? false;
     }
