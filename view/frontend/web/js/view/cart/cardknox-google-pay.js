@@ -178,19 +178,19 @@ define([
                 }
 
                 // calculate tax
-                const taxObj = taxCalculator(
+                const taxObjectGoogelPay = taxCalculator(
                     {
                         address: address,
                         shippingMethod: this.shippingMethod
                     }
                 );
 
-                if (taxObj.hasOwnProperty('tax_amount')) {
-                    this.taxAmt = taxObj['tax_amount'];
+                if (taxObjectGoogelPay.hasOwnProperty('tax_amount')) {
+                    this.taxAmt = taxObjectGoogelPay['tax_amount'];
                 }
 
-                if (taxObj.hasOwnProperty('base_discount_amount')) {
-                    this.discountAmt = taxObj['base_discount_amount'];
+                if (taxObjectGoogelPay.hasOwnProperty('base_discount_amount')) {
+                    this.discountAmt = taxObjectGoogelPay['base_discount_amount'];
                 }
             }
 

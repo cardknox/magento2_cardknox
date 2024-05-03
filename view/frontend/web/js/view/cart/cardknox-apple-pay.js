@@ -222,13 +222,13 @@ define([
                 resp.error = apErr;
             } else {
                 const newShippingMethods = self._getShippingMethods(address);
-                const taxObj = self._calculateTax(address, newShippingMethods[0]);
+                const taxObjectApplePay = self._calculateTax(address, newShippingMethods[0]);
 
-                if (taxObj.hasOwnProperty('tax_amount')) {
-                    self.taxAmt = taxObj['tax_amount'];
+                if (taxObjectApplePay.hasOwnProperty('tax_amount')) {
+                    self.taxAmt = taxObjectApplePay['tax_amount'];
                 }
-                if (taxObj.hasOwnProperty('base_discount_amount')) {
-                    self.discountAmt = taxObj['base_discount_amount'];
+                if (taxObjectApplePay.hasOwnProperty('base_discount_amount')) {
+                    self.discountAmt = taxObjectApplePay['base_discount_amount'];
                 }
 
                 resp = self._getTransactionInfo(newShippingMethods[0]);

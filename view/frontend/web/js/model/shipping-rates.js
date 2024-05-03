@@ -22,7 +22,6 @@ define([
                 cachedData = rateRegistry.get(keyCache);
 
             if (cachedData) {
-                console.log('cachedData: ', cachedData);
                 return cachedData;
             }
 
@@ -38,8 +37,6 @@ define([
                     rateRegistry.set(keyCache, response);
                 }
             });
-
-            console.log('response from ajax: ', response);
 
             return response;
         },

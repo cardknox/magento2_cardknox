@@ -12,7 +12,7 @@ use Magento\Quote\Api\Data\TotalsInterface;
  * Interface for tax calculation
  * @api
  */
-interface TaxCalculatorInterface
+interface CustomerGoogleApplePayTaxCalcInterface
 {
     /**
      * Calculate tax based on address and shipping method.
@@ -21,7 +21,7 @@ interface TaxCalculatorInterface
      * @param TotalsInformationInterface $addressInformation
      * @return TotalsInterface
      */
-    public function calculate(
+    public function walletTaxCalculate(
         $cartId,
         TotalsInformationInterface $addressInformation
     );

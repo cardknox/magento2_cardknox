@@ -16,8 +16,8 @@ define([
                     cartId: quote.getQuoteId()
                 } : {},
                 urls = {
-                    'guest': '/guest-carts/:cartId/calculate-tax',
-                    'customer': '/carts/mine/calculate-tax'
+                    'guest': '/guest-carts/:cartId/wallet-tax-calculate',
+                    'customer': '/carts/mine/wallet-tax-calculate'
                 };
 
             return this.getUrl(urls, params);

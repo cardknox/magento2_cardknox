@@ -12,7 +12,7 @@ use Magento\Quote\Api\Data\TotalsInterface;
  * Interface for guest tax calculation
  * @api
  */
-interface GuestTaxCalculatorInterface
+interface GuestGoogleApplePayTaxCalcInterface
 {
     /**
      * Calculate quote totals based on address and shipping method.
@@ -21,7 +21,7 @@ interface GuestTaxCalculatorInterface
      * @param TotalsInformationInterface $addressInformation
      * @return TotalsInterface
      */
-    public function calculate(
+    public function walletTaxCalculate(
         $cartId,
         TotalsInformationInterface $addressInformation
     );

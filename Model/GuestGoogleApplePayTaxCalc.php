@@ -2,12 +2,12 @@
 
 namespace CardknoxDevelopment\Cardknox\Model;
 
-use CardknoxDevelopment\Cardknox\Api\GuestTaxCalculatorInterface;
-use CardknoxDevelopment\Cardknox\Api\TaxCalculatorInterface;
+use CardknoxDevelopment\Cardknox\Api\GuestGoogleApplePayTaxCalcInterface;
+use CardknoxDevelopment\Cardknox\Api\CustomerGoogleApplePayTaxCalcInterface;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Checkout\Api\Data\TotalsInformationInterface;
 
-class GuestTaxCalculator implements GuestTaxCalculatorInterface
+class GuestGoogleApplePayTaxCalc implements GuestGoogleApplePayTaxCalcInterface
 {
     /**
      * @var QuoteIdMaskFactory
@@ -15,35 +15,35 @@ class GuestTaxCalculator implements GuestTaxCalculatorInterface
     protected $quoteIdMaskFactory;
 
     /**
-     * @var TaxCalculatorInterface
+     * @var CustomerGoogleApplePayTaxCalcInterface
      */
-    protected $taxCalculatorManagement;
+    protected $walletTaxCalcManagement;
 
     /**
      * __construct function
      *
      * @param QuoteIdMaskFactory $quoteIdMaskFactory
-     * @param TaxCalculatorInterface $taxCalculatorManagement
+     * @param CustomerGoogleApplePayTaxCalcInterface $walletTaxCalcManagement
      */
     public function __construct(
         QuoteIdMaskFactory $quoteIdMaskFactory,
-        TaxCalculatorInterface $taxCalculatorManagement
+        CustomerGoogleApplePayTaxCalcInterface $walletTaxCalcManagement
     ) {
         $this->quoteIdMaskFactory = $quoteIdMaskFactory;
-        $this->taxCalculatorManagement = $taxCalculatorManagement;
+        $this->walletTaxCalcManagement = $walletTaxCalcManagement;
     }
 
     /**
      * @inheritDoc
      */
-    public function calculate(
+    public function walletTaxCalculate(
         $cartId,
         TotalsInformationInterface $addressInformation
     ) {
         /** @var $quoteIdMask \Magento\Quote\Model\QuoteIdMask */
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
 
-        return $this->taxCalculatorManagement->calculate(
+        return $this->walletTaxCalcManagement->walletTaxCalculate(
             $quoteIdMask->getQuoteId(),
             $addressInformation
         );

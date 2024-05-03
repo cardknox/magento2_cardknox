@@ -5,11 +5,9 @@ namespace CardknoxDevelopment\Cardknox\Model;
 use Magento\Checkout\Api\Data\TotalsInformationInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
+use CardknoxDevelopment\Cardknox\Api\CustomerGoogleApplePayTaxCalcInterface;
 
-/**
- * Class for management of totals information.
- */
-class TaxCalculator implements \CardknoxDevelopment\Cardknox\Api\TaxCalculatorInterface
+class CustomerGoogleApplePayTaxCalc implements CustomerGoogleApplePayTaxCalcInterface
 {
     /**
      * @var CartTotalRepositoryInterface
@@ -40,7 +38,7 @@ class TaxCalculator implements \CardknoxDevelopment\Cardknox\Api\TaxCalculatorIn
     /**
      * @inheritDoc
      */
-    public function calculate(
+    public function walletTaxCalculate(
         $cartId,
         TotalsInformationInterface $addressInformation
     ) {
