@@ -6,6 +6,7 @@
 - Add new 2 configuration for GooglePay
     1. GooglePay Button Type
     2. Enable GooglePay On the Cart Page
+    3. Enable Show Summary GooglePay/ApplePay for cart page
 
 1.0.21
 - Add ApplePay to cart page

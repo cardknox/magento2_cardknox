@@ -25,6 +25,7 @@ class GpayConfig
     public const GPAY_SPLIT_CAPTURE_ENABLED = 'payment/cardknox_google_pay/split_capture_enabled';
     public const GPAY_BUTTON_TYPE = 'payment/cardknox_google_pay/gp_button_type';
     public const GOOGLEPAY_ENABLE_ON_CARTPAGE = 'payment/cardknox_google_pay/cardknox_googlepay_enable_cart';
+    public const ENABLE_GOOGLEPAY_SHOW_SUMMARY = 'payment/cardknox_google_pay/gp_enable_show_summary';
     /**
      * @var ScopeConfigInterface
      */
@@ -142,5 +143,15 @@ class GpayConfig
     public function isEnabledGooglePayOnCartPage()
     {
         return (bool) $this->getValue(self::GOOGLEPAY_ENABLE_ON_CARTPAGE);
+    }
+
+    /**
+     * Check show summary is enable for GooglePaypopup on cart page function
+     *
+     * @return boolean
+     */
+    public function isEnabledGooglePayShowSummary()
+    {
+        return (bool) $this->getValue(self::ENABLE_GOOGLEPAY_SHOW_SUMMARY);
     }
 }

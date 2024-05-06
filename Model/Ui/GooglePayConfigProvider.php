@@ -63,6 +63,7 @@ class GooglePayConfigProvider implements ConfigProviderInterface
                     'isGPaySplitCaptureEnabled' => $this->gpayConfig->isGPaySplitCaptureEnabled(),
                     'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction(),
                     'buttonType'  => $this->gpayConfig->getGooglePayButtonType(),
+                    'isEnabledGooglePayShowSummary'  => $this->gpayConfig->isEnabledGooglePayShowSummary(),
                 ]
             ]
         ];

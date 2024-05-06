@@ -60,9 +60,12 @@ define([
 
                 this.creditType = creditType || this.creditType;
                 const amt = getSubTotal();
+
+                const isEnabledAPShowSummary = applePayConfig.isEnabledApplePayShowSummary ? applePayConfig.isEnabledApplePayShowSummary : "";
+
                 const lineItems = [
                     {
-                        "label": "Subtotal",
+                        "label": isEnabledAPShowSummary ? "Subtotal" : "",
                         "type": "final",
                         "amount": amt
                     },
@@ -72,14 +75,14 @@ define([
                 const discountAmount = this.discountAmt;
                 if (discountAmount != 0) {
                     lineItems.push({
-                        label: 'Discount',
+                        label: isEnabledAPShowSummary ? 'Discount' : '',
                         type: 'final',
                         amount: discountAmount
                     });
                 }
 
                 lineItems.push({
-                    "label": "Estimated Tax",
+                    "label": isEnabledAPShowSummary ? "Estimated Tax" : '',
                     "amount": this.taxAmt,
                     "type": "final"
                 });
@@ -96,7 +99,7 @@ define([
 
                     total: {
                         type:  'final',
-                        label: 'Total',
+                        label: 'GrandTotal',
                         amount: totalAmt,
                     }
                 };

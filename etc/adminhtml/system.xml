@@ -156,6 +156,14 @@
                             <field id="cardknox_gpay_active">1</field>
                         </depends>
                     </field>
+                    <field id="gp_enable_show_summary" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enable Show Summary Google Pay Popup on Cart Page</label>
+                        <config_path>payment/cardknox_google_pay/gp_enable_show_summary</config_path>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <depends>
+                            <field id="cardknox_gpay_active">1</field>
+                        </depends>
+                    </field>
                     <field id="payment_action" translate="label" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>GooglePay Payment Action</label>
                         <source_model>CardknoxDevelopment\Cardknox\Model\Adminhtml\Source\PaymentAction</source_model>
@@ -268,6 +276,14 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <depends>
                             <field id="cardknox_applepay_active">1</field>
+                        </depends>
+                    </field>
+                    <field id="ap_enable_show_summary" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enable Show Summary Apple Pay Popup on Cart Page</label>
+                        <config_path>payment/cardknox_apple_pay/ap_enable_show_summary</config_path>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <depends>
+                            <field id="cardknox_gpay_active">1</field>
                         </depends>
                     </field>
                     <field id="allowspecific" translate="label" type="allowspecific" showInDefault="9"

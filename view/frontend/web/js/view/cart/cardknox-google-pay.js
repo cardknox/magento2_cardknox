@@ -198,29 +198,29 @@ define([
             if (null !== this.shippingMethod && typeof this.shippingMethod === 'object') {
                 shippingPrice = parseFloat(this.shippingMethod['amount']) || 0;
             }
-
+            const isEnabledShowSummary = gPayConfig.isEnabledGooglePayShowSummary ? gPayConfig.isEnabledGooglePayShowSummary : "";
             const lineItems = [
                 {
-                    label: 'Subtotal',
+                    label: isEnabledShowSummary ? 'Subtotal' :'',
                     type: 'SUBTOTAL',
                     price: subTotal.toString(),
                 },
                 {
-                    label: 'Shipping',
+                    label: isEnabledShowSummary ? 'Shipping' :'',
                     type: 'LINE_ITEM',
                     price: shippingPrice.toString(),
                 }
             ];
 
             const taxLineItem = {
-                label: 'Tax',
+                label: isEnabledShowSummary ? 'Tax' :'',
                 type: 'TAX',
                 price: this.taxAmt.toString(),
             };
 
             if (this.discountAmt != 0) {
                 lineItems.push({
-                    label: 'Discount',
+                    label: isEnabledShowSummary ? 'Discount' :'',
                     type: 'LINE_ITEM',
                     price: this.discountAmt.toString()
                 });
@@ -240,7 +240,7 @@ define([
                 currencyCode: quoteData.base_currency_code.toString(),
                 totalPriceStatus: 'FINAL',
                 totalPrice: totalAmt,
-                totalPriceLabel: 'Total'
+                totalPriceLabel: 'GrandTotal'
             }
         },
 

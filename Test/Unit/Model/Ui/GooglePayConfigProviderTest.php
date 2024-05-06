@@ -67,7 +67,8 @@ class GooglePayConfigProviderTest extends \PHPUnit\Framework\TestCase
                         'GPEnvironment' => $this->gpayConfig->getEnvironment(),
                         'isGPaySplitCaptureEnabled' => $this->gpayConfig->isGPaySplitCaptureEnabled(),
                         'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction(),
-                        'buttonType' => $this->gpayConfig->getGooglePayButtonType()
+                        'buttonType' => $this->gpayConfig->getGooglePayButtonType(),
+                        'isEnabledGooglePayShowSummary'  => $this->gpayConfig->isEnabledGooglePayShowSummary()
                     ],
                 ],
             ],
