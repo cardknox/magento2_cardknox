@@ -1,3 +1,6 @@
+1.2.22
+- Update the plugin to the latest version of iFields 2.15.2405.1601
+
 1.0.21
 - Add ApplePay to cart page
 - Fix retrieving the Client's IP Address
