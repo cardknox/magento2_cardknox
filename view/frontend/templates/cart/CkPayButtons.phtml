@@ -3,10 +3,12 @@
 /** @var $viewModel \CardknoxDevelopment\Cardknox\ViewModel\Data */
 $viewModel = $block->getViewModel();
 $isActiveGooglePay = $viewModel->isActiveGooglePay();
+$isEnabledGooglePayOnCartPage = $viewModel->isEnabledGooglePayOnCartPage();
+$isActiveApplePay = $viewModel->isActiveApplePay();
 $isEnabledApplePayOnCartPage = $viewModel->isEnabledApplyPayOnCartPage();
 
 // For GooglePay
-if ($isActiveGooglePay) : ?>
+if ($isActiveGooglePay && $isEnabledGooglePayOnCartPage) : ?>
     <div id="googlepay-btn-cart-summary" data-bind="scope: 'googlepay-btn-cart-summary'">
         <!-- ko template: getTemplate() --><!-- /ko -->
     </div>
@@ -27,7 +29,7 @@ if ($isActiveGooglePay) : ?>
 <?php endif;?>
 <?php
 // For ApplePay
-if($isEnabledApplePayOnCartPage): ?>
+if($isActiveApplePay && $isEnabledApplePayOnCartPage): ?>
     <div id="applepay-btn-cart-summary" data-bind="scope: 'applepay-btn-cart-summary'">
         <!-- ko template: getTemplate() --><!-- /ko -->
     </div>

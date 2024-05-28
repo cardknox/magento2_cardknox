@@ -1,10 +1,17 @@
 /**
  * cardknox Apple Pay
  **/
-define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,ifields,quote) {
+define([
+    "jquery",
+    "ifields",
+    "Magento_Checkout/js/model/quote",
+    'CardknoxDevelopment_Cardknox/js/model/shipping-rates',
+    'CardknoxDevelopment_Cardknox/js/model/tax'
+],function ($,ifields,quote, shippingRates, taxCalculator) {
     'use strict';
     let applePayConfig = window.checkoutConfig.payment.cardknox_apple_pay;
     let applePay = '';
+    let lastSelectedShippingMethod = '';
 
     // Apple pay object
     window.apRequest = {
@@ -22,27 +29,237 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         shippingMethod: null,
         creditType: null,
 
-        _getTransactionInfo: function () {
+        _getTransactionInfo: function (shippingMethod, creditType) {
+            if (quoteIsVirtual()) {
+                try {
+                    const apAmt = _getAmount();
+                    return {
+                        total: {
+                                type:  'final',
+                                label: 'Total',
+                                amount: apAmt.toString(),
+                            }
+                    };
+                } catch (err) {
+                    console.error("getTransactionInfo error ", exMsg(err));
+                }
+            }
             try {
-                const apAmt = _getAmount();
+                if (null !== shippingMethod) {
+                    this.shippingMethod = shippingMethod
+                }
+
+                if (!this.taxAmt) {
+                    this.taxAmt = getTax();
+                }
+
+                if (!this.shippingMethod) {
+                    const shippingOptions = this._getShippingMethods();
+                    this.shippingMethod = shippingOptions[0] || {};
+                }
+
+                this.creditType = creditType || this.creditType;
+                const amt = getSubTotal();
+
+                const isEnabledAPShowSummary = applePayConfig.isEnabledApplePayShowSummary ? applePayConfig.isEnabledApplePayShowSummary : "";
+
+                const lineItems = [
+                    {
+                        "label": isEnabledAPShowSummary ? "Subtotal" : "",
+                        "type": "final",
+                        "amount": amt
+                    },
+                    this.shippingMethod
+                ];
+
+                const discountAmount = this.discountAmt;
+                if (discountAmount != 0) {
+                    lineItems.push({
+                        label: isEnabledAPShowSummary ? 'Discount' : '',
+                        type: 'final',
+                        amount: discountAmount
+                    });
+                }
+
+                lineItems.push({
+                    "label": isEnabledAPShowSummary ? "Estimated Tax" : '',
+                    "amount": this.taxAmt,
+                    "type": "final"
+                });
+
+                let totalAmt = 0;
+                lineItems.forEach((item) => {
+                    totalAmt += parseFloat(item.amount) || 0;
+                });
+                totalAmt = roundTo(totalAmt, 2);
+
+                this.totalAmount = totalAmt;
                 return {
+                    lineItems: lineItems,
+
                     total: {
-                            type:  'final',
-                            label: 'Total',
-                            amount: apAmt.toString(),
-                        }
+                        type:  'final',
+                        label: 'GrandTotal',
+                        amount: totalAmt,
+                    }
                 };
             } catch (err) {
-                console.error("getTransactionInfo error ", exMsg(err));
+                console.error("_getTransactionInfo error ", exMsg(err));
+                if (isDebugEnv) {
+                    alert("_getTransactionInfo error: "+exMsg(err));
+                }
             }
         },
 
-        onGetTransactionInfo: function () {
+        onGetTransactionInfo: function (paymentData) {
             try {
-                return this._getTransactionInfo();
+                const totalAmt = _getAmount();
+
+                return {
+                    lineItems: [],
+
+                    total: {
+                        type:  'final',
+                        label: 'Total',
+                        amount: totalAmt,
+                    }
+                };
             } catch (err) {
                 console.error("onGetTransactionInfo error ", exMsg(err));
             }
+        },
+
+        onGetShippingMethods: function (address) {
+            return this._getShippingMethods(address);
+        },
+
+        _getShippingMethods: function (address) {
+            if (typeof address === 'undefined') {
+                return [];
+            }
+
+            const result = shippingRates.getRates(address);
+            let shippingOptions = [];
+            if (result.length) {
+                $.each(result, function (idx, item) {
+                    const id = item.carrier_code + '__' + item.method_code;
+
+                    shippingOptions.push({
+                        identifier: id,
+                        label: item.method_title,
+                        amount: item.price_incl_tax,
+                        detail: item.carrier_title
+                    });
+                });
+            }
+
+            return shippingOptions;
+        },
+
+        onShippingContactSelected: function (shippingContact) {
+            const self = this;
+            return new Promise(function (resolve, reject) {
+                try {
+                    const address = self._constructAddressFromShippingContact(shippingContact);
+
+                    if (!address) {
+                        return reject(new Error('Invalid shipping contact'));
+                    }
+
+                    const resp = self._processShippingAddress(address);
+                    resolve(resp);
+                } catch (err) {
+                    console.error("onShippingContactSelected error:", err.message);
+                    if (isDebugEnv) {
+                        setTimeout(function () { alert("onShippingContactSelected error: " + err.message) }, 100);
+                    }
+                    reject(new Error("Exception : " + err.message));
+                }
+            });
+        },
+
+        _constructAddressFromShippingContact: function (shippingContact) {
+            let countryCode = 'US';
+            if (quote.shippingAddress() !== null && quote.shippingAddress() !== undefined) {
+                countryCode = quote.shippingAddress().countryId
+            }
+
+            const address = {
+                countryId: countryCode,
+                city: '',
+                postcode: '',
+                region: ''
+            };
+
+            if (shippingContact) {
+                if (shippingContact.countryCode) {
+                    address.countryId = shippingContact.countryCode;
+                }
+                if (shippingContact.locality) {
+                    address.city = shippingContact.locality;
+                }
+                if (shippingContact.postalCode) {
+                    address.postcode = shippingContact.postalCode;
+                }
+                if (shippingContact.administrativeArea) {
+                    address.region = shippingContact.administrativeArea;
+                }
+            }
+
+            return address;
+        },
+
+        _processShippingAddress: function (address) {
+            const self = this;
+            let resp = {};
+
+            if (!applePay._validate(address.countryId)) {
+                const apErr = {
+                    code: APErrorCode.shippingContactInvalid,
+                    contactField: APErrorContactField.countryCode,
+                    msgMessage: 'Shipping to country not supported, Unable to process the order. Please try again.'
+                }
+
+                resp = self._getTransactionInfo();
+                resp.shippingMethods = [];
+                resp.error = apErr;
+            } else {
+                const newShippingMethods = self._getShippingMethods(address);
+                const taxObjectApplePay = self._calculateTax(address, newShippingMethods[0]);
+
+                if (taxObjectApplePay.hasOwnProperty('tax_amount')) {
+                    self.taxAmt = taxObjectApplePay['tax_amount'];
+                }
+                if (taxObjectApplePay.hasOwnProperty('base_discount_amount')) {
+                    self.discountAmt = taxObjectApplePay['base_discount_amount'];
+                }
+
+                resp = self._getTransactionInfo(newShippingMethods[0]);
+                resp.shippingMethods = newShippingMethods;
+            }
+
+            return resp;
+        },
+
+        _calculateTax: function (address, shippingMethod) {
+            return taxCalculator({
+                address: address,
+                shippingMethod: shippingMethod
+            });
+        },
+
+        onShippingMethodSelected: function(shippingMethod) {
+            const self = this;
+            return new Promise(function (resolve, reject) {
+                try {
+                    lastSelectedShippingMethod = shippingMethod;
+                    const resp = self._getTransactionInfo(shippingMethod);
+                    resolve(resp);
+                } catch (err) {
+                    console.error("onShippingMethodSelected error.", exMsg(err));
+                    reject(new Error("Exception : " + err.message));
+                }
+            })
         },
 
         _validateApplePayMerchant: function () {
@@ -72,7 +289,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                     setTimeout(function () { console.log("getApplePaySession error: " + err.message) }, 100);
                 }
             });
-        },        
+        },
 
         onValidateMerchant: function() {
             return new Promise((resolve, reject) => {
@@ -109,14 +326,14 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                 try {
                     console.log("paymentMethod", JSON.stringify(paymentMethod));
                     const resp = self._getTransactionInfo(null, null, paymentMethod.type);
-                    resolve(resp);                            
+                    resolve(resp);
                 } catch (err) {
                     console.error("onPaymentMethodSelected error.", exMsg(err));
                     const error = new Error("onPaymentMethodSelected error: " + exMsg(err));
                     error.originalError = err;
                     reject(error);
                 }
-            })                
+            })
         },
 
         onPaymentAuthorize: function(applePayload) {
@@ -142,7 +359,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                         console.error("authorizeAPay error.", JSON.stringify(err));
                         apRequest.handleAPError(err);
                         reject(err);
-                    });    
+                    });
                 } catch (err) {
                     console.error("onPaymentAuthorize error.", JSON.stringify(err));
                     apRequest.handleAPError(err);
@@ -154,27 +371,18 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         onBeforeProcessPayment: function () {
             return new Promise(function (resolve, reject) {
                 try {
-                    if (applePay.validate() &&
-                        applePay.additionalValidator()
+                    if (applePay.validate()
                     ) {
-                        // Check shipping method is selected or not in cart summary
-                        if ( quote.shippingMethod() !== null && quote.shippingMethod() !== undefined) {
-                            // update amount dynamically
-                            window.ckApplePay.updateAmount();
-                            resolve(iStatus.success);
-                        } else {
-                            let err = 'Please select a shipping method.';
-                            _errorShowMessage(err);
-                        }
+                        window.ckApplePay.updateAmount();
+                        resolve(iStatus.success);
                     }
                 } catch (err) {
-                    _errorShowMessage(err);
+                    _errorShowMessage(err, reject);
                 }
             });
         },
 
         authorize: function(applePayload, totalAmount) {
-            console.log(applePayload)
             let appToken = applePayload.token.paymentData.data;
             if (appToken) {
                 let xcardnum = btoa(JSON.stringify(applePayload.token.paymentData));
@@ -184,7 +392,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
                     // Check lastname is exist in billing address from applepay response
                     isExistLastNameBillingAddress(applePayload);
                 }
-                return applePay.startPlaceOrder(xcardnum, totalAmount, applePayload);
+                return applePay.startPlaceOrder(xcardnum, totalAmount, applePayload, lastSelectedShippingMethod);
             }
         },
 
@@ -192,11 +400,14 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             return {
                 buttonOptions: this.buttonOptions,
                 merchantIdentifier: "merchant.cardknox.com",
+                requiredFeatures: [APRequiredFeatures.address_validation],
                 requiredBillingContactFields: ['postalAddress', 'name', 'phone', 'email'],
                 requiredShippingContactFields: ['postalAddress', 'name', 'phone', 'email'],
                 onGetTransactionInfo: "apRequest.onGetTransactionInfo",
-                onGetShippingMethods: "apRequest.onGetShippingMethods",
+                onGetShippingMethods: quoteIsVirtual() ? null : "apRequest.onGetShippingMethods",
                 onPaymentMethodSelected: "apRequest.onPaymentMethodSelected",
+                onShippingContactSelected: quoteIsVirtual() ? null : "apRequest.onShippingContactSelected",
+                onShippingMethodSelected: quoteIsVirtual() ? null : "apRequest.onShippingMethodSelected",
                 onValidateMerchant: "apRequest.onValidateMerchant",
                 onBeforeProcessPayment: "apRequest.onBeforeProcessPayment",
                 onPaymentAuthorize: "apRequest.onPaymentAuthorize",
@@ -211,7 +422,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             if (resp.status === iStatus.success) {
                 _showHide(this.buttonOptions.buttonContainer, true);
             } else if (resp.reason) {
-                jQuery(".applepay-error").html("<div>"+resp.reason+"</div>").show();
+                $(".applepay-error").html("<div>"+resp.reason+"</div>").show();
                 console.log(resp.reason);
             } else if(resp.status == -100){
                 console.error("Apple Pay initialization failed. Apple Pay not supported");
@@ -219,6 +430,9 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         }
     };
 
+    function quoteIsVirtual() {
+        return quote.isVirtual();
+    }
     function _showHide(elem, toShow) {
         if (typeof(elem) === "string") {
             elem = document.getElementById(elem);
@@ -233,10 +447,10 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         reject(err);
     }
 
-    function _errorShowMessage(err) {
-        jQuery(".applepay-error").html("<div> "+err+"</div>").show();
+    function _errorShowMessage(err, reject) {
+        $(".applepay-error").html("<div> "+err+"</div>").show();
         setTimeout(function () {
-            jQuery(".applepay-error").html("").hide();
+            $(".applepay-error").html("").hide();
         }, 4000);
         reject(err);
     }
@@ -249,9 +463,9 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
     function isExistLastNameShippingAddress(data) {
         let lastname = data.shippingContact.familyName;
         if (!lastname || lastname.trim().length === 0) {
-            jQuery(".applepay-error").html("<div>Please check the shipping address information. Lastname is required. Enter and try again.</div>").show();
+            $(".applepay-error").html("<div>Please check the shipping address information. Lastname is required. Enter and try again.</div>").show();
             setTimeout(function () {
-                jQuery(".applepay-error").html("").hide();
+                $(".applepay-error").html("").hide();
             }, 4000);
             throw new Error("Please check the shipping address information. Lastname is required. Enter and try again.");
         }
@@ -259,13 +473,26 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
     function isExistLastNameBillingAddress(data) {
         let lastname = data.billingContact.familyName;
         if (!lastname || lastname.trim().length === 0) {
-            jQuery(".applepay-error").html("<div>Please check the billing address information. Lastname is required. Enter and try again.</div>").show();
+            $(".applepay-error").html("<div>Please check the billing address information. Lastname is required. Enter and try again.</div>").show();
             setTimeout(function () {
-                jQuery(".applepay-error").html("").hide();
+                $(".applepay-error").html("").hide();
             }, 4000);
             throw new Error("Please check the billing address information. Lastname is required. Enter and try again.");
         }
     }
+
+    function getSubTotal() {
+        const totals = quote.totals(),
+            base_subtotal = (totals || quote)['base_subtotal'];
+        return parseFloat(base_subtotal).toFixed(2);
+    }
+
+    function getTax() {
+        const totals = quote.totals(),
+            tax = (totals || quote)['tax_amount'];
+        return parseFloat(tax).toFixed(2);
+    }
+
     function setAPPayload(value) {
         console.log(value);
     }
@@ -325,9 +552,9 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
             }
             applePay = parent;
             if (!applePayConfig.merchantIdentifier) {
-                jQuery(".applepay-error").html("<div>Please contact support. Failed to initialize Apple Pay. </div>").show();
+                $(".applepay-error").html("<div>Please contact support. Failed to initialize Apple Pay. </div>").show();
             } else {
-                jQuery('#ap-container').attr('data-ifields-oninit',"window.apRequest.initAP");
+                $('#ap-container').attr('data-ifields-oninit',"window.apRequest.initAP");
                 ckApplePay.enableApplePay({
                     initFunction: 'apRequest.initAP',
                     amountField: 'amount'

@@ -116,7 +116,7 @@ define([
             try {
                 //setAccount(this.saveOnlyKey, "Magento2", "0.1.2");
                 enableLogging();
-                setAccount(this.tokenKey, "Magento2", "1.0.21");
+                setAccount(this.tokenKey, "Magento2", "1.0.23");
                 enableAutoFormatting();
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);

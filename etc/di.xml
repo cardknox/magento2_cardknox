@@ -593,4 +593,8 @@
         </arguments>
     </virtualType>
 
+    <!-- Calculate tax for GooglePay & ApplePay on cart page -->
+    <preference for="CardknoxDevelopment\Cardknox\Api\GuestGoogleApplePayTaxCalcInterface" type="CardknoxDevelopment\Cardknox\Model\GuestGoogleApplePayTaxCalc" />
+    <preference for="CardknoxDevelopment\Cardknox\Api\CustomerGoogleApplePayTaxCalcInterface" type="CardknoxDevelopment\Cardknox\Model\CustomerGoogleApplePayTaxCalc" />
+
 </config>

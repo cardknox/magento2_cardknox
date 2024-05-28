@@ -41,7 +41,6 @@ class GooglePayConfigProvider implements ConfigProviderInterface
         GpayConfig $gpayConfig,
         ResolverInterface $localeResolver
     ) {
-    
         $this->gpayConfig = $gpayConfig;
         $this->config = $config;
     }
@@ -62,7 +61,9 @@ class GooglePayConfigProvider implements ConfigProviderInterface
                     'button'  => $this->gpayConfig->getButtonStyle(),
                     'GPEnvironment' => $this->gpayConfig->getEnvironment(),
                     'isGPaySplitCaptureEnabled' => $this->gpayConfig->isGPaySplitCaptureEnabled(),
-                    'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction()
+                    'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction(),
+                    'buttonType'  => $this->gpayConfig->getGooglePayButtonType(),
+                    'isEnabledGooglePayShowSummary'  => $this->gpayConfig->isEnabledGooglePayShowSummary(),
                 ]
             ]
         ];

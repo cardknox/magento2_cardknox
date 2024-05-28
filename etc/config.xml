@@ -74,6 +74,9 @@
                 <environment>TEST</environment>
                 <button_style>white</button_style>
                 <allowspecific>0</allowspecific>
+                <gp_button_type>pay</gp_button_type>
+                <cardknox_googlepay_enable_cart>0</cardknox_googlepay_enable_cart>
+                <gp_enable_show_summary>0</gp_enable_show_summary>
             </cardknox_google_pay>
             <cardknox_apple_pay>
                 <model>CardknoxApplePayFacade</model>
@@ -98,6 +101,7 @@
                 <can_void>1</can_void>
                 <can_use_internal>0</can_use_internal>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <ap_enable_show_summary>0</ap_enable_show_summary>
             </cardknox_apple_pay>
         </payment>
     </default>

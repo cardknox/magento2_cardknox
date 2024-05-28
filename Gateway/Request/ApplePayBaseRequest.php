@@ -68,7 +68,7 @@ class ApplePayBaseRequest implements BuilderInterface
         return [
             'xVersion' => '4.5.8',
             'xSoftwareName' => $xSoftwareName,
-            'xSoftwareVersion' => '1.0.21',
+            'xSoftwareVersion' => '1.0.23',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $order->getStoreId()

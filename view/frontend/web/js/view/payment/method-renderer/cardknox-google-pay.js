@@ -1,7 +1,7 @@
 /**
  * cardknox Google Pay
  **/
- define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,ifields,quote) {
+define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,ifields,quote) {
     'use strict';
     var gPayConfig = window.checkoutConfig.payment.cardknox_google_pay;
     var quoteData = window.checkoutConfig.quoteData;
@@ -14,13 +14,13 @@
         },
         buttonOptions: {
             buttonColor: gPayConfig.button ? gPayConfig.button : "default",
-            buttonType: GPButtonType.buy,
+            buttonType: gPayConfig.buttonType ? gPayConfig.buttonType : "buy",
             buttonSizeMode: GPButtonSizeMode.full
         },
-        
+
         billingParams: {
             emailRequired: true,
-            billingAddressRequired: false                       
+            billingAddressRequired: false
         },
         shippingParams: {
             shippingAddressRequired: false

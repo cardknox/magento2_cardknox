@@ -15,7 +15,7 @@ use Magento\Framework\Locale\ResolverInterface;
 class GooglePayConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     public const CODE = 'cardknox_google_pay';
-    
+
     /**
      * Config variable
      *
@@ -66,7 +66,9 @@ class GooglePayConfigProviderTest extends \PHPUnit\Framework\TestCase
                         'button'  => $this->gpayConfig->getButtonStyle(),
                         'GPEnvironment' => $this->gpayConfig->getEnvironment(),
                         'isGPaySplitCaptureEnabled' => $this->gpayConfig->isGPaySplitCaptureEnabled(),
-                        'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction()
+                        'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction(),
+                        'buttonType' => $this->gpayConfig->getGooglePayButtonType(),
+                        'isEnabledGooglePayShowSummary'  => $this->gpayConfig->isEnabledGooglePayShowSummary()
                     ],
                 ],
             ],
