@@ -1,12 +1,15 @@
-1.0.22
+1.0.23
 - feat: add shipping methods to GooglePay & ApplePay popup on cart page
 - feat: add tax & discount to summary in GooglePay & ApplePay Popup on cart page
 - fix: GooglePay & ApplePay not working if a quote has only a virtual product on cart page
 - remove customer login condition for adding shipping & billing address when order place on cart page
-- Add new 2 configuration for GooglePay
+- Add new store configuration for GooglePay
     1. GooglePay Button Type
     2. Enable GooglePay On the Cart Page
     3. Enable Show Summary GooglePay/ApplePay for cart page
+
+1.0.22
+- Update the plugin to the latest version of iFields 2.15.2405.1601
 
 1.0.21
 - Add ApplePay to cart page
