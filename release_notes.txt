@@ -1,3 +1,6 @@
+1.0.24
+- Fix: Passing wrong amount to cardknox API request for GooglePay & ApplePay
+
 1.0.23
 - feat: add shipping methods to GooglePay & ApplePay popup on cart page
 - feat: add tax & discount to summary in GooglePay & ApplePay Popup on cart page
