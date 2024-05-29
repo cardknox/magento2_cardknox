@@ -62,7 +62,7 @@ class GooglePayCaptureRequest implements BuilderInterface
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
 
-        $amount = $this->helper->formatPrice($payment->getAdditionalInformation("xAmount"));
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
         
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');

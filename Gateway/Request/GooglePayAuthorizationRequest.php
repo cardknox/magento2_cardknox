@@ -60,7 +60,7 @@ class GooglePayAuthorizationRequest implements BuilderInterface
         $paymentDO = $buildSubject['payment'];
         $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
-        $amount = $this->helper->formatPrice($payment->getAdditionalInformation("xAmount"));
+        $amount = $this->helper->formatPrice($buildSubject['amount']);
         // phpcs:disable
         $gPayPaymentAction = $payment->getAdditionalInformation("xPaymentAction") ? $payment->getAdditionalInformation("xPaymentAction") : $this->config->getGPayPaymentAction();
         $isGPaySplitCaptureEnabled = $payment->getAdditionalInformation("isSplitCapture") ? $payment->getAdditionalInformation("isSplitCapture") : $this->helper->isGPaySplitCaptureEnabled();
