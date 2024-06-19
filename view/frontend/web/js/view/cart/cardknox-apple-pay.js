@@ -5,13 +5,10 @@ define([
     "jquery",
     "ifields",
     "Magento_Checkout/js/model/quote",
-    'CardknoxDevelopment_Cardknox/js/model/shipping-rates',
-    'CardknoxDevelopment_Cardknox/js/model/tax'
-],function ($,ifields,quote, shippingRates, taxCalculator) {
+],function ($,ifields,quote) {
     'use strict';
     let applePayConfig = window.checkoutConfig.payment.cardknox_apple_pay;
     let applePay = '';
-    let lastSelectedShippingMethod = '';
 
     // Apple pay object
     window.apRequest = {
@@ -24,12 +21,8 @@ define([
             buttonColor: getApButtonColor(applePayConfig),
             buttonType: getApButtonType(applePayConfig)
         },
-        totalAmount: null,
-        taxAmt: null,
-        shippingMethod: null,
-        creditType: null,
-
-        _getTransactionInfo: function (shippingMethod, creditType) {
+        
+        _getTransactionInfo: function (shippingData) {
             if (quoteIsVirtual()) {
                 try {
                     const apAmt = _getAmount();
@@ -45,46 +38,39 @@ define([
                 }
             }
             try {
-                if (null !== shippingMethod) {
-                    this.shippingMethod = shippingMethod
-                }
 
-                if (!this.taxAmt) {
-                    this.taxAmt = getTax();
-                }
-
-                if (!this.shippingMethod) {
-                    const shippingOptions = this._getShippingMethods();
-                    this.shippingMethod = shippingOptions[0] || {};
-                }
-
-                this.creditType = creditType || this.creditType;
-                const amt = getSubTotal();
+                const subTotal = getSubTotal();
+                const taxAmount = getTax();
+                const shippingPrice = getShippingPrice();
 
                 const isEnabledAPShowSummary = applePayConfig.isEnabledApplePayShowSummary ? applePayConfig.isEnabledApplePayShowSummary : "";
 
                 const lineItems = [
                     {
-                        "label": isEnabledAPShowSummary ? "Subtotal" : "",
-                        "type": "final",
-                        "amount": amt
+                        label: isEnabledAPShowSummary ? "Subtotal" : "",
+                        type: "final",
+                        amount: subTotal.toString()
                     },
-                    this.shippingMethod
+                    {
+                        label: isEnabledShowSummary ? 'Shipping' :'',
+                        type: 'LINE_ITEM',
+                        price: shippingPrice.toString(),
+                    }
                 ];
 
-                const discountAmount = this.discountAmt;
+                const discountAmount = getDiscountAmount();
                 if (discountAmount != 0) {
                     lineItems.push({
                         label: isEnabledAPShowSummary ? 'Discount' : '',
                         type: 'final',
-                        amount: discountAmount
+                        amount: discountAmount.toString()
                     });
                 }
 
                 lineItems.push({
-                    "label": isEnabledAPShowSummary ? "Estimated Tax" : '',
-                    "amount": this.taxAmt,
-                    "type": "final"
+                    label: isEnabledAPShowSummary ? "Tax" : '',
+                    amount: taxAmount.toString(),
+                    type: "final"
                 });
 
                 let totalAmt = 0;
@@ -93,7 +79,6 @@ define([
                 });
                 totalAmt = roundTo(totalAmt, 2);
 
-                this.totalAmount = totalAmt;
                 return {
                     lineItems: lineItems,
 
@@ -223,44 +208,11 @@ define([
                 resp = self._getTransactionInfo();
                 resp.shippingMethods = [];
                 resp.error = apErr;
-            } else {
-                const newShippingMethods = self._getShippingMethods(address);
-                const taxObjectApplePay = self._calculateTax(address, newShippingMethods[0]);
-
-                if (taxObjectApplePay.hasOwnProperty('tax_amount')) {
-                    self.taxAmt = taxObjectApplePay['tax_amount'];
-                }
-                if (taxObjectApplePay.hasOwnProperty('base_discount_amount')) {
-                    self.discountAmt = taxObjectApplePay['base_discount_amount'];
-                }
-
-                resp = self._getTransactionInfo(newShippingMethods[0]);
-                resp.shippingMethods = newShippingMethods;
             }
 
             return resp;
         },
 
-        _calculateTax: function (address, shippingMethod) {
-            return taxCalculator({
-                address: address,
-                shippingMethod: shippingMethod
-            });
-        },
-
-        onShippingMethodSelected: function(shippingMethod) {
-            const self = this;
-            return new Promise(function (resolve, reject) {
-                try {
-                    lastSelectedShippingMethod = shippingMethod;
-                    const resp = self._getTransactionInfo(shippingMethod);
-                    resolve(resp);
-                } catch (err) {
-                    console.error("onShippingMethodSelected error.", exMsg(err));
-                    reject(new Error("Exception : " + err.message));
-                }
-            })
-        },
 
         _validateApplePayMerchant: function () {
             return new Promise((resolve, reject) => {
@@ -371,8 +323,13 @@ define([
         onBeforeProcessPayment: function () {
             return new Promise(function (resolve, reject) {
                 try {
-                    if (applePay.validate()
+                    if (applePay.validate() && applePay.additionalValidator()
                     ) {
+                        if (!quote.isVirtual() && quote.shippingMethod() == null) {
+                            var err = 'Please select a shipping method.';
+                            _errorShowMessage(err);
+                            reject(err);
+                        }
                         window.ckApplePay.updateAmount();
                         resolve(iStatus.success);
                     }
@@ -392,7 +349,7 @@ define([
                     // Check lastname is exist in billing address from applepay response
                     isExistLastNameBillingAddress(applePayload);
                 }
-                return applePay.startPlaceOrder(xcardnum, totalAmount, applePayload, lastSelectedShippingMethod);
+                return applePay.startPlaceOrder(xcardnum, totalAmount, applePayload);
             }
         },
 
@@ -407,7 +364,6 @@ define([
                 onGetShippingMethods: quoteIsVirtual() ? null : "apRequest.onGetShippingMethods",
                 onPaymentMethodSelected: "apRequest.onPaymentMethodSelected",
                 onShippingContactSelected: quoteIsVirtual() ? null : "apRequest.onShippingContactSelected",
-                onShippingMethodSelected: quoteIsVirtual() ? null : "apRequest.onShippingMethodSelected",
                 onValidateMerchant: "apRequest.onValidateMerchant",
                 onBeforeProcessPayment: "apRequest.onBeforeProcessPayment",
                 onPaymentAuthorize: "apRequest.onPaymentAuthorize",
@@ -444,7 +400,7 @@ define([
 
     function _errorOnValidateMerchant(consoleErrorMsg, err) {
         console.error(consoleErrorMsg);
-        reject(err);
+        // reject(err);
     }
 
     function _errorShowMessage(err, reject) {
@@ -452,7 +408,7 @@ define([
         setTimeout(function () {
             $(".applepay-error").html("").hide();
         }, 4000);
-        reject(err);
+        // reject(err);
     }
 
     function _getAmount () {
@@ -479,6 +435,19 @@ define([
             }, 4000);
             throw new Error("Please check the billing address information. Lastname is required. Enter and try again.");
         }
+    }
+
+    function getDiscountAmount() {
+        const totals = quote.totals(),
+            base_discount = (totals || quote)['base_discount_amount'];
+
+        return parseFloat(base_discount).toFixed(2);
+    }
+
+    function getShippingPrice() {
+        const totals = quote.totals(),
+            tax = (totals || quote)['shipping_amount'];
+        return parseFloat(tax).toFixed(2);
     }
 
     function getSubTotal() {

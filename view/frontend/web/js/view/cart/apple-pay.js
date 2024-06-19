@@ -62,7 +62,7 @@ define([
         /**
          * Apple pay place order method
          */
-        startPlaceOrder: function (nonce, xAmount, applePayload, lastSelectedShippingMethod) {
+        startPlaceOrder: function (nonce, xAmount, applePayload) {
             $("body").trigger('processStart');
 
             this.xAmount = xAmount ;
@@ -70,7 +70,6 @@ define([
             this.setPaymentMethodNonce(nonce);
             this.isPlaceOrderActionAllowed(true);
             if (!quote.isVirtual()) {
-                this._setShippingMethod(lastSelectedShippingMethod);
                 saveShipping.saveShippingInformation();
             }
 
@@ -358,25 +357,6 @@ define([
                 }
             });
             return response;
-        },
-
-        _setShippingMethod: function (lastSelectedShippingMethod) {
-            if (lastSelectedShippingMethod != '') {
-            let shippingOptionDataRes = lastSelectedShippingMethod.identifier;
-                if (typeof shippingOptionDataRes !== 'undefined' ) {
-                let shippingMethodArray = shippingOptionDataRes.split("__");
-                let shippingCarrierCode = shippingMethodArray[0];
-                let shippingMethodCode = shippingMethodArray[1];
-
-                // Create the shipping method object
-                let shippingMethod = {
-                    'carrier_code': shippingCarrierCode,
-                    'method_code': shippingMethodCode
-                };
-
-                selectShippingMethodAction(shippingMethod);
-            }
-            }
         },
     });
 });

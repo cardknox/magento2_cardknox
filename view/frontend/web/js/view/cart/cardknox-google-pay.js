@@ -107,7 +107,6 @@ define([
             return new Promise(function (resolve, reject) {
                 try {
                     if (gPay.validate() && gPay.additionalValidator()) {
-                        console.log('quote.isVirtual()', quote.isVirtual(), " quote.shippingMethod()", quote.shippingMethod());
                         if (!quote.isVirtual() && quote.shippingMethod() == null) {
                             var err = 'Please select a shipping method.';
                             $(".gpay-error").html("<div>"+err+" </div>").show();
