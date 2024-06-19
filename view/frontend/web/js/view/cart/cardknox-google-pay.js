@@ -5,27 +5,17 @@ define([
     "jquery",
     "ifields",
     "Magento_Checkout/js/model/quote",
-    "CardknoxDevelopment_Cardknox/js/model/shipping-rates",
-    "CardknoxDevelopment_Cardknox/js/model/tax",
-    "Magento_Catalog/js/price-utils"
-],function ($,ifields,quote, shippingRates, taxCalculator, utils) {
+],function ($,ifields,quote) {
     'use strict';
     let gPayConfig = window.checkoutConfig.payment.cardknox_google_pay;
     let quoteData = window.checkoutConfig.quoteData;
     let gPay = '';
 
-    const roundTo = (total, digits) => {
-        return parseFloat(total).toFixed(digits);
-    }
 
     // Google pay object
     window.gpRequest = {
 
         totalAmount: null,
-        taxAmt: null,
-        discountAmt: 0,
-        shippingMethod: null,
-        _shippingOptions: [],
 
         merchantInfo: {
             merchantName: gPayConfig.merchantName
@@ -47,101 +37,10 @@ define([
             shippingAddressRequired: true,
             phoneNumberRequired: true,
             emailRequired: !window.checkoutConfig.isCustomerLoggedIn,
-            onGetShippingCosts: function (shippingData) {
-                if (typeof shippingData !== 'undefined') {
-                    logDebug({
-                        label: "onGetShippingCosts",
-                        data: shippingData
-                    });
-                }
-
-                const address = {
-                    countryId: shippingData.shippingAddress.countryCode,
-                    city: shippingData.shippingAddress.locality,
-                    postcode: shippingData.shippingAddress.postalCode,
-                    region: shippingData.shippingAddress.administrativeArea
-                }
-
-                const shippingCosts = {};
-                const result = shippingRates.getRates(address);
-
-                if (result.length) {
-                    $.each(result, function (idx, item) {
-                        const k = item.carrier_code + '__' + item.method_code;
-                        shippingCosts[k] = item.price_incl_tax.toString();
-                    });
-                }
-
-                return shippingCosts;
-            },
-
-            onGetShippingOptions: function (shippingData) {
-                return gpRequest._getShippingOptions(shippingData);
-            }
         },
 
         onGetTransactionInfo: function (shippingData) {
             return this._getTransactionInfo(shippingData);
-        },
-
-        _getShippingOptions: function (shippingData) {
-            const _self = this;
-
-            if (typeof shippingData !== 'undefined') {
-                logDebug({
-                    label: "onGetShippingOptions",
-                    data: shippingData
-                });
-            }
-            let selectedOptionId = '';
-
-            if (shippingData && shippingData.shippingOptionData && shippingData.shippingOptionData.id !== 'shipping_option_unselected') {
-                selectedOptionId = shippingData.shippingOptionData.id;
-            }
-            const shippingOptions = {
-                defaultSelectedOptionId: selectedOptionId,
-                shippingOptions: []
-            };
-
-            if (!shippingData || !shippingData.shippingAddress) {
-                return shippingOptions;
-            }
-            const address = {
-                countryId: shippingData.shippingAddress.countryCode,
-                city: shippingData.shippingAddress.locality,
-                postcode: shippingData.shippingAddress.postalCode,
-                region: shippingData.shippingAddress.administrativeArea
-            }
-
-            const result = shippingRates.getRates(address);
-
-            this._shippingOptions = [];
-
-            if (result.length) {
-                $.each(result, function (idx, item) {
-                    const id = item.carrier_code + '__' + item.method_code;
-
-                    if (!selectedOptionId && idx === 0) {
-                        selectedOptionId = id;
-                    }
-
-                    const option = {
-                        id: id,
-                        label: item.method_title + ' - ' + utils.formatPrice(item.price_incl_tax),
-                        description: item.carrier_title
-                    };
-
-                    shippingOptions.shippingOptions.push(option);
-
-                    if (selectedOptionId === id) {
-                        _self.shippingMethod = option;
-                    }
-
-                    _self._shippingOptions.push($.extend({}, option, {amount: item.price_incl_tax}));
-                });
-            }
-            shippingOptions['defaultSelectedOptionId'] = selectedOptionId;
-            return shippingOptions;
         },
 
         _getTransactionInfo: function (shippingData) {
@@ -154,50 +53,10 @@ define([
                 countryCode = 'US';
             }
 
-            this.taxAmt = getTax();
-            this.discountAmt = getDiscount();
-
-            if (typeof shippingData !== 'undefined' && shippingData.hasOwnProperty('shippingAddress')) {
-
-                // get shipping
-                this._getShippingOptions(shippingData);
-
-                if (shippingData.shippingOptionData && shippingData.shippingOptionData.id === 'shipping_option_unselected') {
-                    this.shippingMethod = this._shippingOptions[0];
-                } else {
-                    this.shippingMethod = _.find(this._shippingOptions, function (item) {
-                        return item.id === shippingData.shippingOptionData.id;
-                    })
-                }
-
-                const address = {
-                    countryId: shippingData.shippingAddress.countryCode,
-                    city: shippingData.shippingAddress.locality,
-                    postcode: shippingData.shippingAddress.postalCode,
-                    region: shippingData.shippingAddress.administrativeArea
-                }
-
-                // calculate tax
-                const taxObjectGoogelPay = taxCalculator(
-                    {
-                        address: address,
-                        shippingMethod: this.shippingMethod
-                    }
-                );
-
-                if (taxObjectGoogelPay.hasOwnProperty('tax_amount')) {
-                    this.taxAmt = taxObjectGoogelPay['tax_amount'];
-                }
-
-                if (taxObjectGoogelPay.hasOwnProperty('base_discount_amount')) {
-                    this.discountAmt = taxObjectGoogelPay['base_discount_amount'];
-                }
-            }
+            let taxAmount = getTaxAmount();
+            let discountAmount = getDiscountAmount();
 
             let shippingPrice = getShippingPrice();
-            if (null !== this.shippingMethod && typeof this.shippingMethod === 'object') {
-                shippingPrice = parseFloat(this.shippingMethod['amount']) || 0;
-            }
             const isEnabledShowSummary = gPayConfig.isEnabledGooglePayShowSummary ? gPayConfig.isEnabledGooglePayShowSummary : "";
             const lineItems = [
                 {
@@ -215,31 +74,31 @@ define([
             const taxLineItem = {
                 label: isEnabledShowSummary ? 'Tax' :'',
                 type: 'TAX',
-                price: this.taxAmt.toString(),
+                price: taxAmount.toString(),
             };
 
             if (this.discountAmt != 0) {
                 lineItems.push({
                     label: isEnabledShowSummary ? 'Discount' :'',
                     type: 'LINE_ITEM',
-                    price: this.discountAmt.toString()
+                    price: discountAmount.toString()
                 });
             }
 
             lineItems.push(taxLineItem);
 
-            let totalAmt = 0;
+            let totalAmount = 0;
             lineItems.forEach((item) => {
-                totalAmt += parseFloat(item.price) || 0;
+                totalAmount += parseFloat(item.price) || 0;
             });
-            totalAmt = roundTo(totalAmt, 2);
+            totalAmount = roundTo(totalAmount, 2);
 
             return {
                 displayItems: lineItems,
                 countryCode: countryCode,
                 currencyCode: quoteData.base_currency_code.toString(),
                 totalPriceStatus: 'FINAL',
-                totalPrice: totalAmt,
+                totalPrice: totalAmount,
                 totalPriceLabel: 'GrandTotal'
             }
         },
@@ -247,7 +106,17 @@ define([
         onBeforeProcessPayment: function () {
             return new Promise(function (resolve, reject) {
                 try {
-                    if (gPay.validate()) {
+                    if (gPay.validate() && gPay.additionalValidator()) {
+                        console.log('quote.isVirtual()', quote.isVirtual(), " quote.shippingMethod()", quote.shippingMethod());
+                        if (!quote.isVirtual() && quote.shippingMethod() == null) {
+                            var err = 'Please select a shipping method.';
+                            $(".gpay-error").html("<div>"+err+" </div>").show();
+                            setTimeout(function () {
+                                $(".gpay-error").html("").hide();
+                            }, 4000);
+                            reject(err);
+                        }
+                        // update amount dynamically
                         window.ckGooglePay.updateAmount();
                         resolve(iStatus.success);
                     }
@@ -300,15 +169,10 @@ define([
             return gPayConfig.GPEnvironment ? gPayConfig.GPEnvironment : "TEST";
         },
 
-        getShippingCostAndOptions() {
+        getShippingParams() {
             let data = {
                 emailRequired: this.shippingParams.emailRequired
             };
-
-            if (!quote.isVirtual()) {
-                data.onGetShippingCosts = "gpRequest.shippingParams.onGetShippingCosts";
-                data.onGetShippingOptions = "gpRequest.shippingParams.onGetShippingOptions";
-            }
             return data;
         },
 
@@ -318,7 +182,7 @@ define([
                 buttonOptions: this.buttonOptions,
                 environment: this.getGPEnvironment(),
                 billingParameters: this.billingParams,
-                shippingParameters: this.getShippingCostAndOptions(),
+                shippingParameters: this.getShippingParams(),
                 onGetTransactionInfo: "gpRequest.onGetTransactionInfo",
                 onBeforeProcessPayment: "gpRequest.onBeforeProcessPayment",
                 onProcessPayment: "gpRequest.onProcessPayment",
@@ -337,10 +201,6 @@ define([
         },
     };
 
-    const logDebug = (data) => {
-        console.log('payment info: ', data);
-    }
-
     function showHide(elem, toShow) {
         if (typeof(elem) === "string") {
             elem = document.getElementById(elem);
@@ -350,7 +210,7 @@ define([
         }
     }
 
-    function getDiscount() {
+    function getDiscountAmount() {
         const totals = quote.totals(),
             base_discount = (totals || quote)['base_discount_amount'];
 
@@ -363,7 +223,7 @@ define([
         return parseFloat(base_subtotal).toFixed(2);
     }
 
-    function getTax() {
+    function getTaxAmount() {
         const totals = quote.totals(),
             tax = (totals || quote)['tax_amount'];
         return parseFloat(tax).toFixed(2);
