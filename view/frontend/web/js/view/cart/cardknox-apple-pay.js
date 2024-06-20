@@ -9,6 +9,7 @@ define([
     'use strict';
     let applePayConfig = window.checkoutConfig.payment.cardknox_apple_pay;
     let applePay = '';
+    let lastSelectedShippingMethod = '';
 
     // Apple pay object
     window.apRequest = {
@@ -21,56 +22,39 @@ define([
             buttonColor: getApButtonColor(applePayConfig),
             buttonType: getApButtonType(applePayConfig)
         },
-        
-        _getTransactionInfo: function (shippingData) {
-            if (quoteIsVirtual()) {
-                try {
-                    const apAmt = _getAmount();
-                    return {
-                        total: {
-                                type:  'final',
-                                label: 'Total',
-                                amount: apAmt.toString(),
-                            }
-                    };
-                } catch (err) {
-                    console.error("getTransactionInfo error ", exMsg(err));
-                }
-            }
+        _getTransactionInfo: function () {
+
             try {
-
-                const subTotal = getSubTotal();
-                const taxAmount = getTax();
-                const shippingPrice = getShippingPrice();
-
                 const isEnabledAPShowSummary = applePayConfig.isEnabledApplePayShowSummary ? applePayConfig.isEnabledApplePayShowSummary : "";
+                const subTotal = getSubTotal();
+                const shippingPrice = getShippingPrice();
+                const discountAmount = getDiscountAmount();
+                const taxAmount = getTax();
+                const apAmt = _getAmount();
 
                 const lineItems = [
                     {
-                        label: isEnabledAPShowSummary ? "Subtotal" : "",
-                        type: "final",
-                        amount: subTotal.toString()
+                        "label": isEnabledAPShowSummary ? "Subtotal" : "",
+                        "type": "final",
+                        "amount": subTotal ?? 0
                     },
                     {
-                        label: isEnabledShowSummary ? 'Shipping' :'',
-                        type: 'LINE_ITEM',
-                        price: shippingPrice.toString(),
+                        "label": isEnabledAPShowSummary ? 'Shipping' :'',
+                        "type": 'final',
+                        "amount": shippingPrice ?? 0
                     }
                 ];
 
-                const discountAmount = getDiscountAmount();
-                if (discountAmount != 0) {
-                    lineItems.push({
-                        label: isEnabledAPShowSummary ? 'Discount' : '',
-                        type: 'final',
-                        amount: discountAmount.toString()
-                    });
-                }
+                lineItems.push({
+                    "label": isEnabledAPShowSummary ? 'Discount' : '',
+                    "amount": discountAmount ?? 0,
+                    "type": 'final'
+                });
 
                 lineItems.push({
-                    label: isEnabledAPShowSummary ? "Tax" : '',
-                    amount: taxAmount.toString(),
-                    type: "final"
+                    "label": isEnabledAPShowSummary ? "Tax" : '',
+                    "amount": taxAmount ?? 0,
+                    "type": "final"
                 });
 
                 let totalAmt = 0;
@@ -80,14 +64,14 @@ define([
                 totalAmt = roundTo(totalAmt, 2);
 
                 return {
-                    lineItems: lineItems,
-
+                    'lineItems': lineItems,
                     total: {
-                        type:  'final',
-                        label: 'GrandTotal',
-                        amount: totalAmt,
+                        "type":  'final',
+                        "label": 'GrandTotal',
+                        "amount": totalAmt,
                     }
                 };
+
             } catch (err) {
                 console.error("_getTransactionInfo error ", exMsg(err));
                 if (isDebugEnv) {
@@ -96,124 +80,27 @@ define([
             }
         },
 
-        onGetTransactionInfo: function (paymentData) {
+        onGetTransactionInfo: function () {
             try {
-                const totalAmt = _getAmount();
-
-                return {
-                    lineItems: [],
-
-                    total: {
-                        type:  'final',
-                        label: 'Total',
-                        amount: totalAmt,
-                    }
-                };
+                console.log('getTransactionInfo>>>>');
+                return this._getTransactionInfo();
             } catch (err) {
                 console.error("onGetTransactionInfo error ", exMsg(err));
             }
         },
-
-        onGetShippingMethods: function (address) {
-            return this._getShippingMethods(address);
-        },
-
-        _getShippingMethods: function (address) {
-            if (typeof address === 'undefined') {
-                return [];
-            }
-
-            const result = shippingRates.getRates(address);
-            let shippingOptions = [];
-            if (result.length) {
-                $.each(result, function (idx, item) {
-                    const id = item.carrier_code + '__' + item.method_code;
-
-                    shippingOptions.push({
-                        identifier: id,
-                        label: item.method_title,
-                        amount: item.price_incl_tax,
-                        detail: item.carrier_title
-                    });
-                });
-            }
-
-            return shippingOptions;
-        },
-
-        onShippingContactSelected: function (shippingContact) {
+        onShippingMethodSelected: function(shippingMethod) {
             const self = this;
             return new Promise(function (resolve, reject) {
                 try {
-                    const address = self._constructAddressFromShippingContact(shippingContact);
-
-                    if (!address) {
-                        return reject(new Error('Invalid shipping contact'));
-                    }
-
-                    const resp = self._processShippingAddress(address);
+                    lastSelectedShippingMethod = shippingMethod;
+                    const resp = self._getTransactionInfo(shippingMethod);
                     resolve(resp);
                 } catch (err) {
-                    console.error("onShippingContactSelected error:", err.message);
-                    if (isDebugEnv) {
-                        setTimeout(function () { alert("onShippingContactSelected error: " + err.message) }, 100);
-                    }
+                    console.error("onShippingMethodSelected error.", exMsg(err));
                     reject(new Error("Exception : " + err.message));
                 }
-            });
+            })
         },
-
-        _constructAddressFromShippingContact: function (shippingContact) {
-            let countryCode = 'US';
-            if (quote.shippingAddress() !== null && quote.shippingAddress() !== undefined) {
-                countryCode = quote.shippingAddress().countryId
-            }
-
-            const address = {
-                countryId: countryCode,
-                city: '',
-                postcode: '',
-                region: ''
-            };
-
-            if (shippingContact) {
-                if (shippingContact.countryCode) {
-                    address.countryId = shippingContact.countryCode;
-                }
-                if (shippingContact.locality) {
-                    address.city = shippingContact.locality;
-                }
-                if (shippingContact.postalCode) {
-                    address.postcode = shippingContact.postalCode;
-                }
-                if (shippingContact.administrativeArea) {
-                    address.region = shippingContact.administrativeArea;
-                }
-            }
-
-            return address;
-        },
-
-        _processShippingAddress: function (address) {
-            const self = this;
-            let resp = {};
-
-            if (!applePay._validate(address.countryId)) {
-                const apErr = {
-                    code: APErrorCode.shippingContactInvalid,
-                    contactField: APErrorContactField.countryCode,
-                    msgMessage: 'Shipping to country not supported, Unable to process the order. Please try again.'
-                }
-
-                resp = self._getTransactionInfo();
-                resp.shippingMethods = [];
-                resp.error = apErr;
-            }
-
-            return resp;
-        },
-
-
         _validateApplePayMerchant: function () {
             return new Promise((resolve, reject) => {
                 try {
@@ -323,7 +210,8 @@ define([
         onBeforeProcessPayment: function () {
             return new Promise(function (resolve, reject) {
                 try {
-                    if (applePay.validate() && applePay.additionalValidator()
+                    if (applePay.validate() &&
+                        applePay.additionalValidator()
                     ) {
                         if (!quote.isVirtual() && quote.shippingMethod() == null) {
                             var err = 'Please select a shipping method.';
@@ -349,7 +237,7 @@ define([
                     // Check lastname is exist in billing address from applepay response
                     isExistLastNameBillingAddress(applePayload);
                 }
-                return applePay.startPlaceOrder(xcardnum, totalAmount, applePayload);
+                return applePay.startPlaceOrder(xcardnum, totalAmount, applePayload, lastSelectedShippingMethod);
             }
         },
 
@@ -363,7 +251,8 @@ define([
                 onGetTransactionInfo: "apRequest.onGetTransactionInfo",
                 onGetShippingMethods: quoteIsVirtual() ? null : "apRequest.onGetShippingMethods",
                 onPaymentMethodSelected: "apRequest.onPaymentMethodSelected",
-                onShippingContactSelected: quoteIsVirtual() ? null : "apRequest.onShippingContactSelected",
+                onShippingMethodSelected: quoteIsVirtual() ? null : "apRequest.onShippingMethodSelected",
+                // onShippingContactSelected: quoteIsVirtual() ? null : "apRequest.onShippingContactSelected",
                 onValidateMerchant: "apRequest.onValidateMerchant",
                 onBeforeProcessPayment: "apRequest.onBeforeProcessPayment",
                 onPaymentAuthorize: "apRequest.onPaymentAuthorize",
@@ -400,7 +289,7 @@ define([
 
     function _errorOnValidateMerchant(consoleErrorMsg, err) {
         console.error(consoleErrorMsg);
-        // reject(err);
+        reject(err);
     }
 
     function _errorShowMessage(err, reject) {
@@ -446,8 +335,8 @@ define([
 
     function getShippingPrice() {
         const totals = quote.totals(),
-            tax = (totals || quote)['shipping_amount'];
-        return parseFloat(tax).toFixed(2);
+            shippingPrice = (totals || quote)['shipping_amount'];
+        return parseFloat(shippingPrice).toFixed(2);
     }
 
     function getSubTotal() {
