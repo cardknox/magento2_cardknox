@@ -75,6 +75,12 @@ class Data extends AbstractHelper
             //if user is from the remote address
             $ipAddress = $_SERVER['REMOTE_ADDR'];
         }
+        // If ipAddress is more than one, then it will choose first ipAddress
+        if (!empty($ipAddress)) {
+            $ipList = explode(',', $ipAddress);
+            $clientIP = trim($ipList[0]);
+            $ipAddress = $clientIP;
+        }
         //phpcs:enable
         return $ipAddress;
     }

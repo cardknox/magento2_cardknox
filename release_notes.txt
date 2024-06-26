@@ -1,3 +1,6 @@
+1.0.25
+- Fix: Error - Request_Client_IP Exceeds max length
+
 1.0.24
 - Fix: Passing wrong amount to cardknox API request for GooglePay & ApplePay
 
