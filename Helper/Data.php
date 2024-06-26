@@ -65,8 +65,11 @@ class Data extends AbstractHelper
     {
         //phpcs:disable
         $ipAddress = null;
-        // if user from the share internet
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        // Check for IP from Cloudflare first
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            $ipAddress = $_SERVER['HTTP_CF_CONNECTING_IP'];
+        } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            // if user from the share internet
             $ipAddress = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             //if user is from the proxy
