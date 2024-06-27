@@ -85,10 +85,10 @@
 #cardknox_google_pay_container {
     .actions-toolbar {
         display: block;
-    text-align: center;
+        text-align: center;
     .primary {
-    float: none !important;
-    }
+            float: none !important;
+        }
     }
 }
 
@@ -112,6 +112,33 @@
                     width: 100%;
                 }
             }
+        }
+    }
+}
+.cardknox-credit-card-logo {
+    background: url('@{baseDir}CardknoxDevelopment_Cardknox/images/credit-card-logo.png');
+    background-repeat: no-repeat;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0 0 10px;
+    height: 24px;
+    overflow: inherit;
+    flex: 1;
+    background-position: right;
+}
+
+.checkout-payment-method .payment-method.ck-credit-card-payment .payment-method-title {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #cccccc;
+    label {
+        display: inline-flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        span.cardknox-credit-card-title{
+            margin-left: 5px;
+            margin-top: 3px;
         }
     }
 }
