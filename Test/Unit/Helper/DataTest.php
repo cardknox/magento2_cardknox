@@ -10,6 +10,7 @@ use CardknoxDevelopment\Cardknox\Helper\Data;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 
 class DataTest extends TestCase
 {
@@ -64,8 +65,12 @@ class DataTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->remoteAddress = $this->getMockBuilder(RemoteAddress::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->_outputConfig = $this->getMockForAbstractClass(ConfigInterface::class);
-        $this->helper = new Data($this->contextMock);
+        $this->helper = new Data($this->contextMock, $this->remoteAddress);
     }
 
     /**
