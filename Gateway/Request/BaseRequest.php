@@ -69,7 +69,7 @@ class BaseRequest implements BuilderInterface
         return [
             'xVersion' => '4.5.8',
             'xSoftwareName' => 'Magento ' . $edition . " ". $version,
-            'xSoftwareVersion' => '1.0.25',
+            'xSoftwareVersion' => '1.0.26',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $order->getStoreId()
