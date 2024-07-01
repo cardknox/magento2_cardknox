@@ -3,6 +3,7 @@
 namespace CardknoxDevelopment\Cardknox\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 
 class Data extends AbstractHelper
 {
@@ -10,15 +11,23 @@ class Data extends AbstractHelper
     public const IS_GPAY_SPLIT_CAPTURE_ENABLED = 'payment/cardknox_google_pay/split_capture_enabled';
 
     /**
+     * @var RemoteAddress
+     */
+    private $remoteAddress;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
+     * @param RemoteAddress $remoteAddress
      * phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod
      */
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        RemoteAddress $remoteAddress
     ) {
+        $this->remoteAddress = $remoteAddress;
         parent::__construct($context);
     }
-    
+
     /**
      * Format price to 0.00 format
      *
@@ -57,25 +66,14 @@ class Data extends AbstractHelper
         );
     }
     /**
-     * Get Client IP address
+     * Retrieves the visitor's IP address using the `RemoteAddress` instance. It will return IPv4
      *
      * @return string|null
      */
     public function getIpAddress()
     {
-        //phpcs:disable
         $ipAddress = null;
-        // if user from the share internet
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ipAddress = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            //if user is from the proxy
-            $ipAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            //if user is from the remote address
-            $ipAddress = $_SERVER['REMOTE_ADDR'];
-        }
-        //phpcs:enable
+        $ipAddress = $this->remoteAddress->getRemoteAddress(false);
         return $ipAddress;
     }
 }
