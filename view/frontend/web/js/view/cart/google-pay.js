@@ -14,7 +14,6 @@ define([
     'Magento_Checkout/js/action/create-shipping-address',
     'mage/url',
     'Magento_Checkout/js/model/shipping-save-processor/default',
-    'Magento_Checkout/js/action/select-shipping-method',
     'Magento_Customer/js/customer-data'
 ], function(
     $,
@@ -32,7 +31,6 @@ define([
     createShippingAddress,
     urlBuilder,
     saveShipping,
-    selectShippingMethodAction,
     customerData
 ) {
     'use strict';
@@ -183,7 +181,6 @@ define([
             this.setPaymentMethodNonce(nonce);
             this.isPlaceOrderActionAllowed(true);
             if (!quote.isVirtual()) {
-                this._setShippingMethod(paymentResponse);
                 saveShipping.saveShippingInformation();
             }
 
@@ -351,24 +348,5 @@ define([
             return response;
         },
 
-        _setShippingMethod: function (paymentResponse) {
-            let shippingOptionDataRes = paymentResponse.paymentData;
-            if (shippingOptionDataRes.hasOwnProperty('shippingOptionData')) {
-                    if (typeof shippingOptionDataRes.shippingOptionData.id !== 'undefined' ) {
-                    let fullShippigName = shippingOptionDataRes.shippingOptionData.id;
-                    let shippingMethodArray = fullShippigName.split("__");
-                    let shippingCarrierCode = shippingMethodArray[0];
-                    let shippingMethodCode = shippingMethodArray[1];
-
-                    // Create the shipping method object
-                    let shippingMethod = {
-                        'carrier_code': shippingCarrierCode,
-                        'method_code': shippingMethodCode
-                    };
-
-                    selectShippingMethodAction(shippingMethod);
-                }
-            }
-        },
     });
 });

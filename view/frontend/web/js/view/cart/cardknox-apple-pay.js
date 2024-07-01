@@ -5,9 +5,7 @@ define([
     "jquery",
     "ifields",
     "Magento_Checkout/js/model/quote",
-    'CardknoxDevelopment_Cardknox/js/model/shipping-rates',
-    'CardknoxDevelopment_Cardknox/js/model/tax'
-],function ($,ifields,quote, shippingRates, taxCalculator) {
+],function ($,ifields,quote) {
     'use strict';
     let applePayConfig = window.checkoutConfig.payment.cardknox_apple_pay;
     let applePay = '';
@@ -24,66 +22,38 @@ define([
             buttonColor: getApButtonColor(applePayConfig),
             buttonType: getApButtonType(applePayConfig)
         },
-        totalAmount: null,
-        taxAmt: null,
-        shippingMethod: null,
-        creditType: null,
+        _getTransactionInfo: function () {
 
-        _getTransactionInfo: function (shippingMethod, creditType) {
-            if (quoteIsVirtual()) {
-                try {
-                    const apAmt = _getAmount();
-                    return {
-                        total: {
-                                type:  'final',
-                                label: 'Total',
-                                amount: apAmt.toString(),
-                            }
-                    };
-                } catch (err) {
-                    console.error("getTransactionInfo error ", exMsg(err));
-                }
-            }
             try {
-                if (null !== shippingMethod) {
-                    this.shippingMethod = shippingMethod
-                }
-
-                if (!this.taxAmt) {
-                    this.taxAmt = getTax();
-                }
-
-                if (!this.shippingMethod) {
-                    const shippingOptions = this._getShippingMethods();
-                    this.shippingMethod = shippingOptions[0] || {};
-                }
-
-                this.creditType = creditType || this.creditType;
-                const amt = getSubTotal();
-
                 const isEnabledAPShowSummary = applePayConfig.isEnabledApplePayShowSummary ? applePayConfig.isEnabledApplePayShowSummary : "";
+                const subTotal = getSubTotal();
+                const shippingPrice = getShippingPrice();
+                const discountAmount = getDiscountAmount();
+                const taxAmount = getTax();
+                const apAmt = _getAmount();
 
                 const lineItems = [
                     {
                         "label": isEnabledAPShowSummary ? "Subtotal" : "",
                         "type": "final",
-                        "amount": amt
+                        "amount": subTotal ?? 0
                     },
-                    this.shippingMethod
+                    {
+                        "label": isEnabledAPShowSummary ? 'Shipping' :'',
+                        "type": 'final',
+                        "amount": shippingPrice ?? 0
+                    }
                 ];
 
-                const discountAmount = this.discountAmt;
-                if (discountAmount != 0) {
-                    lineItems.push({
-                        label: isEnabledAPShowSummary ? 'Discount' : '',
-                        type: 'final',
-                        amount: discountAmount
-                    });
-                }
+                lineItems.push({
+                    "label": isEnabledAPShowSummary ? 'Discount' : '',
+                    "amount": discountAmount ?? 0,
+                    "type": 'final'
+                });
 
                 lineItems.push({
-                    "label": isEnabledAPShowSummary ? "Estimated Tax" : '',
-                    "amount": this.taxAmt,
+                    "label": isEnabledAPShowSummary ? "Tax" : '',
+                    "amount": taxAmount ?? 0,
                     "type": "final"
                 });
 
@@ -93,16 +63,15 @@ define([
                 });
                 totalAmt = roundTo(totalAmt, 2);
 
-                this.totalAmount = totalAmt;
                 return {
-                    lineItems: lineItems,
-
+                    'lineItems': lineItems,
                     total: {
-                        type:  'final',
-                        label: 'GrandTotal',
-                        amount: totalAmt,
+                        "type":  'final',
+                        "label": 'GrandTotal',
+                        "amount": totalAmt,
                     }
                 };
+
             } catch (err) {
                 console.error("_getTransactionInfo error ", exMsg(err));
                 if (isDebugEnv) {
@@ -111,143 +80,14 @@ define([
             }
         },
 
-        onGetTransactionInfo: function (paymentData) {
+        onGetTransactionInfo: function () {
             try {
-                const totalAmt = _getAmount();
-
-                return {
-                    lineItems: [],
-
-                    total: {
-                        type:  'final',
-                        label: 'Total',
-                        amount: totalAmt,
-                    }
-                };
+                console.log('getTransactionInfo>>>>');
+                return this._getTransactionInfo();
             } catch (err) {
                 console.error("onGetTransactionInfo error ", exMsg(err));
             }
         },
-
-        onGetShippingMethods: function (address) {
-            return this._getShippingMethods(address);
-        },
-
-        _getShippingMethods: function (address) {
-            if (typeof address === 'undefined') {
-                return [];
-            }
-
-            const result = shippingRates.getRates(address);
-            let shippingOptions = [];
-            if (result.length) {
-                $.each(result, function (idx, item) {
-                    const id = item.carrier_code + '__' + item.method_code;
-
-                    shippingOptions.push({
-                        identifier: id,
-                        label: item.method_title,
-                        amount: item.price_incl_tax,
-                        detail: item.carrier_title
-                    });
-                });
-            }
-
-            return shippingOptions;
-        },
-
-        onShippingContactSelected: function (shippingContact) {
-            const self = this;
-            return new Promise(function (resolve, reject) {
-                try {
-                    const address = self._constructAddressFromShippingContact(shippingContact);
-
-                    if (!address) {
-                        return reject(new Error('Invalid shipping contact'));
-                    }
-
-                    const resp = self._processShippingAddress(address);
-                    resolve(resp);
-                } catch (err) {
-                    console.error("onShippingContactSelected error:", err.message);
-                    if (isDebugEnv) {
-                        setTimeout(function () { alert("onShippingContactSelected error: " + err.message) }, 100);
-                    }
-                    reject(new Error("Exception : " + err.message));
-                }
-            });
-        },
-
-        _constructAddressFromShippingContact: function (shippingContact) {
-            let countryCode = 'US';
-            if (quote.shippingAddress() !== null && quote.shippingAddress() !== undefined) {
-                countryCode = quote.shippingAddress().countryId
-            }
-
-            const address = {
-                countryId: countryCode,
-                city: '',
-                postcode: '',
-                region: ''
-            };
-
-            if (shippingContact) {
-                if (shippingContact.countryCode) {
-                    address.countryId = shippingContact.countryCode;
-                }
-                if (shippingContact.locality) {
-                    address.city = shippingContact.locality;
-                }
-                if (shippingContact.postalCode) {
-                    address.postcode = shippingContact.postalCode;
-                }
-                if (shippingContact.administrativeArea) {
-                    address.region = shippingContact.administrativeArea;
-                }
-            }
-
-            return address;
-        },
-
-        _processShippingAddress: function (address) {
-            const self = this;
-            let resp = {};
-
-            if (!applePay._validate(address.countryId)) {
-                const apErr = {
-                    code: APErrorCode.shippingContactInvalid,
-                    contactField: APErrorContactField.countryCode,
-                    msgMessage: 'Shipping to country not supported, Unable to process the order. Please try again.'
-                }
-
-                resp = self._getTransactionInfo();
-                resp.shippingMethods = [];
-                resp.error = apErr;
-            } else {
-                const newShippingMethods = self._getShippingMethods(address);
-                const taxObjectApplePay = self._calculateTax(address, newShippingMethods[0]);
-
-                if (taxObjectApplePay.hasOwnProperty('tax_amount')) {
-                    self.taxAmt = taxObjectApplePay['tax_amount'];
-                }
-                if (taxObjectApplePay.hasOwnProperty('base_discount_amount')) {
-                    self.discountAmt = taxObjectApplePay['base_discount_amount'];
-                }
-
-                resp = self._getTransactionInfo(newShippingMethods[0]);
-                resp.shippingMethods = newShippingMethods;
-            }
-
-            return resp;
-        },
-
-        _calculateTax: function (address, shippingMethod) {
-            return taxCalculator({
-                address: address,
-                shippingMethod: shippingMethod
-            });
-        },
-
         onShippingMethodSelected: function(shippingMethod) {
             const self = this;
             return new Promise(function (resolve, reject) {
@@ -261,7 +101,6 @@ define([
                 }
             })
         },
-
         _validateApplePayMerchant: function () {
             return new Promise((resolve, reject) => {
                 try {
@@ -371,8 +210,14 @@ define([
         onBeforeProcessPayment: function () {
             return new Promise(function (resolve, reject) {
                 try {
-                    if (applePay.validate()
+                    if (applePay.validate() &&
+                        applePay.additionalValidator()
                     ) {
+                        if (!quote.isVirtual() && quote.shippingMethod() == null) {
+                            var err = 'Please select a shipping method.';
+                            _errorShowMessage(err);
+                            reject(err);
+                        }
                         window.ckApplePay.updateAmount();
                         resolve(iStatus.success);
                     }
@@ -406,8 +251,8 @@ define([
                 onGetTransactionInfo: "apRequest.onGetTransactionInfo",
                 onGetShippingMethods: quoteIsVirtual() ? null : "apRequest.onGetShippingMethods",
                 onPaymentMethodSelected: "apRequest.onPaymentMethodSelected",
-                onShippingContactSelected: quoteIsVirtual() ? null : "apRequest.onShippingContactSelected",
                 onShippingMethodSelected: quoteIsVirtual() ? null : "apRequest.onShippingMethodSelected",
+                // onShippingContactSelected: quoteIsVirtual() ? null : "apRequest.onShippingContactSelected",
                 onValidateMerchant: "apRequest.onValidateMerchant",
                 onBeforeProcessPayment: "apRequest.onBeforeProcessPayment",
                 onPaymentAuthorize: "apRequest.onPaymentAuthorize",
@@ -452,7 +297,7 @@ define([
         setTimeout(function () {
             $(".applepay-error").html("").hide();
         }, 4000);
-        reject(err);
+        // reject(err);
     }
 
     function _getAmount () {
@@ -479,6 +324,19 @@ define([
             }, 4000);
             throw new Error("Please check the billing address information. Lastname is required. Enter and try again.");
         }
+    }
+
+    function getDiscountAmount() {
+        const totals = quote.totals(),
+            base_discount = (totals || quote)['base_discount_amount'];
+
+        return parseFloat(base_discount).toFixed(2);
+    }
+
+    function getShippingPrice() {
+        const totals = quote.totals(),
+            shippingPrice = (totals || quote)['shipping_amount'];
+        return parseFloat(shippingPrice).toFixed(2);
     }
 
     function getSubTotal() {

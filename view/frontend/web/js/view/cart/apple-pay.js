@@ -359,23 +359,22 @@ define([
             });
             return response;
         },
-
         _setShippingMethod: function (lastSelectedShippingMethod) {
             if (lastSelectedShippingMethod != '') {
-            let shippingOptionDataRes = lastSelectedShippingMethod.identifier;
+                let shippingOptionDataRes = lastSelectedShippingMethod.identifier;
                 if (typeof shippingOptionDataRes !== 'undefined' ) {
-                let shippingMethodArray = shippingOptionDataRes.split("__");
-                let shippingCarrierCode = shippingMethodArray[0];
-                let shippingMethodCode = shippingMethodArray[1];
+                    let shippingMethodArray = shippingOptionDataRes.split("__");
+                    let shippingCarrierCode = shippingMethodArray[0];
+                    let shippingMethodCode = shippingMethodArray[1];
 
-                // Create the shipping method object
-                let shippingMethod = {
-                    'carrier_code': shippingCarrierCode,
-                    'method_code': shippingMethodCode
-                };
+                    // Create the shipping method object
+                    let shippingMethod = {
+                        'carrier_code': shippingCarrierCode,
+                        'method_code': shippingMethodCode
+                    };
 
-                selectShippingMethodAction(shippingMethod);
-            }
+                    selectShippingMethodAction(shippingMethod);
+                }
             }
         },
     });
