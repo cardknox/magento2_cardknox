@@ -23,7 +23,7 @@ define([
         buttonOptions: {
             buttonColor: gPayConfig.button ? gPayConfig.button : "default",
             buttonType: gPayConfig.buttonType ? gPayConfig.buttonType : "buy",
-            buttonSizeMode: GPButtonSizeMode.fill
+            buttonSizeMode: gPayConfig.buttonSizeMode ? gPayConfig.buttonSizeMode : "fill"
         },
 
         billingParams: {
