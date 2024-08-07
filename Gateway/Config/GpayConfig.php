@@ -26,6 +26,8 @@ class GpayConfig
     public const GPAY_BUTTON_TYPE = 'payment/cardknox_google_pay/gp_button_type';
     public const GOOGLEPAY_ENABLE_ON_CARTPAGE = 'payment/cardknox_google_pay/cardknox_googlepay_enable_cart';
     public const ENABLE_GOOGLEPAY_SHOW_SUMMARY = 'payment/cardknox_google_pay/gp_enable_show_summary';
+    public const BUTTON_SIZE_MODE = 'payment/cardknox_google_pay/button_size_mode';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -153,5 +155,15 @@ class GpayConfig
     public function isEnabledGooglePayShowSummary()
     {
         return (bool) $this->getValue(self::ENABLE_GOOGLEPAY_SHOW_SUMMARY);
+    }
+
+    /**
+     * GetButtonSizeMode function
+     *
+     * @return string
+     */
+    public function getGPButtonSizeMode()
+    {
+        return $this->getValue(self::BUTTON_SIZE_MODE);
     }
 }

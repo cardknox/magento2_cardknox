@@ -14,7 +14,7 @@ use Magento\Framework\Locale\ResolverInterface;
 class GooglePayConfigProvider implements ConfigProviderInterface
 {
     public const CODE = 'cardknox_google_pay';
-    
+
     /**
      * Config variable
      *
@@ -64,6 +64,7 @@ class GooglePayConfigProvider implements ConfigProviderInterface
                     'xPaymentAction' => $this->gpayConfig->getGPayPaymentAction(),
                     'buttonType'  => $this->gpayConfig->getGooglePayButtonType(),
                     'isEnabledGooglePayShowSummary'  => $this->gpayConfig->isEnabledGooglePayShowSummary(),
+                    'buttonSizeMode'  => $this->gpayConfig->getGPButtonSizeMode(),
                 ]
             ]
         ];
