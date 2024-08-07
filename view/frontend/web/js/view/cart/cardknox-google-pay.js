@@ -230,8 +230,8 @@ define([
 
     function getShippingPrice() {
         const totals = quote.totals(),
-            tax = (totals || quote)['shipping_amount'];
-        return parseFloat(tax).toFixed(2);
+            shipping_amount = (totals || quote)['shipping_amount'];
+        return parseFloat(shipping_amount).toFixed(2);
     }
 
     function isExistLastNameShippingAddress(data) {
