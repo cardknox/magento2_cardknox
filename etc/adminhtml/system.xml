@@ -139,7 +139,7 @@
                             <field id="cardknox_gpay_active">1</field>
                         </depends>
                     </field>
-                    
+
                     <field id="gp_button_type" type="select" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="51">
                         <label>Google Pay Button Type</label>
                         <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\ConfigGooglePayButtonType</source_model>
@@ -153,7 +153,7 @@
                         <label>Button Size Mode</label>
                         <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\ConfigGooglePayButtonSizeMode</source_model>
                         <config_path>payment/cardknox_google_pay/button_size_mode</config_path>
-                        <comment>If you use button type = short, please use static mode to button size mode.</comment>
+                        <comment>If you want button smaller, use button type = short and button size mode = static.</comment>
                         <depends>
                             <field id="cardknox_gpay_active">1</field>
                         </depends>
