@@ -22,7 +22,7 @@ define([
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
     const METHOD_ID = 'cardknox_google_pay';
-        
+
     return Component.extend({
         defaults: {
             template: 'CardknoxDevelopment_Cardknox/payment/cardknox-google-pay-method.html',

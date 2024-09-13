@@ -15,7 +15,7 @@ define(["jquery","ifields","Magento_Checkout/js/model/quote"],function (jQuery,i
         buttonOptions: {
             buttonColor: gPayConfig.button ? gPayConfig.button : "default",
             buttonType: gPayConfig.buttonType ? gPayConfig.buttonType : "buy",
-            buttonSizeMode: GPButtonSizeMode.full
+            buttonSizeMode: gPayConfig.buttonSizeMode ? gPayConfig.buttonSizeMode : "fill"
         },
 
         billingParams: {
