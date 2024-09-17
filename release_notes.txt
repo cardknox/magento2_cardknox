@@ -1,3 +1,6 @@
+1.0.28
+- Fix GooglePay button style on cart & checkout page for responsive view
+
 1.0.27
 - Remove the Shipping method selection from Googlepay/ApplePay popup in cart page
 - Remove dynamic tax calculation from Googlepay/ApplePay popup in cart page
