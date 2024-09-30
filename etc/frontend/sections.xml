@@ -10,4 +10,10 @@
     <action name="checkout/sidebar/removeItem">
         <section name="checkout_config"/>
     </action>
+    <action name="cardknox/giftcard/addGiftCard">
+        <section name="checkout_ckgiftcard"/>
+    </action>
+    <action name="cardknox/giftcard/cancelGiftCard">
+        <section name="checkout_ckgiftcard"/>
+    </action>
 </config>

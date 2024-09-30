@@ -53,6 +53,7 @@
         <arguments>
             <argument name="sectionSourceMap" xsi:type="array">
                 <item name="checkout_config" xsi:type="string">CardknoxDevelopment\Cardknox\CustomerData\CheckoutConfigData</item>
+                <item name="checkout_ckgiftcard" xsi:type="string">CardknoxDevelopment\Cardknox\CustomerData\CheckoutGiftCardData</item>
             </argument>
         </arguments>
     </type>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+    <section name="quote">
+        <group name="totals">
+            <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcard" sort_order="900"/>
+        </group>
+    </section>
+    <!-- <section name="order_invoice">
+	    <group name="totals">
+	        <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcardInvoice" sort_order="165"/>
+	    </group>
+	</section> -->
+</config>  

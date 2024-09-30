@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- Quote table -->
+    <table name="quote">
+        <column name="ckgiftcard_code" xsi:type="varchar" nullable="true" length="255" comment="Cardknox Giftcard Code"/>
+        <column name="ckgiftcard_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Amount"/>
+        <column name="ckgiftcard_base_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Base Amount"/>
+        <column name="base_grand_total_without_ckgiftcard" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Base grandtotal without ckgiftcard"/>
+        <column name="grand_total_without_ckgiftcard" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Grandtotal without ckgiftcard"/>
+    </table>
+
+    <!-- Sales Order table -->
+    <table name="sales_order">
+        <column name="ckgiftcard_code" xsi:type="varchar" nullable="true" length="255" comment="Cardknox Giftcard Code"/>
+        <column name="ckgiftcard_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Amount"/>
+        <column name="ckgiftcard_base_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Base Amount"/>
+         <column name="base_grand_total_without_ckgiftcard" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Base grandtotal without ckgiftcard"/>
+        <column name="grand_total_without_ckgiftcard" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Grandtotal without ckgiftcard"/>
+    </table>
+
+    <!-- Sales Invoice table -->
+    <table name="sales_invoice">
+        <column name="ckgiftcard_code" xsi:type="varchar" nullable="true" length="255" comment="Cardknox Giftcard Code"/>
+        <column name="ckgiftcard_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Amount"/>
+        <column name="ckgiftcard_base_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Base Amount"/>
+    </table>
+
+    <!-- Sales Credit Memo table -->
+    <table name="sales_creditmemo">
+        <column name="ckgiftcard_code" xsi:type="varchar" nullable="true" length="255" comment="Cardknox Giftcard Code"/>
+        <column name="ckgiftcard_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Amount"/>
+        <column name="ckgiftcard_base_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Base Amount"/>
+    </table>
+</schema>

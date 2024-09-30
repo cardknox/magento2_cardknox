@@ -11,5 +11,27 @@
                 </arguments>
             </block>
         </referenceContainer>
+        <referenceContainer name="cart.discount">
+            <block class="CardknoxDevelopment\Cardknox\Block\GiftCard" name="checkout.cart.cardknox.giftcard" after="-"  template="CardknoxDevelopment_Cardknox::cart/giftcard.phtml"/>
+        </referenceContainer>
+        <referenceBlock name="checkout.cart.totals">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="block-totals" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="ckgiftcard" xsi:type="array">
+                                    <item name="component" xsi:type="string">CardknoxDevelopment_Cardknox/js/view/checkout/summary/ckgiftcard</item>
+                                    <item name="sortOrder" xsi:type="string">20</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="ckgiftcard" xsi:type="string" translate="true">Giftcard</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
     </body>
 </page>
