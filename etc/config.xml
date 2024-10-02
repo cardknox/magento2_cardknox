@@ -44,6 +44,7 @@
                 <visible_api_secret></visible_api_secret>
                 <select_recaptcha_source>google.com</select_recaptcha_source>
                 <allowspecific>0</allowspecific>
+                <ck_giftcard_enabled>0</ck_giftcard_enabled>
             </cardknox>
             <cardknox_cc_vault>
                 <model>CardknoxCreditCardVaultFacade</model>

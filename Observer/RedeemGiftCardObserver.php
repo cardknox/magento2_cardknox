@@ -10,6 +10,7 @@ use CardknoxDevelopment\Cardknox\Helper\Giftcard;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Model\QuoteRepository;
+use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
 
 class RedeemGiftCardObserver implements ObserverInterface
 {
@@ -41,6 +42,10 @@ class RedeemGiftCardObserver implements ObserverInterface
      */
     protected $quoteRepository;
 
+    /**
+     * @var Helper
+     */
+    protected $helper;
 
     /**
      * __construct function
@@ -50,6 +55,7 @@ class RedeemGiftCardObserver implements ObserverInterface
      * @param OrderRepositoryInterface $orderRepository
      * @param CheckoutSession $checkoutSession
      * @param QuoteRepository $quoteRepository
+     * @param Helper $helper
      */
     public function __construct(
         LoggerInterface $logger,
@@ -57,12 +63,14 @@ class RedeemGiftCardObserver implements ObserverInterface
         OrderRepositoryInterface $orderRepository,
         CheckoutSession $checkoutSession,
         QuoteRepository $quoteRepository,
+        Helper $helper
     ) {
         $this->logger = $logger;
         $this->_giftcardHelper = $giftcardHelper;
         $this->orderRepository = $orderRepository;
         $this->checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;
+        $this->helper = $helper;
     }
 
     /**
@@ -80,31 +88,34 @@ class RedeemGiftCardObserver implements ObserverInterface
 
         try {
             $order = $observer->getEvent()->getOrder();
+            $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
+            if ($isCardknoxGiftcardEnabled) {
 
-            $ckGiftCardCodeFromSession = $this->checkoutSession->getCardknoxGiftCardCode();
-            $ckGiftCardAmountFromSession = $this->checkoutSession->getCardknoxGiftCardAmount();
-
-            $quote = $this->quoteRepository->get($order->getQuoteId());
-            $ckGiftCardCode = $quote->getCkgiftcardCode();
-            $ckGiftCardAmount = $quote->getCkgiftcardAmount();
-            $ckGiftCardBaseAmount = $quote->getCkgiftcardBaseAmount();
-
-            $ckGiftCardAmountWithCurrency = $this->_giftcardHelper->getFormattedAmount($ckGiftCardAmount);
-            $ckGiftcardComment = 'The Cardknox gift card with code <b>'.$ckGiftCardCode.'</b> has been successfully redeemed for an amount of <b>'.$ckGiftCardAmountWithCurrency.'</b>.';
-
-            if ($ckGiftCardCode && $ckGiftCardAmount > 0) {
-                $this->redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order);
-                $order->addStatusHistoryComment($ckGiftcardComment);
-                $order->setCkgiftcardCode($ckGiftCardCode);
-                $order->setCkgiftcardAmount($ckGiftCardAmount);
-                $order->setCkgiftcardBaseAmount($ckGiftCardBaseAmount);
-                $this->orderRepository->save($order);
-
-                // Delete the gift card code and amount in the session
-                $this->checkoutSession->unsCardknoxGiftCardCode();
-                $this->checkoutSession->unsCardknoxGiftCardAmount();
-                $this->checkoutSession->unsCardknoxGiftCardBalance();
-
+                $ckGiftCardCodeFromSession = $this->checkoutSession->getCardknoxGiftCardCode();
+                $ckGiftCardAmountFromSession = $this->checkoutSession->getCardknoxGiftCardAmount();
+    
+                $quote = $this->quoteRepository->get($order->getQuoteId());
+                $ckGiftCardCode = $quote->getCkgiftcardCode();
+                $ckGiftCardAmount = $quote->getCkgiftcardAmount();
+                $ckGiftCardBaseAmount = $quote->getCkgiftcardBaseAmount();
+    
+                $ckGiftCardAmountWithCurrency = $this->_giftcardHelper->getFormattedAmount($ckGiftCardAmount);
+                $ckGiftcardComment = 'The Cardknox gift card with code <b>'.$ckGiftCardCode.'</b> has been successfully redeemed for an amount of <b>'.$ckGiftCardAmountWithCurrency.'</b>.';
+    
+                if ($ckGiftCardCode && $ckGiftCardAmount > 0) {
+                    $this->redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order);
+                    $order->addStatusHistoryComment($ckGiftcardComment);
+                    $order->setCkgiftcardCode($ckGiftCardCode);
+                    $order->setCkgiftcardAmount($ckGiftCardAmount);
+                    $order->setCkgiftcardBaseAmount($ckGiftCardBaseAmount);
+                    $this->orderRepository->save($order);
+    
+                    // Delete the gift card code and amount in the session
+                    $this->checkoutSession->unsCardknoxGiftCardCode();
+                    $this->checkoutSession->unsCardknoxGiftCardAmount();
+                    $this->checkoutSession->unsCardknoxGiftCardBalance();
+    
+                }
             }
         } catch (\Exception $e) {
             $this->logger->error('Gift card redemption failed: ' . $e->getMessage());

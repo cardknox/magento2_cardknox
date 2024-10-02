@@ -73,6 +73,11 @@
                         <field id="recaptchaEnabled">1</field>
                     </depends>
                 </field>
+                <field id="ck_giftcard_enabled" translate="label" type="select" sortOrder="153" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Cardknox Giftcard</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>payment/cardknox/ck_giftcard_enabled</config_path>
+                </field>
                 <field id="select_recaptcha_source" translate="label comment" type="select" sortOrder="154" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Select reCaptcha Source</label>
                     <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\SelectRecaptchaSource</source_model>

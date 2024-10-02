@@ -16,7 +16,8 @@ define([
         },
 
         isDisplayed: function () {
-            return this.getGiftCardAmount();
+            // return this.getGiftCardAmount();
+            return window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
         },
 
         getGiftCardAmount: function () {

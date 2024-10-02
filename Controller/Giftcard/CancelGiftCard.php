@@ -10,6 +10,7 @@ use Magento\Framework\HTTP\Client\Curl;
 use CardknoxDevelopment\Cardknox\Helper\Giftcard;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Api\CartRepositoryInterface;
+use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
 
 class CancelGiftCard extends Action
 {
@@ -41,6 +42,11 @@ class CancelGiftCard extends Action
     protected $quoteRepository;
 
     /**
+     * @var Helper
+     */
+    protected $helper;
+
+    /**
      * __construct function
      *
      * @param Context $context
@@ -49,6 +55,7 @@ class CancelGiftCard extends Action
      * @param Giftcard $giftcardHelper
      * @param CheckoutSession $checkoutSession
      * @param CartRepositoryInterface $quoteRepository
+     * @param Helper $helper
      */
     public function __construct(
         Context $context,
@@ -56,21 +63,30 @@ class CancelGiftCard extends Action
         Curl $curl,
         Giftcard $giftcardHelper,
         CheckoutSession $checkoutSession,
-        CartRepositoryInterface $quoteRepository
+        CartRepositoryInterface $quoteRepository,
+        Helper $helper
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->_curl = $curl;
         $this->_giftcardHelper = $giftcardHelper;
         $this->checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;
+        $this->helper = $helper;
         parent::__construct($context);
     }
 
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
-        $giftCardCode = $this->getRequest()->getParam('giftcard_code');
+        $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
+        if (!$isCardknoxGiftcardEnabled) {
+            return $result->setData([
+                'success' => false,
+                'message' => __('Please enable Cardknox GiftCard.'),
+            ]);
+        }
 
+        $giftCardCode = $this->getRequest()->getParam('giftcard_code');
         if (!$giftCardCode) {
             return $result->setData([
                 'success' => false,

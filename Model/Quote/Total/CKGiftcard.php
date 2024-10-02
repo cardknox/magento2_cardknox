@@ -4,6 +4,7 @@ namespace CardknoxDevelopment\Cardknox\Model\Quote\Total;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use CardknoxDevelopment\Cardknox\Model\TotalCalculator;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
 
 class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
 {
@@ -24,20 +25,28 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
     protected $checkoutSession;
 
     /**
+     * @var Helper
+     */
+    protected $helper;
+
+    /**
      * __construct function
      *
      * @param TotalCalculator $totalCalculator
      * @param PriceCurrencyInterface $priceCurrency
      * @param CheckoutSession $checkoutSession
+     * @param Helper $helper
      */
     public function __construct(
         TotalCalculator $totalCalculator,
         PriceCurrencyInterface $priceCurrency,
-        CheckoutSession $checkoutSession
+        CheckoutSession $checkoutSession,
+        Helper $helper
     ) {
         $this->priceCurrency = $priceCurrency;
         $this->totalCalculator= $totalCalculator;
         $this->checkoutSession = $checkoutSession;
+        $this->helper = $helper;
     }
 
     /**
@@ -61,6 +70,10 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
 
         //if there is no item in shopping cart then return
         if (!count($items)) {
+            return $this;
+        }
+        $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
+        if (!$isCardknoxGiftcardEnabled) {
             return $this;
         }
 
@@ -111,10 +124,13 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
         \Magento\Quote\Model\Quote $quote,
         \Magento\Quote\Model\Quote\Address\Total $total
     ) {
-        return [
-            'code' => 'ckgiftcard',
-            'title' => __('Gift Card'),
-            'value' => -$quote->getCkgiftcardAmount()
-        ];
+        $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
+        if (!$isCardknoxGiftcardEnabled) {
+            return [
+                'code' => 'ckgiftcard',
+                'title' => __('Gift Card'),
+                'value' => -$quote->getCkgiftcardAmount()
+            ];
+        }
     }
 }

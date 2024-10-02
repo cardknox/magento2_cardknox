@@ -34,6 +34,13 @@ define([
         isCkGiftCardApplied: isCkGiftCardApplied,
 
         /**
+         * Apply gift card
+         */
+        isDisplayedCKGiftcard: function(value) {
+            return window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
+        },
+
+        /**
          * Check gift card account balance
          */
         checkBalance: function() {
@@ -50,7 +57,7 @@ define([
                 addGiftCardAction.add(this.ckGiftCardCode(), isCkGiftCardApplied);
             }
         },
-
+        
         /**
          * Cancel gift card
          */

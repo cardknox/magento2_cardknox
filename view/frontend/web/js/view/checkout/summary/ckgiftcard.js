@@ -12,19 +12,21 @@ define(
             defaults: {
                 template: 'CardknoxDevelopment_Cardknox/checkout/summary/ckgiftcard'
             },
-            ckgiftcard: window.checkoutConfig.usa_processing_fee,
+            ckgiftcard: window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard,
             totals: quote.getTotals(),
-               isDisplayedHandlingfeeTotal : function () {
-                   //    return this.ckgiftcard.isEnabled;
-                   return true;
+
+            isDisplayedCardknoxGiftcard: function () {
+                return window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
             },
             getHandlingfeeTotal : function () {
                 var price = 0;
-                // if (this.totals() && this.ckgiftcard.isEnabled == true) {
-                if (this.totals() && totals.getSegment('ckgiftcard')) {
-                    price = totals.getSegment('ckgiftcard').value;
-                }           
-                return this.getFormattedPrice(price);
+                var isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard
+                if (this.totals() && isEnabledCardknoxGiftcard == true) {
+                    if (this.totals() && totals.getSegment('ckgiftcard')) {
+                        price = totals.getSegment('ckgiftcard').value;
+                    }
+                    return this.getFormattedPrice(price);
+                }
             }
         });
     }

@@ -4,6 +4,7 @@ namespace CardknoxDevelopment\Cardknox\Block;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
 
 class GiftCard extends Template
 {
@@ -13,19 +14,27 @@ class GiftCard extends Template
     protected $checkoutSession;
 
     /**
+     * @var Helper
+     */
+    protected $helper;
+
+    /**
      * GiftCard constructor.
      *
      * @param Template\Context $context
      * @param CheckoutSession $checkoutSession
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
         CheckoutSession $checkoutSession,
+        Helper $helper,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->checkoutSession = $checkoutSession;
+        $this->helper = $helper;
     }
 
     /**
@@ -77,5 +86,15 @@ class GiftCard extends Template
     public function getCancelGiftCardUrl()
     {
         return $this->getUrl('cardknox/giftcard/cancelGiftCard');
+    }
+
+    /**
+     * IsCardknoxGiftcardEnabled function
+     *
+     * @return boolean
+     */
+    public function isCardknoxGiftcardEnabled()
+    {
+        return $this->helper->isCardknoxGiftcardEnabled();
     }
 }
