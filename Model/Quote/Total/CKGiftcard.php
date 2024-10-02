@@ -73,6 +73,7 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
             return $this;
         }
         $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
+
         if (!$isCardknoxGiftcardEnabled) {
             return $this;
         }
@@ -125,7 +126,7 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
         \Magento\Quote\Model\Quote\Address\Total $total
     ) {
         $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
-        if (!$isCardknoxGiftcardEnabled) {
+        if ($isCardknoxGiftcardEnabled) {
             return [
                 'code' => 'ckgiftcard',
                 'title' => __('Gift Card'),
