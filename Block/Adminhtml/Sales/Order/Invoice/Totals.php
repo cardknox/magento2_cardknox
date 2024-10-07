@@ -43,7 +43,7 @@ class Totals extends \Magento\Framework\View\Element\Template
         if (!$this->getSource()->getCkgiftcardAmount()) {
             return $this;
         }
-       
+
         $total = new \Magento\Framework\DataObject(
             [
                 'code' => 'ckgiftcardamount',
@@ -52,7 +52,10 @@ class Totals extends \Magento\Framework\View\Element\Template
             ]
         );
         $this->getParentBlock()->addTotalBefore($total, 'grand_total');
-        $this->getInvoice()->setGrandTotal($this->getInvoice()->getGrandTotal() + $this->getSource()->getCkgiftcardAmount());
+        $this->getInvoice()->getGrandTotal();
+        $this->getSource()->getCkgiftcardAmount();
+        $invoiceGrandTotal = $this->getInvoice()->getGrandTotal() - $this->getSource()->getCkgiftcardAmount();
+        $this->getInvoice()->setGrandTotal($invoiceGrandTotal);
 
         return $this;
     }

@@ -5,9 +5,9 @@
             <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcard" sort_order="900"/>
         </group>
     </section>
-    <!-- <section name="order_invoice">
+    <section name="order_invoice">
 	    <group name="totals">
 	        <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcardInvoice" sort_order="165"/>
 	    </group>
-	</section> -->
+	</section>
 </config>  

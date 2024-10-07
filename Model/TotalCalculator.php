@@ -26,47 +26,43 @@ class TotalCalculator
 
     public function collectQuoteCKGiftCard($quote, $total, $giftCardBalance)
     {
+       
         $giftCardCollectedFlag = $quote->getGiftCardCollectedFlag();
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/aaaa.log');
-        $logger = new \Zend_Log();
-        $logger->addWriter($writer);
-        $logger->info('giftCardCollectedFlag'. $giftCardCollectedFlag);
         if (!$giftCardCollectedFlag) {
+        
+            // Initialization of amounts
             $this->_baseAmount = 0;
             $this->_baseAmountUsed = 0;
-
+            // Calculate the quote grand total left after all other discounts and fees
             $subtotal = $total->getBaseTotalAmount('subtotal');
-            $shipping =   $total->getBaseTotalAmount('shipping');
+            $shipping = $total->getBaseTotalAmount('shipping');
             $tax = $total->getBaseTotalAmount('tax');
-            $weee =  $total->getBaseTotalAmount('weee');
-            $wee_tax =  $total->getBaseTotalAmount('weee_tax');
-            $discount =  $total->getBaseTotalAmount('discount');
-            $discount_tax_compensation =$total->getBaseTotalAmount('discount_tax_compensation');
-            $shipping_discount_tax_compensation =  $total->getBaseTotalAmount('shipping_discount_tax_compensation');
-            $this->quoteGrandTotalLeft=  $subtotal
-                +   $shipping
-                +  $tax
-                + $weee
-                + $wee_tax
+            $discount = abs($total->getBaseTotalAmount('discount'));  // Absolute value of discount
 
-                - $discount
-                - $discount_tax_compensation
-                - $shipping_discount_tax_compensation
-
-            ;
-
-            if ($giftCardBalance < $this->quoteGrandTotalLeft) {
-                $this->_baseAmount +=$giftCardBalance;
-                $this->quoteGrandTotalLeft = $this->quoteGrandTotalLeft-$giftCardBalance;
-            } elseif ($giftCardBalance ==$this->quoteGrandTotalLeft) {
-                $this->_baseAmount  +=$giftCardBalance;
-                $this->quoteGrandTotalLeft = 0;
-            } elseif ($giftCardBalance > $this->quoteGrandTotalLeft) {
-                $this->_baseAmount += $this->quoteGrandTotalLeft;
-                $quoteGrandTotalLeft = 0;
+            // Calculate the remaining grand total after the discount
+            $this->quoteGrandTotalLeft = $subtotal + $shipping + $tax - $discount;
+            // Ensure the grand total is positive before applying gift card
+            if ($this->quoteGrandTotalLeft > 0 && $giftCardBalance) {
+                // Apply the gift card, ensuring the total does not go negative
+                if ($giftCardBalance < $this->quoteGrandTotalLeft) {
+                    $this->_baseAmount += $giftCardBalance;
+                    $this->quoteGrandTotalLeft -= $giftCardBalance;
+                } else {
+                    // Cap the gift card amount to the remaining grand total
+                    $this->_baseAmount += $this->quoteGrandTotalLeft;
+                    $this->quoteGrandTotalLeft = 0;
+                }
+                // Set the new grand total ensuring it's not negative
+                $quoteBaseGrandTotal = max(0, $quote->getData('base_grand_total') - $this->_baseAmount);
+                $quoteGrandTotal = max(0, $quote->getData('grand_total') - $this->_baseAmount);
+                // Apply the new totals
+                $quote->setData('base_grand_total', $quoteBaseGrandTotal);
+                $quote->setData('grand_total', $quoteGrandTotal);
+                // Save the quote
+                $quote->save();
             }
         }
-        $quote->setGiftCardCollectedFlag(true);
+        return $this;
     }
 
     public function getBaseAmount()
