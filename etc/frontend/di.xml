@@ -57,4 +57,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Checkout\Controller\Cart\CouponPost">
+        <plugin name="custom_coupon_post_after_plugin" type="CardknoxDevelopment\Cardknox\Plugin\Controller\Cart\CouponPost" />
+    </type>
 </config>

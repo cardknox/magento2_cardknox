@@ -2,9 +2,9 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="checkout.cart.methods">
-            <block class="Magento\Checkout\Block\Cart\Totals" 
-                   name="checkout.cart.methods.onepage.top" 
-                   template="CardknoxDevelopment_Cardknox::cart/CkPayButtons.phtml" 
+            <block class="Magento\Checkout\Block\Cart\Totals"
+                   name="checkout.cart.methods.onepage.top"
+                   template="CardknoxDevelopment_Cardknox::cart/CkPayButtons.phtml"
                    after="checkout.cart.methods.onepage.bottom">
                 <arguments>
                     <argument name="view_model" xsi:type="object">CardknoxDevelopment\Cardknox\ViewModel\Data</argument>
@@ -26,6 +26,22 @@
                                     <item name="config" xsi:type="array">
                                         <item name="ckgiftcard" xsi:type="string" translate="true">Giftcard</item>
                                     </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.shipping">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="block-summary" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                                <item name="component"  xsi:type="string">CardknoxDevelopment_Cardknox/js/view/cart/ckgiftcard-shipping</item>
+                                    <item name="sortOrder" xsi:type="string">30</item>
                                 </item>
                             </item>
                         </item>

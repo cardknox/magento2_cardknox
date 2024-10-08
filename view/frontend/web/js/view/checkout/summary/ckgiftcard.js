@@ -18,15 +18,21 @@ define(
             isDisplayedCardknoxGiftcard: function () {
                 return window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
             },
-            getHandlingfeeTotal : function () {
+
+            getHandlingfeeTotal: function () {
                 var price = 0;
-                var isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard
-                if (this.totals() && isEnabledCardknoxGiftcard == true) {
+                var isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
+                if (this.totals() && isEnabledCardknoxGiftcard) {
                     if (this.totals() && totals.getSegment('ckgiftcard')) {
                         price = totals.getSegment('ckgiftcard').value;
                     }
-                    return this.getFormattedPrice(price);
                 }
+                return price;
+            },
+
+            getFormattedHandlingfeeTotal: function () {
+                var price = -this.getHandlingfeeTotal();
+                return this.getFormattedPrice(price);
             }
         });
     }

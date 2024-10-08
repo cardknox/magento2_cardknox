@@ -68,7 +68,8 @@ class Totals extends \Magento\Framework\View\Element\Template
             );
 
             $this->getParentBlock()->addTotalBefore($total, 'grand_total');
-            $this->getCreditmemo()->setGrandTotal($this->getCreditmemo()->getGrandTotal() + $this->getSource()->getCkgiftcardAmount());
+            $creditmemoGrandTotal = $this->getCreditmemo()->getGrandTotal() - $this->getSource()->getCkgiftcardAmount();
+            $this->getCreditmemo()->setGrandTotal($creditmemoGrandTotal);
         }
         return $this;
     }

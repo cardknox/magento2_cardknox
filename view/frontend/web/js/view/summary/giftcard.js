@@ -1,32 +1,39 @@
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+define(
+    [
+        'jquery',
+        'Magento_Checkout/js/view/summary/abstract-total',
+        'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/model/totals',
+        'Magento_Catalog/js/price-utils'
+    ],
+    function ($,Component,quote,totals,priceUtils) {
+        "use strict";
+        return Component.extend({
+            defaults: {
+                template: 'CardknoxDevelopment_Cardknox/summary/giftcard'
+            },
+            ckgiftcard: window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard,
+            totals: quote.getTotals(),
 
-define([
-    'Magento_Checkout/js/view/summary/abstract-total',
-    'Magento_Checkout/js/model/totals',
-    'ko'
-], function (Component, totals, ko) {
-    'use strict';
+            isDisplayedCardknoxGiftcard: function () {
+                return window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
+            },
 
-    return Component.extend({
-        defaults: {
-            template: 'CardknoxDevelopment_Cardknox/summary/giftcard'
-        },
+            getHandlingfeeTotal: function () {
+                var price = 0;
+                var isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
+                if (this.totals() && isEnabledCardknoxGiftcard) {
+                    if (this.totals() && totals.getSegment('ckgiftcard')) {
+                        price = totals.getSegment('ckgiftcard').value;
+                    }
+                }
+                return price;
+            },
 
-        isDisplayed: function () {
-            // return this.getGiftCardAmount();
-            return window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
-        },
-
-        getGiftCardAmount: function () {
-            var totalSegments = totals.getSegment('ckgiftcard'); // This should match your total segment key
-            return totalSegments ? totalSegments.value : 0;
-        },
-
-        formatPrice: function (price) {
-            return this.getFormattedPrice(price);
-        },
-    });
-});
+            getFormattedHandlingfeeTotal: function () {
+                var price = -this.getHandlingfeeTotal();
+                return this.getFormattedPrice(price);
+            }
+        });
+    }
+);

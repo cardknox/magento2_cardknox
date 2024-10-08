@@ -63,8 +63,11 @@ class Giftcard extends AbstractHelper
      */
     public function getMagentoEditionVersion()
     {
-        $magentoEdition = 'Magento ' . $this->_productMetadata->getEdition() . " ". $this->_productMetadata->getVersion();
-        return $magentoEdition;
+        return sprintf(
+            'Magento %s %s',
+            $this->_productMetadata->getEdition(),
+            $this->_productMetadata->getVersion()
+        );
     }
 
     /**
@@ -89,6 +92,7 @@ class Giftcard extends AbstractHelper
     {
         $headers = ["Content-Type" => "application/json"];
         $this->_curl->setHeaders($headers);
+
         $params = [
             "xCardNum" => $giftCardCode,
             "xKey" => $this->getTransactionKey(),
@@ -101,11 +105,38 @@ class Giftcard extends AbstractHelper
             'xSupports64BitRefnum' => true
         ];
 
+        $response = $this->sendGiftCardRequest($params);
+
+        return $this->handleResponse($response);
+    }
+
+    /**
+     * Send Gift Card Request
+     *
+     * @param array $params
+     * @return mixed
+     */
+    private function sendGiftCardRequest(array $params)
+    {
         $giftcardBalanceParams = json_encode($params);
         $this->_curl->post(self::CARDKNOX_API_URL, $giftcardBalanceParams);
 
-        $response = $this->_curl->getBody();
+        return $this->_curl->getBody();
+    }
+
+    /**
+     * Handle Response
+     *
+     * @param mixed $response
+     * @return mixed
+     */
+    private function handleResponse($response)
+    {
         $responseBody = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return ['error' => 'Invalid response format.'];
+        }
 
         return $responseBody;
     }
@@ -118,6 +149,7 @@ class Giftcard extends AbstractHelper
 
         $headers = ["Content-Type" => "application/json"];
         $this->_curl->setHeaders($headers);
+
         $params = [
             "xCardNum" => $ckGiftCardCode,
             "xKey" => $this->getTransactionKey(),
@@ -180,25 +212,35 @@ class Giftcard extends AbstractHelper
      */
     public function calculateGiftcardAmount($giftCardBalance, $grandTotal)
     {
-        if ($giftCardBalance >= $grandTotal) {
-            // If the gift card balance is more than or equal to the grand total, apply the full amount
-            $appliedAmount = $grandTotal; // The full grand total is paid by the gift card
-            $remainingGrandTotal = 0.00; // The customer owes nothing
-        } else {
-            // If the gift card balance is less than the grand total, apply the gift card balance
-            $appliedAmount = $giftCardBalance; // Only the remaining balance of the gift card can be applied
-            $remainingGrandTotal = max(0.00, $grandTotal - $giftCardBalance); // Ensure the remaining amount is not negative
+        if (!is_numeric($giftCardBalance) || !is_numeric($grandTotal)) {
+            throw new \InvalidArgumentException(__('Gift card balance and grand total must be numeric.'));
         }
 
-        // Return the applied gift card amount and remaining grand total
+        if ($giftCardBalance >= $grandTotal) {
+            $appliedAmount = $grandTotal;
+            $remainingGrandTotal = 0.00;
+        } else {
+            $appliedAmount = $giftCardBalance;
+            $remainingGrandTotal = max(0.00, $grandTotal - $giftCardBalance);
+        }
+
         return [
             'applied_amount' => $appliedAmount,
-            'remaining_grand_total' => $remainingGrandTotal
+            'remaining_grand_total' => $remainingGrandTotal,
         ];
     }
-
+    /**
+     * Get Formatted Amount
+     *
+     * @param mixed $amount
+     * @return mixed
+     */
     public function getFormattedAmount($amount)
     {
-        return $this->_priceHelper->currency($amount, true, false);
+        return $this->_priceHelper->currency(
+            $amount,
+            true,
+            false
+        );
     }
 }

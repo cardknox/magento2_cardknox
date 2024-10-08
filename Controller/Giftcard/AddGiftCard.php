@@ -75,96 +75,159 @@ class AddGiftCard extends Action
         parent::__construct($context);
     }
 
+    /**
+     * Add GIFT Card
+     *
+     * @return mixed
+     */
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
 
-        $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
-        if (!$isCardknoxGiftcardEnabled) {
-            return $result->setData([
-                'success' => false,
-                'message' => __('Please enable Cardknox GiftCard.'),
-            ]);
+        if (!$this->helper->isCardknoxGiftcardEnabled()) {
+            return $this->jsonResponse(false, __('Please enable Cardknox GiftCard.'));
         }
+
         $giftCardCode = $this->getRequest()->getParam('giftcard_code');
+        $isCartPage = $this->getRequest()->getParam('is_cart_page');
+
         if (!$giftCardCode) {
-            return $result->setData([
-                'success' => false,
-                'message' => __('Gift Card code is required.'),
-            ]);
+            return $this->jsonResponse(false, __('Gift Card code is required.'));
         }
+
         try {
+            $quote = $this->checkoutSession->getQuote();
+
+            // Validate quote
+            if (!$quote || !is_object($quote)) {
+                return $this->jsonResponse(false, __('We couldn\'t retrieve your cart details. Please try again.'));
+            }
+
+            if ($isCartPage && !$quote->isVirtual()) {
+                $this->updateShippingMethod($quote);
+            }
+
+            if ($this->isCartTotalZero($quote)) {
+                return $this->jsonResponse(false, __('Your cart total is zero, so there\'s no need to apply a Gift Card code.'));
+            }
+
             $apiResponse = $this->_giftcardHelper->checkGiftCardBalanceStatus($giftCardCode);
 
-            if ($apiResponse['xStatus'] == "Approved" &&
-                $apiResponse['xActivationStatus'] == "Active" &&
-                $apiResponse['xRemainingBalance'] > 0 )
-            {
-                $apiResponseData = [
-                    "xRemainingBalance" => $apiResponse['xRemainingBalance'],
-                    "xActivationStatus" => $apiResponse['xActivationStatus']
-                ];
-                $giftCardBalance = $apiResponse['xRemainingBalance'];
-                $quote = $this->checkoutSession->getQuote();
+            return $this->handleApiResponse($apiResponse, $giftCardCode, $quote);
 
-                // Log the initial grand total before collecting totals
-                \Magento\Framework\App\ObjectManager::getInstance()->get('Psr\Log\LoggerInterface')->info('Before collecting totals: Grand Total: ' . $quote->getGrandTotal());
-
-                $grandTotal = $quote->getGrandTotal();
-                $calculateGiftcardAmount = $this->_giftcardHelper->calculateGiftcardAmount($giftCardBalance, $grandTotal);
-                $appliedAmount = $calculateGiftcardAmount['applied_amount'];
-
-                \Magento\Framework\App\ObjectManager::getInstance()->get('Psr\Log\LoggerInterface')->info('Gift Card Amount: ' . $giftCardBalance);
-                \Magento\Framework\App\ObjectManager::getInstance()->get('Psr\Log\LoggerInterface')->info('Applied Gift Card Amount: ' . $appliedAmount);
-
-
-                // Store the gift card code and amount in the session
-                $this->checkoutSession->setCardknoxGiftCardCode($giftCardCode);
-                $this->checkoutSession->setCardknoxGiftCardAmount($appliedAmount);
-                $this->checkoutSession->setCardknoxGiftCardBalance($giftCardBalance);
-
-                // Log the grand total after collecting totals but before applying the gift card
-                \Magento\Framework\App\ObjectManager::getInstance()->get('Psr\Log\LoggerInterface')->info('After collecting totals, before gift card: Grand Total: ' . $quote->getGrandTotal());
-
-                // Adjust the quote totals
-                $quote->setCkgiftcardCode($giftCardCode);
-                $quote->setCkgiftcardAmount($appliedAmount);
-                $quote->setCkgiftcardBaseAmount($appliedAmount);
-                $quote->collectTotals();
-
-                $this->quoteRepository->save($quote);
-
-                // Log the grand total after applying the gift card
-                \Magento\Framework\App\ObjectManager::getInstance()->get('Psr\Log\LoggerInterface')->info('After applying gift card: Grand Total: ' . $quote->getGrandTotal());
-
-                $appliedAmountWithCurrency = $this->_giftcardHelper->getFormattedAmount($appliedAmount);
-                $message = "The gift card was applied successfully with an amount of $appliedAmountWithCurrency";
-                return $result->setData([
-                    'success' => true,
-                    'message' => $message,
-                    'data' => $apiResponseData
-                ]);
-            } elseif ($apiResponse['xActivationStatus'] == 'Inactive') {
-                return $result->setData([
-                    'success' => false,
-                    'message' => "Your gift card account is inactive. Please activate it before proceeding."
-                ]);
-            } elseif ($apiResponse['xRemainingBalance'] == 0) {
-                return $result->setData([
-                    'success' => false,
-                    'message' => "Your gift card balance is zero. Please use another card number or credit your balance."
-                ]);
-            } elseif ($apiResponse['xStatus'] == "Error") {
-                return $result->setData([
-                    'success' => false,
-                    'message' => $apiResponse['xError'],
-                ]);
-            }
         } catch (LocalizedException $e) {
-            return $result->setData([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->jsonResponse(false, $e->getMessage());
         }
+    }
+
+    /**
+     * Update the shipping method of the quote
+     *
+     * @param mixed $quote
+     * @return void
+     */
+    private function updateShippingMethod($quote)
+    {
+        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+        if ($shippingMethod) {
+            $quote->getShippingAddress()->setShippingMethod($shippingMethod);
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+            $quote->collectTotals();
+        }
+    }
+
+    /**
+     * Check if the cart total is zero
+     *
+     * @param mixed $quote
+     * @return bool
+     */
+    private function isCartTotalZero($quote)
+    {
+        return (float)$quote->getGrandTotal() === 0.0 && $quote->getShippingAddress()->getShippingAmount() == 0;
+    }
+
+    /**
+     * Handle the API response for gift card validation.
+     *
+     * @param mixed $apiResponse
+     * @param mixed $giftCardCode
+     * @param mixed $quote
+     * @return mixed
+     */
+    private function handleApiResponse($apiResponse, $giftCardCode, $quote)
+    {
+        $apiErrorMessage = $apiResponse['xError'] ?? null;
+        $status = $apiResponse['xStatus'] ?? null;
+        $activationStatus = $apiResponse['xActivationStatus'] ?? null;
+        $remainingBalance = $apiResponse['xRemainingBalance'] ?? null;
+
+        if ($status === "Approved" && $activationStatus === "Active" && $remainingBalance > 0) {
+            return $this->applyGiftCard($apiResponse, $giftCardCode, $quote);
+        }
+
+        if ($activationStatus === 'Inactive') {
+            return $this->jsonResponse(false, __('Your gift card account is inactive. Please activate it before proceeding.'));
+        }
+
+        if ($remainingBalance === 0) {
+            return $this->jsonResponse(false, __('Your gift card balance is zero. Please use another card number or credit your balance.'));
+        }
+
+        if ($status === "Error") {
+            return $this->jsonResponse(false, $apiErrorMessage);
+        }
+
+        return $this->jsonResponse(false, __('An unexpected error occurred.'));
+    }
+
+    /**
+     * Apply the gift card to the quote
+     *
+     * @param mixed $apiResponse
+     * @param mixed $giftCardCode
+     * @param mixed $quote
+     * @return mixed
+     */
+    private function applyGiftCard($apiResponse, $giftCardCode, $quote)
+    {
+        $giftCardBalance = $apiResponse['xRemainingBalance'];
+        $grandTotal = $quote->getGrandTotal();
+        $calculateGiftcardAmount = $this->_giftcardHelper->calculateGiftcardAmount($giftCardBalance, $grandTotal);
+        $appliedAmount = $calculateGiftcardAmount['applied_amount'];
+
+        // Store the gift card code and amount in the session
+        $this->checkoutSession->setCardknoxGiftCardCode($giftCardCode);
+        $this->checkoutSession->setCardknoxGiftCardAmount($appliedAmount);
+        $this->checkoutSession->setCardknoxGiftCardBalance($giftCardBalance);
+
+        // Adjust the quote totals
+        $quote->setCkgiftcardCode($giftCardCode);
+        $quote->setCkgiftcardAmount($appliedAmount);
+        $quote->setCkgiftcardBaseAmount($appliedAmount);
+        $quote->collectTotals();
+
+        $this->quoteRepository->save($quote);
+
+        $appliedAmountWithCurrency = $this->_giftcardHelper->getFormattedAmount($appliedAmount);
+        $message = __("The gift card was applied successfully with an amount of %1", $appliedAmountWithCurrency);
+
+        return $this->jsonResponse(true, $message, [
+            "xRemainingBalance" => $giftCardBalance,
+            "xActivationStatus" => $apiResponse['xActivationStatus']
+        ]);
+    }
+
+    /**
+     * Generate a JSON response
+     *
+     * @param mixed $success
+     * @param mixed $message
+     * @param mixed $data
+     * @return mixed
+     */
+    private function jsonResponse($success, $message, $data = [])
+    {
+        return $this->resultJsonFactory->create()->setData(array_merge(['success' => $success, 'message' => $message], $data));
     }
 }

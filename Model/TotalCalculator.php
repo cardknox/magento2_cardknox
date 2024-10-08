@@ -4,69 +4,89 @@ namespace CardknoxDevelopment\Cardknox\Model;
 class TotalCalculator
 {
     /**
-     * _baseAmount variable
+     * Base amount of the gift card used
      *
-     * @var integer
+     * @var float
      */
-    protected $_baseAmount = 0;
+    protected $baseAmount = 0;
 
     /**
-     * _quoteGrandTotalLeft variable
+     * Remaining grand total after all deductions
      *
-     * @var integer
+     * @var float
      */
     protected $quoteGrandTotalLeft = 0;
 
     /**
-     * _baseAmountUsed variable
+     * Apply the gift card balance to the quote total.
      *
-     * @var integer
+     * @param \Magento\Quote\Model\Quote $quote
+     * @param \Magento\Quote\Model\Quote\Address\Total $total
+     * @param float $giftCardBalance
+     * @return $this
      */
-    protected $_baseAmountUsed = 0;
-
     public function collectQuoteCKGiftCard($quote, $total, $giftCardBalance)
     {
-       
-        $giftCardCollectedFlag = $quote->getGiftCardCollectedFlag();
-        if (!$giftCardCollectedFlag) {
-        
-            // Initialization of amounts
-            $this->_baseAmount = 0;
-            $this->_baseAmountUsed = 0;
-            // Calculate the quote grand total left after all other discounts and fees
-            $subtotal = $total->getBaseTotalAmount('subtotal');
-            $shipping = $total->getBaseTotalAmount('shipping');
-            $tax = $total->getBaseTotalAmount('tax');
-            $discount = abs($total->getBaseTotalAmount('discount'));  // Absolute value of discount
+        if (!$quote->getGiftCardCollectedFlag() && $giftCardBalance > 0) {
+            // Initialize base amount used
+            $this->baseAmount = 0;
 
             // Calculate the remaining grand total after the discount
-            $this->quoteGrandTotalLeft = $subtotal + $shipping + $tax - $discount;
-            // Ensure the grand total is positive before applying gift card
-            if ($this->quoteGrandTotalLeft > 0 && $giftCardBalance) {
-                // Apply the gift card, ensuring the total does not go negative
-                if ($giftCardBalance < $this->quoteGrandTotalLeft) {
-                    $this->_baseAmount += $giftCardBalance;
-                    $this->quoteGrandTotalLeft -= $giftCardBalance;
-                } else {
-                    // Cap the gift card amount to the remaining grand total
-                    $this->_baseAmount += $this->quoteGrandTotalLeft;
-                    $this->quoteGrandTotalLeft = 0;
-                }
-                // Set the new grand total ensuring it's not negative
-                $quoteBaseGrandTotal = max(0, $quote->getData('base_grand_total') - $this->_baseAmount);
-                $quoteGrandTotal = max(0, $quote->getData('grand_total') - $this->_baseAmount);
-                // Apply the new totals
-                $quote->setData('base_grand_total', $quoteBaseGrandTotal);
-                $quote->setData('grand_total', $quoteGrandTotal);
-                // Save the quote
-                $quote->save();
+            $this->quoteGrandTotalLeft = $this->calculateGrandTotal($total);
+
+            // Apply the gift card balance if grand total is positive
+            if ($this->quoteGrandTotalLeft > 0) {
+                $this->applyGiftCard($quote, $giftCardBalance);
+                $quote->save(); // Save the updated quote
             }
         }
         return $this;
     }
 
+    /**
+     * Calculate the remaining grand total after subtotal, shipping, tax, and discount.
+     *
+     * @param \Magento\Quote\Model\Quote\Address\Total $total
+     * @return float
+     */
+    protected function calculateGrandTotal($total)
+    {
+        $subtotal = $total->getBaseTotalAmount('subtotal');
+        $shipping = $total->getBaseTotalAmount('shipping');
+        $tax = $total->getBaseTotalAmount('tax');
+        $discount = abs($total->getBaseTotalAmount('discount'));  // Use absolute value for discount
+        return $subtotal + $shipping + $tax - $discount;
+    }
+
+    /**
+     * Apply the gift card balance to the quote.
+     *
+     * @param \Magento\Quote\Model\Quote $quote
+     * @param float $giftCardBalance
+     * @return void
+     */
+    protected function applyGiftCard($quote, $giftCardBalance)
+    {
+        if ($giftCardBalance < $this->quoteGrandTotalLeft) {
+            $this->baseAmount = $giftCardBalance;
+            $this->quoteGrandTotalLeft -= $giftCardBalance;
+        } else {
+            $this->baseAmount = $this->quoteGrandTotalLeft;
+            $this->quoteGrandTotalLeft = 0;
+        }
+
+        // Ensure the new grand total is non-negative
+        $quote->setData('base_grand_total', max(0, $quote->getData('base_grand_total') - $this->baseAmount));
+        $quote->setData('grand_total', max(0, $quote->getData('grand_total') - $this->baseAmount));
+    }
+
+    /**
+     * Get the base amount of the gift card used.
+     *
+     * @return float
+     */
     public function getBaseAmount()
     {
-        return $this->_baseAmount;
+        return $this->baseAmount;
     }
 }
