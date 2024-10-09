@@ -10,6 +10,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Api\CartRepositoryInterface;
 use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
+use CardknoxDevelopment\Cardknox\Helper\Giftcard;
 
 class ValidateGiftCard extends Action implements HttpPostActionInterface
 {
@@ -35,6 +36,12 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
     protected $helper;
 
     /**
+     *
+     * @var \CardknoxDevelopment\Cardknox\Helper\Giftcard
+     */
+    protected $giftcardHelper;
+
+    /**
      * __construct function
      *
      * @param Context $context
@@ -48,12 +55,14 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
         JsonFactory $resultJsonFactory,
         CheckoutSession $checkoutSession,
         CartRepositoryInterface $quoteRepository,
-        Helper $helper
+        Helper $helper,
+        Giftcard $giftcardHelper
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;
         $this->helper = $helper;
+        $this->giftcardHelper = $giftcardHelper;
         parent::__construct($context);
     }
 
@@ -68,13 +77,15 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
 
         try {
             $quoteData = $this->getRequest()->getPost('quote_data');
+            $selectedShippingMethod = $this->getRequest()->getPost('selected_shipping_method');
             $quote = $this->checkoutSession->getQuote();
 
             // Check if a gift card code is already applied to the quote
             if ($quote->getCkgiftcardCode()) {
-                $quote->getShippingAddress()->setCollectShippingRates(true);
-                $quote->collectTotals();
-
+                $this->giftcardHelper->setShippingMethodForce(
+                    $quote,
+                    $selectedShippingMethod
+                );
                 // Check conditions for successful cancellation of the gift card
                 if ($this->isGiftCardCancellationValid($quote, $quoteData)) {
                     return $this->createResponse(true, __('Gift card cancelled successfully.'));

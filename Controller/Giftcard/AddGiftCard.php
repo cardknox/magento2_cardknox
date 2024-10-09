@@ -130,9 +130,10 @@ class AddGiftCard extends Action
     {
         $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
         if ($shippingMethod) {
-            $quote->getShippingAddress()->setShippingMethod($shippingMethod);
-            $quote->getShippingAddress()->setCollectShippingRates(true);
-            $quote->collectTotals();
+            $this->_giftcardHelper->setShippingMethodForce(
+                $quote,
+                $shippingMethod
+            );
         }
     }
 
@@ -200,14 +201,6 @@ class AddGiftCard extends Action
         $this->checkoutSession->setCardknoxGiftCardCode($giftCardCode);
         $this->checkoutSession->setCardknoxGiftCardAmount($appliedAmount);
         $this->checkoutSession->setCardknoxGiftCardBalance($giftCardBalance);
-
-        // Adjust the quote totals
-        $quote->setCkgiftcardCode($giftCardCode);
-        $quote->setCkgiftcardAmount($appliedAmount);
-        $quote->setCkgiftcardBaseAmount($appliedAmount);
-        $quote->collectTotals();
-
-        $this->quoteRepository->save($quote);
 
         $appliedAmountWithCurrency = $this->_giftcardHelper->getFormattedAmount($appliedAmount);
         $message = __("The gift card was applied successfully with an amount of %1", $appliedAmountWithCurrency);

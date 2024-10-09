@@ -243,4 +243,18 @@ class Giftcard extends AbstractHelper
             false
         );
     }
+
+    /**
+     * Set Shipping Method Force
+     *
+     * @param mixed $quote
+     * @param mixed $selectedShippingMethod
+     * @return void
+     */
+    public function setShippingMethodForce($quote, $selectedShippingMethod)
+    {
+        $quote->getShippingAddress()->setShippingMethod($selectedShippingMethod);
+        $quote->getShippingAddress()->setCollectShippingRates(true);
+        $quote->collectTotals();
+    }
 }
