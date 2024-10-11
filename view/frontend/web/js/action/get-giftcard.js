@@ -8,7 +8,7 @@ define([
     'ko',
     'mage/url',
     'CardknoxDevelopment_Cardknox/js/model/giftcard',
-    'CardknoxDevelopment_Cardknox/js/model/payment/giftcard-messages',
+    'CardknoxDevelopment_Cardknox/js/model/checkout/giftcard/giftcard-messages',
     'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/model/error-processor',
     'Magento_Checkout/js/model/totals'

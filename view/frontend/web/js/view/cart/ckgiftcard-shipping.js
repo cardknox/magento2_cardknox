@@ -31,7 +31,10 @@ define([
 
         handleShippingMethodChange: function (newShippingMethod) {
             if (this.isValidShippingMethod(newShippingMethod)) {
-                this.updateGiftCard(newShippingMethod);
+                let selectedShippingMethodCode = newShippingMethod.method_code;
+                let selectedShippingCarrierCode = newShippingMethod.carrier_code;
+                let selectedShippingMethod = selectedShippingCarrierCode + '_' + selectedShippingMethodCode
+                this.updateGiftCard(newShippingMethod, selectedShippingMethod);
             }
         },
 
@@ -39,13 +42,16 @@ define([
             return shippingMethod && shippingMethod.carrier_code;
         },
 
-        updateGiftCard: function (newShippingMethod) {
+        updateGiftCard: function (newShippingMethod, selectedShippingMethod) {
             const self = this;
 
             $.ajax({
                 url: urlBuilder.build('cardknox/giftcard/validategiftcard'),
                 type: 'POST',
-                data: { quote_data: newShippingMethod },
+                data: {
+                    quote_data: newShippingMethod,
+                    selected_shipping_method: selectedShippingMethod
+                },
                 success: function (data) {
                     if (data.success) {
                         self.handleSuccessfulValidation();

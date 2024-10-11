@@ -75,6 +75,7 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
         }
 
         // Get gift card balance
+
         $giftcardBalance = $this->checkoutSession->getCardknoxGiftCardBalance();
         $this->totalCalculator->collectQuoteCKGiftCard($quote, $total, $giftcardBalance);
         $baseTotalAmount = $this->totalCalculator->getBaseAmount();
@@ -104,6 +105,11 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
             // Set updated grand totals
             $total->setData('grand_total', $total->getGrandTotal() - $convertedTotal);
             $total->setData('base_grand_total', $total->getBaseGrandTotal() - $baseTotalAmount);
+
+            $quote->setCkgiftcardCode($this->checkoutSession->getCardknoxGiftCardCode());
+            $quote->setCkgiftcardAmount($convertedTotal);
+            $quote->setCkgiftcardBaseAmount($convertedTotal);
+            $quote->save();
         }
 
         return $this;

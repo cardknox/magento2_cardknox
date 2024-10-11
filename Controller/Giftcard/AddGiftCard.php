@@ -90,6 +90,7 @@ class AddGiftCard extends Action
 
         $giftCardCode = $this->getRequest()->getParam('giftcard_code');
         $isCartPage = $this->getRequest()->getParam('is_cart_page');
+        $selectedShippingMethod = $this->getRequest()->getParam('selected_method');
 
         if (!$giftCardCode) {
             return $this->jsonResponse(false, __('Gift Card code is required.'));
@@ -104,7 +105,7 @@ class AddGiftCard extends Action
             }
 
             if ($isCartPage && !$quote->isVirtual()) {
-                $this->updateShippingMethod($quote);
+                $this->updateShippingMethod($quote, $selectedShippingMethod);
             }
 
             if ($this->isCartTotalZero($quote)) {
@@ -124,15 +125,16 @@ class AddGiftCard extends Action
      * Update the shipping method of the quote
      *
      * @param mixed $quote
+     * @param mixed $selectedShippingMethod
      * @return void
      */
-    private function updateShippingMethod($quote)
+    private function updateShippingMethod($quote, $selectedShippingMethod)
     {
-        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
-        if ($shippingMethod) {
-            $quote->getShippingAddress()->setShippingMethod($shippingMethod);
-            $quote->getShippingAddress()->setCollectShippingRates(true);
-            $quote->collectTotals();
+        if ($selectedShippingMethod) {
+            $this->_giftcardHelper->setShippingMethodForce(
+                $quote,
+                $selectedShippingMethod
+            );
         }
     }
 
@@ -201,10 +203,7 @@ class AddGiftCard extends Action
         $this->checkoutSession->setCardknoxGiftCardAmount($appliedAmount);
         $this->checkoutSession->setCardknoxGiftCardBalance($giftCardBalance);
 
-        // Adjust the quote totals
-        $quote->setCkgiftcardCode($giftCardCode);
-        $quote->setCkgiftcardAmount($appliedAmount);
-        $quote->setCkgiftcardBaseAmount($appliedAmount);
+        $quote->getShippingAddress()->setCollectShippingRates(true);
         $quote->collectTotals();
 
         $this->quoteRepository->save($quote);

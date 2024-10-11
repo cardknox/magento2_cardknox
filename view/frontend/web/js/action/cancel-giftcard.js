@@ -1,7 +1,7 @@
 define([
     'jquery',
     'mage/url',
-    'CardknoxDevelopment_Cardknox/js/model/payment/giftcard-messages',
+    'CardknoxDevelopment_Cardknox/js/model/checkout/giftcard/giftcard-messages',
     'Magento_Customer/js/customer-data',
     'Magento_Checkout/js/model/cart/totals-processor/default',
     'Magento_Checkout/js/model/full-screen-loader',
