@@ -62,7 +62,7 @@ class Totals extends \Magento\Framework\View\Element\Template
                 [
                     'code' => 'ckgiftcardamount',
                     'strong' => false,
-                    'value' => -$this->getSource()->getCkgiftcardAmount(),
+                    'value' => $this->getSource()->getCkgiftcardAmount(),
                     'label' => "Cardknox Giftcard Amount",
                 ]
             );

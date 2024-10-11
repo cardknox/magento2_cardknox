@@ -78,13 +78,13 @@ class CkGiftcard extends \Magento\Framework\View\Element\Template
         $parent = $this->getParentBlock();
         $this->_order = $parent->getOrder();
         $this->_source = $parent->getSource();
-        
+
         if ($this->_source->getCkgiftcardAmount()) {
             $ckgiftcardAmount = new \Magento\Framework\DataObject(
                 [
                     'code' => 'ckgiftcardAmount',
                     'strong' => false,
-                    'value' => -$this->_source->getCkgiftcardAmount(),
+                    'value' => $this->_source->getCkgiftcardAmount(),
                     'label' => "Cardknox Giftcard Amount",
                 ]
             );
