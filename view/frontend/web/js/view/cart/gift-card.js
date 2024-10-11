@@ -156,6 +156,7 @@ define([
         _collectFormData: function (formElement) {
             var formData = {};
             var self = this;
+            var selectedMethod = $('input[type="radio"][name^="ko_unique_"]:checked').val();
 
             if (formElement) {
                 $(formElement).find('input').each(function () {
@@ -165,6 +166,7 @@ define([
                 formData['giftcard_code'] = $(self.options.giftCardCodeSelector).val();
             }
             formData['is_cart_page'] = 1;
+            formData['selected_method'] = selectedMethod;
 
             return formData;
         },

@@ -8,6 +8,7 @@ use Magento\Framework\Pricing\Helper\Data as PriceHelper;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\Helper\Context;
+use Magento\Quote\Api\CartRepositoryInterface;
 
 class Giftcard extends AbstractHelper
 {
@@ -36,6 +37,11 @@ class Giftcard extends AbstractHelper
     protected $helper;
 
     /**
+     * @var CartRepositoryInterface
+     */
+    protected $quoteRepository;
+
+    /**
      * @param Context $context
      * @param Curl $curl
      * @param ProductMetadataInterface $productMetadata
@@ -47,12 +53,14 @@ class Giftcard extends AbstractHelper
         Curl $curl,
         ProductMetadataInterface $productMetadata,
         PriceHelper $priceHelper,
-        CardknoxDataHelper $helper
+        CardknoxDataHelper $helper,
+        CartRepositoryInterface $quoteRepository
     ) {
         $this->_curl = $curl;
         $this->_productMetadata = $productMetadata;
         $this->_priceHelper = $priceHelper;
         $this->helper = $helper;
+        $this->quoteRepository = $quoteRepository;
         parent::__construct($context);
     }
 
@@ -253,8 +261,24 @@ class Giftcard extends AbstractHelper
      */
     public function setShippingMethodForce($quote, $selectedShippingMethod)
     {
-        $quote->getShippingAddress()->setShippingMethod($selectedShippingMethod);
-        $quote->getShippingAddress()->setCollectShippingRates(true);
+        $shippingAddress = $quote->getShippingAddress();
+
+        // Set the address data if not already set
+        if (!$shippingAddress->getCountryId() || !$shippingAddress->getStreet()) {
+            $shippingAddress->addData([
+                'country_id' => 'US'
+            ]);
+        }
+
+        // Set the shipping method
+        $shippingAddress->setShippingMethod($selectedShippingMethod);
+        $shippingAddress->setCollectShippingRates(true);
+
+        // Collect shipping rates and totals
+        $shippingAddress->collectShippingRates();
         $quote->collectTotals();
+
+        // Save the quote with the new shipping method
+        $this->quoteRepository->save($quote);
     }
 }

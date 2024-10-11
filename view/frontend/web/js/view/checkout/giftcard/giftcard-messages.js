@@ -5,7 +5,7 @@
 
 define([
     'Magento_Ui/js/view/messages',
-    '../../model/payment/giftcard-messages'
+    'CardknoxDevelopment_Cardknox/js/model/checkout/giftcard/giftcard-messages'
 ], function (Component, messageContainer) {
     'use strict';
 

@@ -6,7 +6,7 @@
 var config = {
     map: {
         '*': {
-            giftCard: 'CardknoxDevelopment_Cardknox/js/gift-card'
+            giftCard: 'CardknoxDevelopment_Cardknox/js/view/cart/gift-card'
         }
     }
 };

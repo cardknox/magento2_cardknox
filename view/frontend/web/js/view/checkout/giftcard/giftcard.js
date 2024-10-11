@@ -6,9 +6,8 @@ define([
     'CardknoxDevelopment_Cardknox/js/action/add-giftcard',
     'CardknoxDevelopment_Cardknox/js/action/cancel-giftcard',
     'CardknoxDevelopment_Cardknox/js/model/giftcard',
-    'Magento_Checkout/js/model/totals',
     'Magento_Customer/js/customer-data'
-],function ($, ko, Component, getGiftCardAction, addGiftCardAction, cancelGiftCardAction, giftCardAccount, totals, customerData)
+],function ($, ko, Component, getGiftCardAction, addGiftCardAction, cancelGiftCardAction, giftCardAccount, customerData)
 {
     'use strict';
 
@@ -34,6 +33,17 @@ define([
         isCkGiftCardApplied: isCkGiftCardApplied,
 
         /**
+          @returns {}
+         */
+        initialize: function () {
+            this._super();
+            if (this.isDisplayedCKGiftcard() === false) {
+                var sections = ['cart'];
+                customerData.reload(sections, true);
+            }
+        },
+
+        /**
          * Apply gift card
          */
         isDisplayedCKGiftcard: function(value) {
@@ -57,7 +67,7 @@ define([
                 addGiftCardAction.add(this.ckGiftCardCode(), isCkGiftCardApplied);
             }
         },
-        
+
         /**
          * Cancel gift card
          */
