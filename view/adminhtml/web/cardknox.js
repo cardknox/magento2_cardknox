@@ -1,5 +1,5 @@
 /**
- * Copyright © 2018 Cardknox Development Inc. All rights reserved.
+ * Copyright © 2024 Cardknox Development Inc. All rights reserved.
  * See LICENSE for license details.
  */
 /*browser:true*/
