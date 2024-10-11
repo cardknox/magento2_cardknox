@@ -4,6 +4,7 @@
 1.0.27
 - Remove the Shipping method selection from Googlepay/ApplePay popup in cart page
 - Remove dynamic tax calculation from Googlepay/ApplePay popup in cart page
+- Update license
 
 1.0.26
 - Fix Error-Request_Client_IP  exceeds max lenght
