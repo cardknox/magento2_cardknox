@@ -130,7 +130,11 @@ class AddGiftCard extends Action
      */
     private function updateShippingMethod($quote, $selectedShippingMethod)
     {
-        if ($selectedShippingMethod) {
+        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+        $shippingAmount = $quote->getShippingAddress()->getShippingAmount();
+
+        if ($selectedShippingMethod &&
+            ($shippingMethod !== $selectedShippingMethod || $shippingAmount == 0)) {
             $this->_giftcardHelper->setShippingMethodForce(
                 $quote,
                 $selectedShippingMethod

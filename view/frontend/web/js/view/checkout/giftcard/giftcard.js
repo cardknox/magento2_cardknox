@@ -6,8 +6,9 @@ define([
     'CardknoxDevelopment_Cardknox/js/action/add-giftcard',
     'CardknoxDevelopment_Cardknox/js/action/cancel-giftcard',
     'CardknoxDevelopment_Cardknox/js/model/giftcard',
-    'Magento_Customer/js/customer-data'
-],function ($, ko, Component, getGiftCardAction, addGiftCardAction, cancelGiftCardAction, giftCardAccount, customerData)
+    'Magento_Customer/js/customer-data',
+    'Magento_Checkout/js/model/quote'
+],function ($, ko, Component, getGiftCardAction, addGiftCardAction, cancelGiftCardAction, giftCardAccount, customerData, quote)
 {
     'use strict';
 
@@ -37,6 +38,9 @@ define([
          */
         initialize: function () {
             this._super();
+            var grandTotal = quote.totals().grand_total;
+            console.log("grandTotal :- " + grandTotal);
+            $('#cancel-gift-card').trigger('click');
             if (this.isDisplayedCKGiftcard() === false) {
                 var sections = ['cart'];
                 customerData.reload(sections, true);

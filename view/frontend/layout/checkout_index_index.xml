@@ -65,6 +65,13 @@
                                                 </item>
                                             </item>
                                         </item>
+                                        <item name="shipping-step" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="custom-shipping-restriction" xsi:type="array">
+                                                    <item name="component" xsi:type="string">CardknoxDevelopment_Cardknox/js/view/cart/ckgiftcard-shipping</item>
+                                                </item>
+                                            </item>
+                                        </item>
                                     </item>
                                 </item>
                                 <!-- Added Cardknox gift card discount amount -->

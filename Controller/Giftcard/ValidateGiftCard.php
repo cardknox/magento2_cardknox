@@ -82,10 +82,16 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
 
             // Check if a gift card code is already applied to the quote
             if ($quote->getCkgiftcardCode()) {
-                $this->giftcardHelper->setShippingMethodForce(
-                    $quote,
-                    $selectedShippingMethod
-                );
+                $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+                $shippingAmount = $quote->getShippingAddress()->getShippingAmount();
+
+                if ($selectedShippingMethod &&
+                    ($shippingMethod !== $selectedShippingMethod || $shippingAmount == 0)) {
+                    $this->giftcardHelper->setShippingMethodForce(
+                        $quote,
+                        $selectedShippingMethod
+                    );
+                }
                 // Check conditions for successful cancellation of the gift card
                 if ($this->isGiftCardCancellationValid($quote, $quoteData)) {
                     return $this->createResponse(true, __('Gift card cancelled successfully.'));

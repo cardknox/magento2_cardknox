@@ -65,6 +65,9 @@ define([
 
         handleSuccessfulValidation: function () {
             $('#giftcard-code-cancle-btn').trigger('click');
+            if ($('#cancel-gift-card').length) {
+                $('#cancel-gift-card').trigger('click');
+            }
         }
     });
 });
