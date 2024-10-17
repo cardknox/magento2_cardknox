@@ -2,9 +2,10 @@
 
 namespace CardknoxDevelopment\Cardknox\Block\Sales\Totals;
 
-class CkGiftcard extends \Magento\Framework\View\Element\Template
+use Magento\Framework\View\Element\Template;
+
+class CkGiftcard extends Template
 {
-    protected $helper;
     protected $_order;
     protected $_source;
 
@@ -16,7 +17,10 @@ class CkGiftcard extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct(
+            $context,
+            $data
+        );
     }
 
     /**
@@ -39,18 +43,30 @@ class CkGiftcard extends \Magento\Framework\View\Element\Template
         return $this->_source;
     }
 
+    /**
+     * Get Store
+     *
+     * @return mixed
+     */
     public function getStore()
     {
         return $this->_order->getStore();
     }
 
+    /**
+     * Get Order
+     *
+     * @return mixed
+     */
     public function getOrder()
     {
         return $this->_order;
     }
 
     /**
-     * @return array
+     * Get Label Properties
+     *
+     * @return mixed
      */
     public function getLabelProperties()
     {
@@ -58,12 +74,9 @@ class CkGiftcard extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return array
-     */
-    /**
-     * GetValueProperties function
+     * Get Value Properties
      *
-     * @return array
+     * @return mixed
      */
     public function getValueProperties()
     {
@@ -71,6 +84,8 @@ class CkGiftcard extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Init Totals
+     *
      * @return $this
      */
     public function initTotals()
@@ -84,7 +99,7 @@ class CkGiftcard extends \Magento\Framework\View\Element\Template
                 [
                     'code' => 'ckgiftcardAmount',
                     'strong' => false,
-                    'value' => $this->_source->getCkgiftcardAmount(),
+                    'value' => -$this->_source->getCkgiftcardAmount(),
                     'label' => "Cardknox Giftcard Amount",
                 ]
             );

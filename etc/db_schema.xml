@@ -14,8 +14,16 @@
         <column name="ckgiftcard_code" xsi:type="varchar" nullable="true" length="255" comment="Cardknox Giftcard Code"/>
         <column name="ckgiftcard_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Amount"/>
         <column name="ckgiftcard_base_amount" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Cardknox Giftcard Base Amount"/>
-         <column name="base_grand_total_without_ckgiftcard" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Base grandtotal without ckgiftcard"/>
+        <column name="base_grand_total_without_ckgiftcard" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Base grandtotal without ckgiftcard"/>
         <column name="grand_total_without_ckgiftcard" xsi:type="decimal" nullable="true" scale="2" precision="10" comment="Grandtotal without ckgiftcard"/>
+        <column xsi:type="decimal" name="base_ckgift_cards_invoiced" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Invoiced"/>
+        <column xsi:type="decimal" name="ckgift_cards_invoiced" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Invoiced"/>
+        <column xsi:type="decimal" name="base_ckgift_cards_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Refunded"/>
+        <column xsi:type="decimal" name="ckgift_cards_refunded" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Refunded"/>
     </table>
 
     <!-- Sales Invoice table -->

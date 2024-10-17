@@ -42,11 +42,12 @@ class Giftcard extends AbstractHelper
     protected $quoteRepository;
 
     /**
-     * @param Context $context
-     * @param Curl $curl
-     * @param ProductMetadataInterface $productMetadata
-     * @param PriceHelper $priceHelper
-     * @param CardknoxDataHelper $helper
+     * @param \Magento\Framework\App\Helper\Context $context
+     * @param \Magento\Framework\HTTP\Client\Curl $curl
+     * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
+     * @param \Magento\Framework\Pricing\Helper\Data $priceHelper
+     * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
+     * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
      */
     public function __construct(
         Context $context,
@@ -94,7 +95,8 @@ class Giftcard extends AbstractHelper
     /**
      * Check gift card balance and status
      *
-     * @return int
+     * @param mixed $giftCardCode
+     * @return mixed
      */
     public function checkGiftCardBalanceStatus($giftCardCode)
     {
@@ -149,6 +151,14 @@ class Giftcard extends AbstractHelper
         return $responseBody;
     }
 
+    /**
+     * Redeem Gift Card
+     *
+     * @param mixed $ckGiftCardCode
+     * @param mixed $ckGiftCardAmount
+     * @param mixed $order
+     * @return mixed
+     */
     public function redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order)
     {
         $billing = $order->getBillingAddress();

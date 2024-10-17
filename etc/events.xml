@@ -9,4 +9,10 @@
     <event name="payment_method_assign_data">
         <observer name="cardknox_data_assign" instance="CardknoxDevelopment\Cardknox\Observer\DataAssignObserver" />
     </event>
+    <event name="sales_order_invoice_register">
+        <observer name="cardknox_giftcardaccount_sales_order_invoice" instance="CardknoxDevelopment\Cardknox\Observer\UpdateOrderGiftCardInvoicedAmount" />
+    </event>
+    <event name="sales_order_creditmemo_refund">
+        <observer name="cardknox_giftcard" instance="CardknoxDevelopment\Cardknox\Observer\UpdateOrderGiftCardCreditmemoAmount" />
+    </event>
 </config>

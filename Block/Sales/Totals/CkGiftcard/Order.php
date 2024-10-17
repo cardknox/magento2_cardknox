@@ -1,7 +1,9 @@
 <?php
 namespace CardknoxDevelopment\Cardknox\Block\Sales\Totals\CkGiftcard;
 
-class Order extends \Magento\Framework\View\Element\Template
+use Magento\Framework\View\Element\Template;
+
+class Order extends Template
 {
     protected $_order;
     protected $_source;
@@ -39,18 +41,30 @@ class Order extends \Magento\Framework\View\Element\Template
         return $this->_source;
     }
 
+    /**
+     * Get Store
+     *
+     * @return mixed
+     */
     public function getStore()
     {
         return $this->_order->getStore();
     }
 
+    /**
+     * Get Order
+     *
+     * @return mixed
+     */
     public function getOrder()
     {
         return $this->_order;
     }
 
     /**
-     * @return array
+     * Get Label Properties
+     *
+     * @return mixed
      */
     public function getLabelProperties()
     {
@@ -58,7 +72,9 @@ class Order extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return array
+     * Get Value Properties
+     *
+     * @return mixed
      */
     public function getValueProperties()
     {
@@ -66,6 +82,8 @@ class Order extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Init Totals
+     *
      * @return $this
      */
     public function initTotals()
@@ -73,11 +91,11 @@ class Order extends \Magento\Framework\View\Element\Template
         $parent = $this->getParentBlock();
         $this->_order = $parent->getOrder();
         $this->_source = $parent->getSource();
-        
+
         if (!$this->_order->getCkgiftcardAmount()) {
             return $this;
         }
-        
+
         if ($this->_order->getCkgiftcardAmount()) {
             $ckgiftcardAmount = new \Magento\Framework\DataObject(
                 [
@@ -93,5 +111,4 @@ class Order extends \Magento\Framework\View\Element\Template
 
         return $this;
     }
-
 }

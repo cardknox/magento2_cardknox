@@ -2,7 +2,9 @@
 
 namespace CardknoxDevelopment\Cardknox\Block\Adminhtml\Sales;
 
-class Totals extends \Magento\Framework\View\Element\Template
+use Magento\Framework\View\Element\Template;
+
+class Totals extends Template
 {
 
     /**
@@ -10,12 +12,20 @@ class Totals extends \Magento\Framework\View\Element\Template
      */
     protected $_currency;
 
+    /**
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Magento\Directory\Model\Currency $currency
+     * @param array $data
+     */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Directory\Model\Currency $currency,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct(
+            $context,
+            $data
+        );
         $this->_currency = $currency;
     }
 
@@ -30,6 +40,8 @@ class Totals extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Get Source
+     *
      * @return mixed
      */
     public function getSource()
@@ -38,7 +50,9 @@ class Totals extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return string
+     * Get Currency Symbol
+     *
+     * @return mixed
      */
     public function getCurrencySymbol()
     {
@@ -46,6 +60,7 @@ class Totals extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Init Totals
      *
      * @return $this
      */

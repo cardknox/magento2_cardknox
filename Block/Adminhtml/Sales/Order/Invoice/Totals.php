@@ -2,7 +2,9 @@
 
 namespace CardknoxDevelopment\Cardknox\Block\Adminhtml\Sales\Order\Invoice;
 
-class Totals extends \Magento\Framework\View\Element\Template
+use Magento\Framework\View\Element\Template;
+
+class Totals extends Template
 {
     protected $_invoice = null;
     protected $_source;
@@ -24,6 +26,11 @@ class Totals extends \Magento\Framework\View\Element\Template
         return $this->getParentBlock()->getSource();
     }
 
+    /**
+     * Get Invoice
+     *
+     * @return mixed
+     */
     public function getInvoice()
     {
         return $this->getParentBlock()->getInvoice();
@@ -47,7 +54,7 @@ class Totals extends \Magento\Framework\View\Element\Template
         $total = new \Magento\Framework\DataObject(
             [
                 'code' => 'ckgiftcardamount',
-                'value' => $this->getSource()->getCkgiftcardAmount(),
+                'value' => -$this->getSource()->getCkgiftcardAmount(),
                 'label' => "Cardknox Giftcard Amount",
             ]
         );

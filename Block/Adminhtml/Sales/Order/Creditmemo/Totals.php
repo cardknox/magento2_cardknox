@@ -2,7 +2,9 @@
 
 namespace CardknoxDevelopment\Cardknox\Block\Adminhtml\Sales\Order\Creditmemo;
 
-class Totals extends \Magento\Framework\View\Element\Template
+use Magento\Framework\View\Element\Template;
+
+class Totals extends Template
 {
     /**
      * Order invoice
@@ -25,7 +27,10 @@ class Totals extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct(
+            $context,
+            $data
+        );
     }
 
     /**
@@ -38,6 +43,11 @@ class Totals extends \Magento\Framework\View\Element\Template
         return $this->getParentBlock()->getSource();
     }
 
+    /**
+     * Get Credit Memo
+     *
+     * @return mixed
+     */
     public function getCreditmemo()
     {
         return $this->getParentBlock()->getCreditmemo();
@@ -62,7 +72,7 @@ class Totals extends \Magento\Framework\View\Element\Template
                 [
                     'code' => 'ckgiftcardamount',
                     'strong' => false,
-                    'value' => $this->getSource()->getCkgiftcardAmount(),
+                    'value' => -$this->getSource()->getCkgiftcardAmount(),
                     'label' => "Cardknox Giftcard Amount",
                 ]
             );

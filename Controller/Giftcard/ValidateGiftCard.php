@@ -44,11 +44,12 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
     /**
      * __construct function
      *
-     * @param Context $context
-     * @param JsonFactory $resultJsonFactory
-     * @param CheckoutSession $checkoutSession
-     * @param CartRepositoryInterface $quoteRepository
-     * @param Helper $helper
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+     * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
+     * @param \CardknoxDevelopment\Cardknox\Helper\Giftcard $giftcardHelper
      */
     public function __construct(
         Context $context,
@@ -66,6 +67,11 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
         parent::__construct($context);
     }
 
+    /**
+     * Validate Gift Card
+     *
+     * @return \Magento\Framework\Controller\Result\Json
+     */
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
@@ -123,9 +129,9 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
     }
 
     /**
-     * Validate conditions for gift card cancellation.
+     * Validate conditions for gift card cancellation
      *
-     * @param $quote
+     * @param mixed $quote
      * @param array $quoteData
      * @return bool
      */

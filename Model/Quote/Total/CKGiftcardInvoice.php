@@ -1,7 +1,9 @@
 <?php
 namespace CardknoxDevelopment\Cardknox\Model\Quote\Total;
 
-class CKGiftcardInvoice extends \Magento\Sales\Model\Order\Invoice\Total\AbstractTotal
+use Magento\Sales\Model\Order\Invoice\Total\AbstractTotal;
+
+class CKGiftcardInvoice extends AbstractTotal
 {
     /**
      * Undocumented function
@@ -11,22 +13,39 @@ class CKGiftcardInvoice extends \Magento\Sales\Model\Order\Invoice\Total\Abstrac
      */
     public function collect(\Magento\Sales\Model\Order\Invoice $invoice)
     {
-
-        $totalCkgiftcardAmount = 0;
-        $baseTotalCkgiftcardAmoun = 0;
         $order = $invoice->getOrder();
-        $totalCkgiftcardAmount = $order->getCkgiftcardAmount();
-        $baseTotalCkgiftcardAmoun = $order->getCkgiftcardBaseAmount();
 
-        $invoice->setCkgiftcardAmount(-$totalCkgiftcardAmount);
-        $invoice->setCkgiftcardBaseAmount(-$baseTotalCkgiftcardAmoun);
+        $baseGiftCardAmount = (float) $order->getCkgiftcardBaseAmount();
+        $invoicedBaseGiftCardAmount = (float) $order->getBaseCkgiftCardsInvoiced();
+        $remainingBaseGiftCardAmount = $baseGiftCardAmount - $invoicedBaseGiftCardAmount;
 
-        $grandTotal = abs($invoice->getGrandTotal() - $totalCkgiftcardAmount) < 0.0001
-            ? 0 : $invoice->getGrandTotal() - $totalCkgiftcardAmount;
-        $baseGrandTotal = abs($invoice->getBaseGrandTotal() - $baseTotalCkgiftcardAmoun) < 0.0001
-            ? 0 : $invoice->getBaseGrandTotal() - $baseTotalCkgiftcardAmoun;
-        $invoice->setGrandTotal($grandTotal);
-        $invoice->setBaseGrandTotal($baseGrandTotal);
+        if ($baseGiftCardAmount && $invoicedBaseGiftCardAmount != $baseGiftCardAmount) {
+            $appliedGiftCardAmount = 0;
+            $appliedBaseGiftCardAmount = 0;
+
+            if ($remainingBaseGiftCardAmount >= $invoice->getBaseGrandTotal()) {
+                // Use gift card to cover the entire invoice amount
+                $appliedBaseGiftCardAmount = $invoice->getBaseGrandTotal();
+                $appliedGiftCardAmount = $invoice->getGrandTotal();
+
+                $invoice->setBaseGrandTotal(0)
+                        ->setGrandTotal(0);
+            } else {
+                // Partial gift card usage
+                $appliedBaseGiftCardAmount = $remainingBaseGiftCardAmount;
+
+                $giftCardAmount = (float) $order->getCkgiftcardAmount();
+                $invoicedGiftCardAmount = (float) $order->getCkgiftCardsInvoiced();
+                $appliedGiftCardAmount = $giftCardAmount - $invoicedGiftCardAmount;
+
+                $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() - $appliedBaseGiftCardAmount)
+                        ->setGrandTotal($invoice->getGrandTotal() - $appliedGiftCardAmount);
+            }
+
+            $invoice->setCkgiftcardBaseAmount($appliedBaseGiftCardAmount)
+                    ->setCkgiftcardAmount($appliedGiftCardAmount);
+        }
+
         return $this;
     }
 }

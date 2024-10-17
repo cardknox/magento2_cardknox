@@ -1,32 +1,49 @@
 <?php
 namespace CardknoxDevelopment\Cardknox\Model\Quote\Total;
 
-class CKGiftcardCreditmemo extends \Magento\Sales\Model\Order\Creditmemo\Total\AbstractTotal
+use Magento\Sales\Model\Order\Creditmemo\Total\AbstractTotal;
+
+class CKGiftcardCreditmemo extends AbstractTotal
 {
     /**
-     * Undocumented function
+     * Collect function call for credit memo
      *
      * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
      * @return void
      */
     public function collect(\Magento\Sales\Model\Order\Creditmemo $creditmemo)
     {
-
-        $totalCkgiftcardAmount = 0;
-        $baseTotalCkgiftcardAmoun = 0;
         $order = $creditmemo->getOrder();
-        $totalCkgiftcardAmount = $order->getCkgiftcardAmount();
-        $baseTotalCkgiftcardAmoun = $order->getCkgiftcardBaseAmount();
 
-        $creditmemo->setCkgiftcardAmount(-$totalCkgiftcardAmount);
-        $creditmemo->setCkgiftcardBaseAmount(-$baseTotalCkgiftcardAmoun);
+        $baseGiftCardInvoiced = $order->getBaseCkgiftCardsInvoiced();
+        $baseGiftCardRefunded = $order->getBaseCkgiftCardsRefunded();
+        $remainingBaseGiftCard = $baseGiftCardInvoiced - $baseGiftCardRefunded;
 
-        $grandTotal = abs($creditmemo->getGrandTotal() - $totalCkgiftcardAmount) < 0.0001
-            ? 0 : $creditmemo->getGrandTotal() - $totalCkgiftcardAmount;
-        $baseGrandTotal = abs($creditmemo->getBaseGrandTotal() - $baseTotalCkgiftcardAmoun) < 0.0001
-            ? 0 : $creditmemo->getBaseGrandTotal() - $baseTotalCkgiftcardAmoun;
-        $creditmemo->setGrandTotal($grandTotal);
-        $creditmemo->setBaseGrandTotal($baseGrandTotal);
+        if ($order->getCkgiftcardBaseAmount() && $baseGiftCardInvoiced != 0) {
+            $appliedGiftCardAmount = 0;
+            $appliedBaseGiftCardAmount = 0;
+
+            if ($remainingBaseGiftCard >= $creditmemo->getBaseGrandTotal()) {
+                // Use the gift card to cover the entire credit memo
+                $appliedBaseGiftCardAmount = $creditmemo->getBaseGrandTotal();
+                $appliedGiftCardAmount = $creditmemo->getGrandTotal();
+
+                $creditmemo->setBaseGrandTotal(0)
+                        ->setGrandTotal(0)
+                        ->setAllowZeroGrandTotal(true);
+            } else {
+                // Partial application of the gift card
+                $appliedBaseGiftCardAmount = $remainingBaseGiftCard;
+                $appliedGiftCardAmount = $order->getCkgiftCardsInvoiced() - $order->getCkgiftCardsRefunded();
+
+                $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() - $appliedBaseGiftCardAmount)
+                        ->setGrandTotal($creditmemo->getGrandTotal() - $appliedGiftCardAmount);
+            }
+
+            $creditmemo->setCkgiftcardBaseAmount($appliedBaseGiftCardAmount)
+                    ->setCkgiftcardAmount($appliedGiftCardAmount);
+        }
+
         return $this;
     }
 }
