@@ -7,6 +7,7 @@
             <font_size>7</font_size>
             <display_zero>false</display_zero>
             <sort_order>400</sort_order>
+            <model>CardknoxDevelopment\Cardknox\Model\Order\Pdf\GiftCardAmount</model>
         </total>
     </totals>
 </config>
