@@ -12,15 +12,18 @@ define([
 {
     'use strict';
 
-    var checkoutCkGiftCard = customerData.get('checkout_ckgiftcard'),
-        ckGiftCardCodeSession = checkoutCkGiftCard().ckgiftcard_code,
+    let checkoutCkGiftCard = customerData.get('checkout_ckgiftcard');
+    let { ckgiftcard_code: ckGiftCardCodeSession } = checkoutCkGiftCard();
+    let ckGiftCardCode = giftCardAccount.getCkGiftCardCode();
+    let isCkGiftCardApplied = giftCardAccount.getIsCkGiftCardApplied();
+    let quoteGiftCardCode = window.checkoutConfig.quoteData.ckgiftcard_code;
 
-        ckGiftCardCode = giftCardAccount.getCkGiftCardCode(),
-        isCkGiftCardApplied = giftCardAccount.getIsCkGiftCardApplied();
-        if (ckGiftCardCodeSession) {
-            ckGiftCardCode(ckGiftCardCodeSession);
-            isCkGiftCardApplied(true);
-        }
+    // Check if quoteGiftCardCode is defined and matches ckGiftCardCodeSession
+    if (quoteGiftCardCode !== null && ckGiftCardCodeSession === quoteGiftCardCode) {
+        ckGiftCardCode(ckGiftCardCodeSession);
+        isCkGiftCardApplied(true);
+    }
+
 
     return Component.extend({
 

@@ -27,7 +27,7 @@ class TotalCalculator
      */
     public function collectQuoteCKGiftCard($quote, $total, $giftCardBalance)
     {
-        if (!$quote->getGiftCardCollectedFlag() && $giftCardBalance > 0) {
+        if ($giftCardBalance > 0) {
             // Initialize base amount used
             $this->baseAmount = 0;
 
