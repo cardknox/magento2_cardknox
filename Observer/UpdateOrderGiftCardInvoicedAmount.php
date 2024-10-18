@@ -14,6 +14,11 @@ class UpdateOrderGiftCardInvoicedAmount implements ObserverInterface
     {
         $invoice = $observer->getEvent()->getInvoice();
         $order = $invoice->getOrder();
+
+        if ($order->getBaseCkgiftCardsInvoiced() == $order->getCkgiftcardBaseAmount()) {
+            return $this;
+        }
+
         if ($invoice->getCkgiftcardBaseAmount()) {
             $order->setBaseCkgiftCardsInvoiced(
                 $order->getBaseCkgiftCardsInvoiced() + $invoice->getCkgiftcardBaseAmount()

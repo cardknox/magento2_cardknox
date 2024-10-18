@@ -10,8 +10,17 @@ class Totals extends Template
 {
     protected $_invoice = null;
     protected $_order;
+
+    /**
+     * @var RequestInterface
+     */
     protected RequestInterface $request;
 
+    /**
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @param array $data
+     */
     public function __construct(
         Template\Context $context,
         RequestInterface $request,

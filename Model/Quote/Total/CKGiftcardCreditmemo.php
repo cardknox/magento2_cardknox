@@ -19,9 +19,9 @@ class CKGiftcardCreditmemo extends AbstractTotal
         $baseGiftCardRefunded = $order->getBaseCkgiftCardsRefunded();
         $remainingBaseGiftCard = $baseGiftCardInvoiced - $baseGiftCardRefunded;
 
+        $appliedGiftCardAmount = null;
+        $appliedBaseGiftCardAmount = null;
         if ($order->getCkgiftcardBaseAmount() && $baseGiftCardInvoiced != 0) {
-            $appliedGiftCardAmount = 0;
-            $appliedBaseGiftCardAmount = 0;
 
             if ($remainingBaseGiftCard >= $creditmemo->getBaseGrandTotal()) {
                 // Use the gift card to cover the entire credit memo
@@ -34,15 +34,18 @@ class CKGiftcardCreditmemo extends AbstractTotal
             } else {
                 // Partial application of the gift card
                 $appliedBaseGiftCardAmount = $remainingBaseGiftCard;
-                $appliedGiftCardAmount = $order->getCkgiftCardsInvoiced() - $order->getCkgiftCardsRefunded();
 
-                $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() - $appliedBaseGiftCardAmount)
-                        ->setGrandTotal($creditmemo->getGrandTotal() - $appliedGiftCardAmount);
+                if ($appliedBaseGiftCardAmount > 0) {
+                    $appliedGiftCardAmount = $order->getCkgiftCardsInvoiced() - $order->getCkgiftCardsRefunded();
+
+                    $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() - $appliedBaseGiftCardAmount)
+                                ->setGrandTotal($creditmemo->getGrandTotal() - $appliedGiftCardAmount);
+                }
             }
-
-            $creditmemo->setCkgiftcardBaseAmount($appliedBaseGiftCardAmount)
-                    ->setCkgiftcardAmount($appliedGiftCardAmount);
         }
+
+        $creditmemo->setCkgiftcardBaseAmount($appliedBaseGiftCardAmount)
+                    ->setCkgiftcardAmount($appliedGiftCardAmount);
 
         return $this;
     }

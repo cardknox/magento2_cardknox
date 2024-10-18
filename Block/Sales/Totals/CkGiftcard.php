@@ -3,11 +3,14 @@
 namespace CardknoxDevelopment\Cardknox\Block\Sales\Totals;
 
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\App\RequestInterface;
 
 class CkGiftcard extends Template
 {
     protected $_order;
     protected $_source;
+
+    protected RequestInterface $request;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -15,12 +18,14 @@ class CkGiftcard extends Template
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
+        RequestInterface $request,
         array $data = []
     ) {
         parent::__construct(
             $context,
             $data
         );
+        $this->request = $request;
     }
 
     /**
@@ -94,6 +99,10 @@ class CkGiftcard extends Template
         $this->_order = $parent->getOrder();
         $this->_source = $parent->getSource();
 
+        if ($this->isInvoiceCreation() && $this->areGiftCardValuesEqual()) {
+            return $this;
+        }
+
         if ($this->_source->getCkgiftcardAmount()) {
             $ckgiftcardAmount = new \Magento\Framework\DataObject(
                 [
@@ -106,5 +115,28 @@ class CkGiftcard extends Template
             $parent->addTotal($ckgiftcardAmount, 'ckgiftcardAmount');
         }
         return $this;
+    }
+
+    /**
+     * Check if the current action is 'sales_order_invoice_new'.
+     *
+     * @return bool
+     */
+    private function isInvoiceCreation(): bool
+    {
+        return $this->request->getFullActionName() === 'sales_order_invoice_updateQty';
+    }
+
+    /**
+     * Compare gift card values between invoice and order.
+     *
+     * @return bool
+     */
+    private function areGiftCardValuesEqual(): bool
+    {
+        $giftCardAmount = round($this->getSource()->getCkgiftcardAmount() ?? 0.00, 2);
+        $baseGiftCardInvoiced = round($this->_order->getBaseCkgiftCardsInvoiced() ?? 0.00, 2);
+
+        return $giftCardAmount === $baseGiftCardInvoiced;
     }
 }

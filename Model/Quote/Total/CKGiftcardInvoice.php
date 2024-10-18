@@ -19,9 +19,9 @@ class CKGiftcardInvoice extends AbstractTotal
         $invoicedBaseGiftCardAmount = (float) $order->getBaseCkgiftCardsInvoiced();
         $remainingBaseGiftCardAmount = $baseGiftCardAmount - $invoicedBaseGiftCardAmount;
 
+        $appliedGiftCardAmount = null;
+        $appliedBaseGiftCardAmount = null;
         if ($baseGiftCardAmount && $invoicedBaseGiftCardAmount != $baseGiftCardAmount) {
-            $appliedGiftCardAmount = 0;
-            $appliedBaseGiftCardAmount = 0;
 
             if ($remainingBaseGiftCardAmount >= $invoice->getBaseGrandTotal()) {
                 // Use gift card to cover the entire invoice amount
@@ -42,9 +42,9 @@ class CKGiftcardInvoice extends AbstractTotal
                         ->setGrandTotal($invoice->getGrandTotal() - $appliedGiftCardAmount);
             }
 
-            $invoice->setCkgiftcardBaseAmount($appliedBaseGiftCardAmount)
-                    ->setCkgiftcardAmount($appliedGiftCardAmount);
         }
+        $invoice->setCkgiftcardBaseAmount($appliedBaseGiftCardAmount)
+                    ->setCkgiftcardAmount($appliedGiftCardAmount);
 
         return $this;
     }
