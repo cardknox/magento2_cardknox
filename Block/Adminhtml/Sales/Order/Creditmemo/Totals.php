@@ -4,12 +4,11 @@ namespace CardknoxDevelopment\Cardknox\Block\Adminhtml\Sales\Order\Creditmemo;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\DataObject;
-use Magento\Framework\App\RequestInterface;
 
 class Totals extends Template
 {
     /**
-     * Order invoice
+     * Order Creditmemo
      *
      * @var \Magento\Sales\Model\Order\Creditmemo|null
      */
@@ -22,16 +21,13 @@ class Totals extends Template
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Magento\Framework\App\RequestInterface $request
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
-        RequestInterface $request,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->request = $request;
     }
 
     /**
@@ -67,10 +63,6 @@ class Totals extends Template
             return $this;
         }
 
-        if ($this->isCreditmemoCreation() && $this->areGiftCardValuesEqual()) {
-            return $this;
-        }
-
         $this->addGiftCardTotal();
         $this->updateCreditmemoGrandTotal();
 
@@ -88,30 +80,7 @@ class Totals extends Template
     }
 
     /**
-     * Check if the current action is 'sales_order_invoice_new'.
-     *
-     * @return bool
-     */
-    private function isCreditmemoCreation(): bool
-    {
-        return $this->request->getFullActionName() === 'sales_order_creditmemo_new' || $this->request->getFullActionName() === 'sales_order_creditmemo_view';
-    }
-
-    /**
-     * Compare gift card values between invoice and order.
-     *
-     * @return bool
-     */
-    private function areGiftCardValuesEqual(): bool
-    {
-        $giftCardAmount = round($this->getSource()->getCkgiftcardAmount() ?? 0.00, 2);
-        $baseGiftCardCreditmemo = round($this->_order->getBaseCkgiftCardsRefunded() ?? 0.00, 2);
-
-        return $giftCardAmount === $baseGiftCardCreditmemo;
-    }
-
-    /**
-     * Add the gift card amount to the invoice totals.
+     * Add the gift card amount to the Creditmemo totals.
      */
     private function addGiftCardTotal(): void
     {
@@ -127,7 +96,7 @@ class Totals extends Template
     }
 
     /**
-     * Update the grand total of the invoice by subtracting the gift card amount.
+     * Update the grand total of the Creditmemo by subtracting the gift card amount.
      */
     private function updateCreditmemoGrandTotal(): void
     {
