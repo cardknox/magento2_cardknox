@@ -6,7 +6,7 @@ use Magento\Sales\Model\Order\Invoice\Total\AbstractTotal;
 class CKGiftcardInvoice extends AbstractTotal
 {
     /**
-     * Undocumented function
+     * Collect function
      *
      * @param \Magento\Sales\Model\Order\Invoice $invoice
      * @return void
