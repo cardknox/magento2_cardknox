@@ -33,12 +33,12 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
     protected $helper;
 
     /**
-     * __construct function
+     * Summary of __construct
      *
-     * @param TotalCalculator $totalCalculator
-     * @param PriceCurrencyInterface $priceCurrency
-     * @param CheckoutSession $checkoutSession
-     * @param Helper $helper
+     * @param \CardknoxDevelopment\Cardknox\Model\TotalCalculator $totalCalculator
+     * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
      */
     public function __construct(
         TotalCalculator $totalCalculator,
@@ -118,8 +118,8 @@ class CKGiftcard extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
     /**
      * Fetch the gift card totals.
      *
-     * @param Quote $quote
-     * @param QuoteTotal $total
+     * @param \Magento\Quote\Model\Quote $quote
+     * @param \Magento\Quote\Model\Quote\Address\Total $total
      * @return array|null
      */
     public function fetch(Quote $quote, Total $total)

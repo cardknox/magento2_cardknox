@@ -86,10 +86,8 @@ class CouponPost
     /**
      * Applies coupon and handles gift card when grand total is zero
      *
-     * @param \Magento\SalesRule\Model\Coupon $coupon
-     * @param string $couponCode
      * @param \Magento\Quote\Model\Quote $cartQuote
-     * @param float $grandTotal
+     * @param float|mixed $grandTotal
      * @return void
      */
     private function applyCouponAndHandleGiftCard($cartQuote, $grandTotal)

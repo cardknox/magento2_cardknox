@@ -9,6 +9,7 @@ use Magento\Framework\Event\ObserverInterface;
 class UpdateOrderGiftCardCreditmemoAmount implements ObserverInterface
 {
     /**
+     * Summary of execute
      *
      * @param \Magento\Framework\Event\Observer $observer
      * @return $this

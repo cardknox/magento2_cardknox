@@ -121,9 +121,9 @@ class RedeemGiftCardObserver implements ObserverInterface
     /**
      * Redeem the gift card by calling a third-party API
      *
-     * @param string $giftCardCode
-     * @param int $ckGiftCardAmount
-     * @param string $orderIncrementId
+     * @param mixed|string $ckGiftCardCode
+     * @param mixed|int|float $ckGiftCardAmount
+     * @param mixed|string $order
      * @return void
      * @throws LocalizedException
      */

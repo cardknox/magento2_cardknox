@@ -18,7 +18,7 @@ class CountryRegion extends \Magento\Framework\App\Action\Action
      * @var AddressHelper
      */
     protected $addressHelper;
-    
+
     /**
      * Login popup function
      *
@@ -56,7 +56,6 @@ class CountryRegion extends \Magento\Framework\App\Action\Action
             $response = [
                 'region' => $region->getData()
             ];
-            
         }
         $resultJson = $this->resultJsonFactory->create();
         return $resultJson->setData($response);
