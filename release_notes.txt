@@ -1,9 +1,10 @@
-1.0.28
-- Update license
+1.2.69
+- Fix GooglePay button style on cart & checkout page for responsive view
 
 1.0.27
 - Remove the Shipping method selection from Googlepay/ApplePay popup in cart page
 - Remove dynamic tax calculation from Googlepay/ApplePay popup in cart page
+- Update license
 
 1.0.26
 - Fix Error-Request_Client_IP  exceeds max lenght
