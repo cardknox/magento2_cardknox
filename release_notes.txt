@@ -1,4 +1,4 @@
-1.0.28
+1.2.69
 - Fix GooglePay button style on cart & checkout page for responsive view
 
 1.0.27
