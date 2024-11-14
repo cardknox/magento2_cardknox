@@ -20,6 +20,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public const CC_SPLIT_CAPTURE_ENABLED = "split_capture_enabled";
     public const CC_SELECT_RECAPTCHA_SOURCE = "select_recaptcha_source";
     public const IS_CARDKNOX_GIFTCARD_ENABLED = "ck_giftcard_enabled";
+    public const IS_CARDKNOX_GIFTCARD_TEXT = "ck_giftcard_text";
 
     /**
      * IsActive function
@@ -135,5 +136,15 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function isCardknoxGiftcardEnabled()
     {
         return (bool) $this->getValue(self::IS_CARDKNOX_GIFTCARD_ENABLED);
+    }
+
+    /**
+     * Cardknox Giftcard Text function
+     *
+     * @return string
+     */
+    public function cardknoxGiftcardText()
+    {
+        return $this->getValue(self::IS_CARDKNOX_GIFTCARD_TEXT);
     }
 }

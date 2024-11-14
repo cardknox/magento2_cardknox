@@ -17,6 +17,7 @@ define([
     let ckGiftCardCode = giftCardAccount.getCkGiftCardCode();
     let isCkGiftCardApplied = giftCardAccount.getIsCkGiftCardApplied();
     let quoteGiftCardCode = window.checkoutConfig.quoteData.ckgiftcard_code;
+    let cardknoxGiftcardText = window.checkoutConfig.payment.cardknox.cardknoxGiftcardText;
 
     // Check if quoteGiftCardCode is defined and matches ckGiftCardCodeSession
     if (quoteGiftCardCode !== null && ckGiftCardCodeSession === quoteGiftCardCode) {
@@ -29,6 +30,7 @@ define([
 
         defaults: {
             template: 'CardknoxDevelopment_Cardknox/checkout/giftcard',
+            cardknoxGiftcardValue: cardknoxGiftcardText,
         },
         isLoading: getGiftCardAction.isLoading,
         giftCardAccount: giftCardAccount,

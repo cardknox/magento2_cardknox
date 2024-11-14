@@ -10,6 +10,7 @@
  * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
  */
 $isCardknoxGiftcardEnabled = $block->isCardknoxGiftcardEnabled();
+$cardknoxGiftText = $block->cardknoxGiftcardText();
 
 if ($isCardknoxGiftcardEnabled) {
     $giftcardCode = $block->getGiftCardCode();
@@ -26,7 +27,7 @@ if ($isCardknoxGiftcardEnabled) {
             data-mage-init='{"collapsible":{"active": true, "openedState": "active", "saveState": false}}'>
         <div data-role="title" class="title">
             <strong id="block-giftcard-heading" role="heading" aria-level="2">
-                <?= $block->escapeHtml(__('Cardknox Gift Card')) ?>
+                <?= $block->escapeHtml(__($cardknoxGiftText)) ?>
             </strong>
         </div>
         <div data-role="content" class="content" aria-labelledby="block-giftcard-heading">

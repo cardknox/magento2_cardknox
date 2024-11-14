@@ -56,7 +56,8 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                         'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
                         'xPaymentAction' => $this->config->getCCPaymentAction(),
                         'selectRecaptchaSource' => $this->config->getSelectReCaptchaSource(),
-                        'isEnabledCardknoxGiftcard' => $this->config->isCardknoxGiftcardEnabled()
+                        'isEnabledCardknoxGiftcard' => $this->config->isCardknoxGiftcardEnabled(),
+                        'cardknoxGiftcardText' => $this->config->cardknoxGiftcardText()
                     ],
                 ],
             ],

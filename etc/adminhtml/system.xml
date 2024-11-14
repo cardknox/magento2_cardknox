@@ -78,7 +78,16 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <config_path>payment/cardknox/ck_giftcard_enabled</config_path>
                 </field>
-                <field id="select_recaptcha_source" translate="label comment" type="select" sortOrder="154" showInDefault="1" showInWebsite="1" showInStore="1">
+                <!-- Dependent Text Field -->
+                <field id="ck_giftcard_text" translate="label" type="text" sortOrder="154" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Cardknox Giftcard Text</label>
+                    <config_path>payment/cardknox/ck_giftcard_text</config_path>
+                    <!-- Make the field dependent on 'ck_giftcard_enabled' being set to '1' (Yes) -->
+                    <depends>
+                        <field id="ck_giftcard_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="select_recaptcha_source" translate="label comment" type="select" sortOrder="155" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Select reCaptcha Source</label>
                     <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\SelectRecaptchaSource</source_model>
                     <config_path>payment/cardknox/select_recaptcha_source</config_path>
