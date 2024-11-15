@@ -108,7 +108,7 @@ class Giftcard extends AbstractHelper
             "xKey" => $this->getTransactionKey(),
             "xVersion" => self::CARDKNOX_X_VERSION,
             "xSoftwareName" => $this->getMagentoEditionVersion(),
-            "xSoftwareVersion" => "1.0.27",
+            "xSoftwareVersion" => "1.2.69",
             "xCommand" => "gift:balance",
             "xExistingCustomer" => "TRUE",
             "xTimeoutSeconds" => "10",
@@ -172,7 +172,7 @@ class Giftcard extends AbstractHelper
             "xCardNum" => $ckGiftCardCode,
             "xKey" => $this->getTransactionKey(),
             "xSoftwareName" => $this->getMagentoEditionVersion(),
-            "xSoftwareVersion" => "1.0.27",
+            "xSoftwareVersion" => "1.2.69",
             'xVersion' => '4.5.8',
             'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
             'xSupports64BitRefnum' => true,
@@ -290,5 +290,74 @@ class Giftcard extends AbstractHelper
 
         // Save the quote with the new shipping method
         $this->quoteRepository->save($quote);
+    }
+
+    /**
+     * Issue Gift Card while credit memo generated
+     *
+     * @param mixed $ckGiftCardAmount
+     * @param mixed $order
+     * @return mixed
+     */
+    public function giftAmountRefund($ckGiftCardAmount, $order)
+    {
+        $billing = $order->getBillingAddress();
+        $shipping = $order->getShippingAddress();
+        $ipAddress = $this->helper->getIpAddress();
+        $ckGiftCardCode = $order->getCkgiftcardCode();
+        $headers = ["Content-Type" => "application/json"];
+        $this->_curl->setHeaders($headers);
+
+        $params = [
+            "xCardNum" => $ckGiftCardCode,
+            "xKey" => $this->getTransactionKey(),
+            "xSoftwareName" => $this->getMagentoEditionVersion(),
+            "xSoftwareVersion" => "1.2.69",
+            'xVersion' => '4.5.8',
+            'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
+            'xSupports64BitRefnum' => true,
+            "xCommand" => "gift:issue",
+            "xAmount" =>  $ckGiftCardAmount,
+            "xOrderID" =>  $order->getIncrementId(),
+            "xExistingCustomer" => "TRUE",
+            "xTimeoutSeconds" => "10",
+            'xBillFirstName' => $billing->getFirstname(),
+            'xBillLastName' => $billing->getLastname(),
+            'xBillCompany' => $billing->getCompany(),
+            'xBillStreet' => $billing->getStreetLine1(),
+            'xBillStreet2' => $billing->getStreetLine2(),
+            'xBillCity' => $billing->getCity(),
+            'xBillState' => $billing->getRegionCode(),
+            'xBillZip' => $billing->getPostcode(),
+            'xBillCountry'=> $billing->getCountryId(),
+            'xBillPhone' => $billing->getTelephone(),
+            'xEmail' => $billing->getEmail(),
+        ];
+
+        if ($shipping != "") {
+            $shippingParams = [
+                'xShipFirstName' => $shipping->getFirstname(),
+                'xShipLastName' => $shipping->getLastname(),
+                'xShipCompany' => $shipping->getCompany(),
+                'xShipStreet' => $shipping->getStreetLine1(),
+                'xShipStreet2'=> $shipping->getStreetLine2(),
+                'xShipCity' => $shipping->getCity(),
+                'xShipState' => $shipping->getRegionCode(),
+                'xShipZip' => $shipping->getPostcode(),
+                'xShipCountry' => $shipping->getCountryId(),
+            ];
+        } else {
+            $shippingParams = [];
+        }
+
+        $params = array_merge_recursive($params, $shippingParams);
+
+        $giftcardIssueParams = json_encode($params);
+        $this->_curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
+
+        $response = $this->_curl->getBody();
+        $responseBody = json_decode($response, true);
+
+        return $responseBody;
     }
 }
