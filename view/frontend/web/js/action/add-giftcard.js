@@ -48,7 +48,7 @@ define([
                 dataType: 'json',
                 data: { giftcard_code: ckgiftCardCode },
                 success: function (response) {
-                    self.handleResponse(response, isCkGiftCardApplied);
+                    self.handleResponse(response, isCkGiftCardApplied, ckgiftCardCode);
                 },
                 error: function () {
                     fullScreenLoader.stopLoader();
@@ -62,11 +62,13 @@ define([
          *
          * @param {Object} response
          * @param {Function} isCkGiftCardApplied
+         * @param {string} ckgiftCardCode
          */
-        handleResponse: function (response, isCkGiftCardApplied) {
+        handleResponse: function (response, isCkGiftCardApplied, ckgiftCardCode) {
             fullScreenLoader.stopLoader();
             if (response.success) {
                 isCkGiftCardApplied(true);
+                ckGiftCardCode(ckgiftCardCode);
                 defaultTotal.estimateTotals();
                 customerData.reload(['cart'], true);
                 recollectShippingRates();
