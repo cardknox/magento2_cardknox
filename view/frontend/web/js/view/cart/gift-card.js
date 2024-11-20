@@ -2,9 +2,10 @@ define([
     'jquery',
     'Magento_Checkout/js/model/cart/totals-processor/default',
     'Magento_Checkout/js/model/cart/cache',
+    'CardknoxDevelopment_Cardknox/js/model/giftcard',
     'jquery-ui-modules/widget',
     'mage/validation'
-], function ($, defaultTotal, cartCache) {
+], function ($, defaultTotal, cartCache, giftcardModel) {
     'use strict';
 
     $.widget('mage.giftCard', {
@@ -134,6 +135,7 @@ define([
          * @private
          */
         _toggleGiftCardButtons: function (actionType, formElement) {
+            let ckgiftCardCode = $('#giftcard-code').val();
             if (actionType === 'addGiftCard') {
                 $(this.options.addGiftcardCodeBtn).hide();
                 $(this.options.cancelGiftcardCodeBtn).show();
@@ -145,6 +147,7 @@ define([
                 $(this.options.giftCardCodeSelector).removeAttr('disabled');
                 $(formElement).find('input').val(''); // Reset form fields
             }
+            giftcardModel.ckGiftCardCode(ckgiftCardCode);
         },
 
         /**
