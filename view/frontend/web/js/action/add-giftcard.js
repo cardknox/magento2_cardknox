@@ -14,6 +14,7 @@ define([
     'Magento_Checkout/js/action/get-payment-information',
     'Magento_Checkout/js/action/recollect-shipping-rates',
     'Magento_Checkout/js/model/totals',
+    'CardknoxDevelopment_Cardknox/js/model/giftcard',
     'Magento_Checkout/js/action/select-payment-method',
     'Magento_Checkout/js/model/payment/method-list'
 ], function (
@@ -26,7 +27,8 @@ define([
     errorProcessor,
     getPaymentInformationAction,
     recollectShippingRates,
-    totals
+    totals,
+    giftcardModel
 ) {
     'use strict';
 
@@ -68,7 +70,7 @@ define([
             fullScreenLoader.stopLoader();
             if (response.success) {
                 isCkGiftCardApplied(true);
-                ckGiftCardCode(ckgiftCardCode);
+                giftcardModel.ckGiftCardCode(ckgiftCardCode);
                 defaultTotal.estimateTotals();
                 customerData.reload(['cart'], true);
                 recollectShippingRates();
