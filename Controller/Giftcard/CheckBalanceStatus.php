@@ -6,9 +6,8 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
 use CardknoxDevelopment\Cardknox\Helper\Giftcard;
-use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
+use CardknoxDevelopment\Cardknox\Helper\Data as DataHelper;
 
 class CheckBalanceStatus extends Action
 {
@@ -19,18 +18,13 @@ class CheckBalanceStatus extends Action
     protected $resultJsonFactory;
 
     /**
-     * @var \Magento\Framework\HTTP\Client\Curl
-     */
-    protected $_curl;
-
-    /**
      *
      * @var \CardknoxDevelopment\Cardknox\Helper\Giftcard
      */
     protected $_giftcardHelper;
 
     /**
-     * @var Helper
+     * @var DataHelper
      */
     protected $helper;
 
@@ -39,19 +33,16 @@ class CheckBalanceStatus extends Action
      *
      * @param Context $context
      * @param JsonFactory $resultJsonFactory
-     * @param Curl $curl
      * @param Giftcard $giftcardHelper
-     * @param Helper $helper
+     * @param DataHelper $helper
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
-        Curl $curl,
         Giftcard $giftcardHelper,
-        Helper $helper
+        DataHelper $helper
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->_curl = $curl;
         $this->_giftcardHelper = $giftcardHelper;
         $this->helper = $helper;
         parent::__construct($context);

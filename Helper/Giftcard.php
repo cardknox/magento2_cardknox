@@ -19,17 +19,17 @@ class Giftcard extends AbstractHelper
     /**
      * @var Curl
      */
-    private $_curl;
+    private $curl;
 
     /**
      * @var ProductMetadataInterface
      */
-    private $_productMetadata;
+    private $productMetadata;
 
     /**
      * @var PriceHelper
      */
-    protected $_priceHelper;
+    protected $priceHelper;
 
     /**
      * @var CardknoxDataHelper
@@ -57,9 +57,9 @@ class Giftcard extends AbstractHelper
         CardknoxDataHelper $helper,
         CartRepositoryInterface $quoteRepository
     ) {
-        $this->_curl = $curl;
-        $this->_productMetadata = $productMetadata;
-        $this->_priceHelper = $priceHelper;
+        $this->curl = $curl;
+        $this->productMetadata = $productMetadata;
+        $this->priceHelper = $priceHelper;
         $this->helper = $helper;
         $this->quoteRepository = $quoteRepository;
         parent::__construct($context);
@@ -74,8 +74,8 @@ class Giftcard extends AbstractHelper
     {
         return sprintf(
             'Magento %s %s',
-            $this->_productMetadata->getEdition(),
-            $this->_productMetadata->getVersion()
+            $this->productMetadata->getEdition(),
+            $this->productMetadata->getVersion()
         );
     }
 
@@ -101,7 +101,7 @@ class Giftcard extends AbstractHelper
     public function checkGiftCardBalanceStatus($giftCardCode)
     {
         $headers = ["Content-Type" => "application/json"];
-        $this->_curl->setHeaders($headers);
+        $this->curl->setHeaders($headers);
 
         $params = [
             "xCardNum" => $giftCardCode,
@@ -129,9 +129,9 @@ class Giftcard extends AbstractHelper
     private function sendGiftCardRequest(array $params)
     {
         $giftcardBalanceParams = json_encode($params);
-        $this->_curl->post(self::CARDKNOX_API_URL, $giftcardBalanceParams);
+        $this->curl->post(self::CARDKNOX_API_URL, $giftcardBalanceParams);
 
-        return $this->_curl->getBody();
+        return $this->curl->getBody();
     }
 
     /**
@@ -166,7 +166,7 @@ class Giftcard extends AbstractHelper
         $ipAddress = $this->helper->getIpAddress();
 
         $headers = ["Content-Type" => "application/json"];
-        $this->_curl->setHeaders($headers);
+        $this->curl->setHeaders($headers);
 
         $params = [
             "xCardNum" => $ckGiftCardCode,
@@ -213,9 +213,9 @@ class Giftcard extends AbstractHelper
         $params = array_merge_recursive($params, $shippingParams);
 
         $giftcardRedeemParams = json_encode($params);
-        $this->_curl->post(self::CARDKNOX_API_URL, $giftcardRedeemParams);
+        $this->curl->post(self::CARDKNOX_API_URL, $giftcardRedeemParams);
 
-        $response = $this->_curl->getBody();
+        $response = $this->curl->getBody();
         $responseBody = json_decode($response, true);
 
         return $responseBody;
@@ -255,7 +255,7 @@ class Giftcard extends AbstractHelper
      */
     public function getFormattedAmount($amount)
     {
-        return $this->_priceHelper->currency(
+        return $this->priceHelper->currency(
             $amount,
             true,
             false
@@ -306,7 +306,21 @@ class Giftcard extends AbstractHelper
         $ipAddress = $this->helper->getIpAddress();
         $ckGiftCardCode = $order->getCkgiftcardCode();
         $headers = ["Content-Type" => "application/json"];
-        $this->_curl->setHeaders($headers);
+        $this->curl->setHeaders($headers);
+        $xTimeoutSeconds = "10";
+
+        // Billing Params
+        $xBillFirstName = $billing->getFirstname();
+        $xBillLastName = $billing->getLastname();
+        $xBillCompany = $billing->getCompany();
+        $xBillStreet = $billing->getStreetLine1();
+        $xBillStreet2 = $billing->getStreetLine2();
+        $xBillCity = $billing->getCity();
+        $xBillState = $billing->getRegionCode();
+        $xBillZip = $billing->getPostcode();
+        $xBillCountry= $billing->getCountryId();
+        $xBillPhone = $billing->getTelephone();
+        $xEmail = $billing->getEmail();
 
         $params = [
             "xCardNum" => $ckGiftCardCode,
@@ -320,31 +334,42 @@ class Giftcard extends AbstractHelper
             "xAmount" =>  $ckGiftCardAmount,
             "xOrderID" =>  $order->getIncrementId(),
             "xExistingCustomer" => "TRUE",
-            "xTimeoutSeconds" => "10",
-            'xBillFirstName' => $billing->getFirstname(),
-            'xBillLastName' => $billing->getLastname(),
-            'xBillCompany' => $billing->getCompany(),
-            'xBillStreet' => $billing->getStreetLine1(),
-            'xBillStreet2' => $billing->getStreetLine2(),
-            'xBillCity' => $billing->getCity(),
-            'xBillState' => $billing->getRegionCode(),
-            'xBillZip' => $billing->getPostcode(),
-            'xBillCountry'=> $billing->getCountryId(),
-            'xBillPhone' => $billing->getTelephone(),
-            'xEmail' => $billing->getEmail(),
+            "xTimeoutSeconds" => $xTimeoutSeconds,
+            'xBillFirstName' => $xBillFirstName,
+            'xBillLastName' => $xBillLastName,
+            'xBillCompany' => $xBillCompany,
+            'xBillStreet' => $xBillStreet,
+            'xBillStreet2' => $xBillStreet2,
+            'xBillCity' => $xBillCity,
+            'xBillState' => $xBillState,
+            'xBillZip' => $xBillZip,
+            'xBillCountry'=> $xBillCountry,
+            'xBillPhone' => $xBillPhone,
+            'xEmail' => $xEmail,
         ];
 
         if ($shipping != "") {
+            // Shipping Params
+            $xShipFirstName = $shipping->getFirstname();
+            $xShipLastName = $shipping->getLastname();
+            $xShipCompany = $shipping->getCompany();
+            $xShipStreet = $shipping->getStreetLine1();
+            $xShipStreet2= $shipping->getStreetLine2();
+            $xShipCity = $shipping->getCity();
+            $xShipState = $shipping->getRegionCode();
+            $xShipZip = $shipping->getPostcode();
+            $xShipCountry = $shipping->getCountryId();
+
             $shippingParams = [
-                'xShipFirstName' => $shipping->getFirstname(),
-                'xShipLastName' => $shipping->getLastname(),
-                'xShipCompany' => $shipping->getCompany(),
-                'xShipStreet' => $shipping->getStreetLine1(),
-                'xShipStreet2'=> $shipping->getStreetLine2(),
-                'xShipCity' => $shipping->getCity(),
-                'xShipState' => $shipping->getRegionCode(),
-                'xShipZip' => $shipping->getPostcode(),
-                'xShipCountry' => $shipping->getCountryId(),
+                'xShipFirstName' => $xShipFirstName,
+                'xShipLastName' => $xShipLastName,
+                'xShipCompany' => $xShipCompany,
+                'xShipStreet' => $xShipStreet,
+                'xShipStreet2'=> $xShipStreet2,
+                'xShipCity' => $xShipCity,
+                'xShipState' => $xShipState,
+                'xShipZip' => $xShipZip,
+                'xShipCountry' => $xShipCountry,
             ];
         } else {
             $shippingParams = [];
@@ -353,9 +378,9 @@ class Giftcard extends AbstractHelper
         $params = array_merge_recursive($params, $shippingParams);
 
         $giftcardIssueParams = json_encode($params);
-        $this->_curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
+        $this->curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
 
-        $response = $this->_curl->getBody();
+        $response = $this->curl->getBody();
         $responseBody = json_decode($response, true);
 
         return $responseBody;

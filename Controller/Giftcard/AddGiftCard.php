@@ -6,43 +6,37 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
 use CardknoxDevelopment\Cardknox\Helper\Giftcard;
-use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Checkout\Model\Session as CheckOutSession;
 use Magento\Quote\Api\CartRepositoryInterface;
-use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
+use CardknoxDevelopment\Cardknox\Helper\Data;
 
 class AddGiftCard extends Action
 {
     /**
      *
-     * @var JsonFactory
+     * @var \Magento\Framework\Controller\Result\JsonFactory
      */
     protected $resultJsonFactory;
-
-    /**
-     * @var \Magento\Framework\HTTP\Client\Curl
-     */
-    protected $_curl;
 
     /**
      *
      * @var \CardknoxDevelopment\Cardknox\Helper\Giftcard
      */
-    protected $_giftcardHelper;
+    protected $giftcardHelper;
 
     /**
-     * @var CheckoutSession
+     * @var CheckOutSession
      */
     protected $checkoutSession;
 
     /**
-     * @var CartRepositoryInterface
+     * @var \Magento\Quote\Api\CartRepositoryInterface
      */
     protected $quoteRepository;
 
     /**
-     * @var Helper
+     * @var \CardknoxDevelopment\Cardknox\Helper\Data
      */
     protected $helper;
 
@@ -51,24 +45,21 @@ class AddGiftCard extends Action
      *
      * @param Context $context
      * @param JsonFactory $resultJsonFactory
-     * @param Curl $curl
      * @param Giftcard $giftcardHelper
-     * @param CheckoutSession $checkoutSession
+     * @param CheckOutSession $checkoutSession
      * @param CartRepositoryInterface $quoteRepository
-     * @param Helper $helper
+     * @param Data $helper
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
-        Curl $curl,
         Giftcard $giftcardHelper,
-        CheckoutSession $checkoutSession,
+        CheckOutSession $checkoutSession,
         CartRepositoryInterface $quoteRepository,
-        Helper $helper
+        Data $helper
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->_curl = $curl;
-        $this->_giftcardHelper = $giftcardHelper;
+        $this->giftcardHelper = $giftcardHelper;
         $this->checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;
         $this->helper = $helper;
@@ -82,8 +73,6 @@ class AddGiftCard extends Action
      */
     public function execute()
     {
-        $result = $this->resultJsonFactory->create();
-
         if (!$this->helper->isCardknoxGiftcardEnabled()) {
             return $this->jsonResponse(false, __('Please enable Cardknox GiftCard.'));
         }
@@ -112,7 +101,7 @@ class AddGiftCard extends Action
                 return $this->jsonResponse(false, __('Your cart total is zero, so there\'s no need to apply a Gift Card code.'));
             }
 
-            $apiResponse = $this->_giftcardHelper->checkGiftCardBalanceStatus($giftCardCode);
+            $apiResponse = $this->giftcardHelper->checkGiftCardBalanceStatus($giftCardCode);
 
             return $this->handleApiResponse($apiResponse, $giftCardCode, $quote);
 
@@ -135,7 +124,7 @@ class AddGiftCard extends Action
 
         if ($selectedShippingMethod &&
             ($shippingMethod !== $selectedShippingMethod || $shippingAmount == 0)) {
-            $this->_giftcardHelper->setShippingMethodForce(
+            $this->giftcardHelper->setShippingMethodForce(
                 $quote,
                 $selectedShippingMethod
             );
@@ -199,7 +188,7 @@ class AddGiftCard extends Action
     {
         $giftCardBalance = $apiResponse['xRemainingBalance'];
         $grandTotal = $quote->getGrandTotal();
-        $calculateGiftcardAmount = $this->_giftcardHelper->calculateGiftcardAmount($giftCardBalance, $grandTotal);
+        $calculateGiftcardAmount = $this->giftcardHelper->calculateGiftcardAmount($giftCardBalance, $grandTotal);
         $appliedAmount = $calculateGiftcardAmount['applied_amount'];
 
         // Store the gift card code and amount in the session
@@ -212,7 +201,7 @@ class AddGiftCard extends Action
 
         $this->quoteRepository->save($quote);
 
-        $appliedAmountWithCurrency = $this->_giftcardHelper->getFormattedAmount($appliedAmount);
+        $appliedAmountWithCurrency = $this->giftcardHelper->getFormattedAmount($appliedAmount);
         $message = __("The gift card was applied successfully with an amount of %1", $appliedAmountWithCurrency);
 
         return $this->jsonResponse(true, $message, [

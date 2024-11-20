@@ -4,9 +4,8 @@ namespace CardknoxDevelopment\Cardknox\Controller\Giftcard;
 
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
 use CardknoxDevelopment\Cardknox\Helper\Giftcard;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -16,14 +15,9 @@ class CancelGiftCard extends Action
 {
     /**
      *
-     * @var JsonFactory
+     * @var ResultJsonFactory
      */
     protected $resultJsonFactory;
-
-    /**
-     * @var \Magento\Framework\HTTP\Client\Curl
-     */
-    protected $_curl;
 
     /**
      *
@@ -50,8 +44,7 @@ class CancelGiftCard extends Action
      * __construct function
      *
      * @param Context $context
-     * @param JsonFactory $resultJsonFactory
-     * @param Curl $curl
+     * @param ResultJsonFactory $resultJsonFactory
      * @param Giftcard $giftcardHelper
      * @param CheckoutSession $checkoutSession
      * @param CartRepositoryInterface $quoteRepository
@@ -59,15 +52,13 @@ class CancelGiftCard extends Action
      */
     public function __construct(
         Context $context,
-        JsonFactory $resultJsonFactory,
-        Curl $curl,
+        ResultJsonFactory $resultJsonFactory,
         Giftcard $giftcardHelper,
         CheckoutSession $checkoutSession,
         CartRepositoryInterface $quoteRepository,
         Helper $helper
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->_curl = $curl;
         $this->_giftcardHelper = $giftcardHelper;
         $this->checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;

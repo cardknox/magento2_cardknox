@@ -7,8 +7,8 @@ use Magento\Framework\App\RequestInterface;
 
 class CkGiftcard extends Template
 {
-    protected $_order;
-    protected $_source;
+    protected $order;
+    protected $source;
 
     protected RequestInterface $request;
 
@@ -29,23 +29,13 @@ class CkGiftcard extends Template
     }
 
     /**
-     * Check if we nedd display full tax total info
-     *
-     * @return bool
-     */
-    public function displayFullSummary()
-    {
-        return true;
-    }
-
-    /**
      * Get data (totals) source model
      *
      * @return \Magento\Framework\DataObject
      */
     public function getSource()
     {
-        return $this->_source;
+        return $this->source;
     }
 
     /**
@@ -55,7 +45,7 @@ class CkGiftcard extends Template
      */
     public function getStore()
     {
-        return $this->_order->getStore();
+        return $this->order->getStore();
     }
 
     /**
@@ -65,7 +55,7 @@ class CkGiftcard extends Template
      */
     public function getOrder()
     {
-        return $this->_order;
+        return $this->order;
     }
 
     /**
@@ -96,19 +86,19 @@ class CkGiftcard extends Template
     public function initTotals()
     {
         $parent = $this->getParentBlock();
-        $this->_order = $parent->getOrder();
-        $this->_source = $parent->getSource();
+        $this->order = $parent->getOrder();
+        $this->source = $parent->getSource();
 
         if ($this->isInvoiceCreation() && $this->areGiftCardValuesEqual()) {
             return $this;
         }
 
-        if ($this->_source->getCkgiftcardAmount()) {
+        if ($this->source->getCkgiftcardAmount()) {
             $ckgiftcardAmount = new \Magento\Framework\DataObject(
                 [
                     'code' => 'ckgiftcardAmount',
                     'strong' => false,
-                    'value' => -$this->_source->getCkgiftcardAmount(),
+                    'value' => -$this->source->getCkgiftcardAmount(),
                     'label' => "Cardknox Giftcard Amount",
                 ]
             );
@@ -135,7 +125,7 @@ class CkGiftcard extends Template
     private function areGiftCardValuesEqual(): bool
     {
         $giftCardAmount = round($this->getSource()->getCkgiftcardAmount() ?? 0.00, 2);
-        $baseGiftCardInvoiced = round($this->_order->getBaseCkgiftCardsInvoiced() ?? 0.00, 2);
+        $baseGiftCardInvoiced = round($this->order->getBaseCkgiftCardsInvoiced() ?? 0.00, 2);
 
         return $giftCardAmount === $baseGiftCardInvoiced;
     }

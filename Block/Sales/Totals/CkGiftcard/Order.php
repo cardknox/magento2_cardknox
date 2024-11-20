@@ -22,16 +22,6 @@ class Order extends Template
     }
 
     /**
-     * Check if we nedd display full tax total info
-     *
-     * @return bool
-     */
-    public function displayFullSummary()
-    {
-        return true;
-    }
-
-    /**
      * Get data (totals) source model
      *
      * @return \Magento\Framework\DataObject
