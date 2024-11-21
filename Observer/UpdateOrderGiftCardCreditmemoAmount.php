@@ -54,7 +54,7 @@ class UpdateOrderGiftCardCreditmemoAmount implements ObserverInterface
             $order->setBaseCkgiftCardsRefunded(
                 $order->getBaseCkgiftCardsRefunded() + $creditmemo->getCkgiftcardBaseAmount()
             );
-            $giftIssueAmount = $order->getCkgiftCardsRefunded() + $creditmemo->getCkgiftcardAmount();
+            $giftIssueAmount = $creditmemo->getCkgiftcardAmount();
 
             $order->setCkgiftCardsRefunded($order->getCkgiftCardsRefunded() + $creditmemo->getCkgiftcardAmount());
 
