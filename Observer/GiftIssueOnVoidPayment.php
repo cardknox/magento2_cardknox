@@ -19,7 +19,6 @@ class GiftIssueOnVoidPayment implements \Magento\Framework\Event\ObserverInterfa
         GiftCardHelper $helper
     ) {
         $this->helper = $helper;
-        $this->orderRepository = $orderRepository;
     }
 
     /**
