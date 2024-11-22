@@ -141,7 +141,7 @@ define([
                 try {
                     if (gPay.validate() && gPay.additionalValidator()) {
                         if (!quote.isVirtual() && quote.shippingMethod() == null) {
-                            var err = 'Please select a shipping method.';
+                            let err = 'Please select a shipping method.';
                             $(".gpay-error").html("<div>"+err+" </div>").show();
                             setTimeout(function () {
                                 $(".gpay-error").html("").hide();
@@ -271,7 +271,7 @@ define([
         let giftcard_amount = 0;
         if (totalSegments && totalSegments.length) {
             // Find the segment with code 'ckgiftcard'
-            var giftCardSegment = totalSegments.find(function (segment) {
+            let giftCardSegment = totalSegments.find(function (segment) {
                 return segment.code === 'ckgiftcard';
             });
 
@@ -282,8 +282,8 @@ define([
         return parseFloat(giftcard_amount).toFixed(2);
     }
     function getGrandTotalAmount() {
-        var totals = quote.totals();
-        var base_grand_total = (totals ? totals : quote)['base_grand_total'];
+        let totals = quote.totals();
+        let base_grand_total = (totals ? totals : quote)['base_grand_total'];
         return parseFloat(base_grand_total).toFixed(2);
     }
     function isExistLastNameShippingAddress(data) {

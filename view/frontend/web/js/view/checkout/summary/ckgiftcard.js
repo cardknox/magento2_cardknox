@@ -20,8 +20,8 @@ define(
             },
 
             getHandlingfeeTotal: function () {
-                var price = 0;
-                var isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
+                let price = 0;
+                let isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
                 if (this.totals() && isEnabledCardknoxGiftcard) {
                     if (this.totals() && totals.getSegment('ckgiftcard')) {
                         price = totals.getSegment('ckgiftcard').value;
@@ -31,7 +31,7 @@ define(
             },
 
             getFormattedHandlingfeeTotal: function () {
-                var price = -this.getHandlingfeeTotal();
+                let price = -this.getHandlingfeeTotal();
                 return this.getFormattedPrice(price);
             }
         });

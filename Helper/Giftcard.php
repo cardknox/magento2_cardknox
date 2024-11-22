@@ -15,6 +15,8 @@ class Giftcard extends AbstractHelper
     public const CARDKNOX_API_URL = 'https://x1.cardknox.com/gatewayjson';
     public const CARDKNOX_TRANSACTION_KEY = 'payment/cardknox/cardknox_transaction_key';
     public const CARDKNOX_X_VERSION = "4.5.8";
+    public const CONTENT_TYPE = "application/json";
+    public const XSOFTWARE_VERSION = "application/json";
 
     /**
      * @var Curl
@@ -108,7 +110,7 @@ class Giftcard extends AbstractHelper
      */
     public function checkGiftCardBalanceStatus($giftCardCode)
     {
-        $headers = ["Content-Type" => "application/json"];
+        $headers = ["Content-Type" => self::CONTENT_TYPE];
         $this->curl->setHeaders($headers);
 
         $params = [
@@ -116,7 +118,7 @@ class Giftcard extends AbstractHelper
             "xKey" => $this->getTransactionKey(),
             "xVersion" => self::CARDKNOX_X_VERSION,
             "xSoftwareName" => $this->getMagentoEditionVersion(),
-            "xSoftwareVersion" => "1.2.69",
+            "xSoftwareVersion" => self::XSOFTWARE_VERSION,
             "xCommand" => "gift:balance",
             "xExistingCustomer" => "TRUE",
             "xTimeoutSeconds" => "10",
@@ -173,15 +175,15 @@ class Giftcard extends AbstractHelper
         $shipping = $order->getShippingAddress();
         $ipAddress = $this->helper->getIpAddress();
 
-        $headers = ["Content-Type" => "application/json"];
+        $headers = ["Content-Type" => self::CONTENT_TYPE];
         $this->curl->setHeaders($headers);
 
         $params = [
             "xCardNum" => $ckGiftCardCode,
             "xKey" => $this->getTransactionKey(),
             "xSoftwareName" => $this->getMagentoEditionVersion(),
-            "xSoftwareVersion" => "1.2.69",
-            'xVersion' => '4.5.8',
+            "xSoftwareVersion" => self::XSOFTWARE_VERSION,
+            'xVersion' => self::CARDKNOX_X_VERSION,
             'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
             'xSupports64BitRefnum' => true,
             "xCommand" => "gift:redeem",
@@ -224,9 +226,7 @@ class Giftcard extends AbstractHelper
         $this->curl->post(self::CARDKNOX_API_URL, $giftcardRedeemParams);
 
         $response = $this->curl->getBody();
-        $responseBody = json_decode($response, true);
-
-        return $responseBody;
+        return json_decode($response, true);
     }
 
     /**
@@ -313,7 +313,7 @@ class Giftcard extends AbstractHelper
         $shipping = $order->getShippingAddress();
         $ipAddress = $this->helper->getIpAddress();
         $ckGiftCardCode = $order->getCkgiftcardCode();
-        $headers = ["Content-Type" => "application/json"];
+        $headers = ["Content-Type" => self::CONTENT_TYPE];
         $this->curl->setHeaders($headers);
         $xTimeoutSeconds = "10";
 
@@ -334,8 +334,8 @@ class Giftcard extends AbstractHelper
             "xCardNum" => $ckGiftCardCode,
             "xKey" => $this->getTransactionKey(),
             "xSoftwareName" => $this->getMagentoEditionVersion(),
-            "xSoftwareVersion" => "1.2.69",
-            'xVersion' => '4.5.8',
+            "xSoftwareVersion" => self::XSOFTWARE_VERSION,
+            'xVersion' => self::CARDKNOX_X_VERSION,
             'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
             'xSupports64BitRefnum' => true,
             "xCommand" => "gift:issue",
@@ -389,9 +389,7 @@ class Giftcard extends AbstractHelper
         $this->curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
 
         $response = $this->curl->getBody();
-        $responseBody = json_decode($response, true);
-
-        return $responseBody;
+        return json_decode($response, true);
     }
 
     /**

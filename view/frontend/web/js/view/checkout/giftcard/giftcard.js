@@ -43,11 +43,11 @@ define([
          */
         initialize: function () {
             this._super();
-            var grandTotal = quote.totals().grand_total;
+            let grandTotal = quote.totals().grand_total;
             console.log("grandTotal :- " + grandTotal);
             $('#cancel-gift-card').trigger('click');
             if (this.isDisplayedCKGiftcard() === false) {
-                var sections = ['cart'];
+                let sections = ['cart'];
                 customerData.reload(sections, true);
             }
         },

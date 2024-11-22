@@ -69,9 +69,9 @@ define([
          * @private
          */
         _processGiftCard: function (ajaxUrl, actionType) {
-            var self = this;
-            var formElement = this._getFormElement();
-            var formData = this._collectFormData(formElement);
+            let self = this;
+            let formElement = this._getFormElement();
+            let formData = this._collectFormData(formElement);
 
             if (!this.element.validation().valid()) {
                 return;
@@ -108,8 +108,8 @@ define([
          * @private
          */
         _handleResponse: function (response, actionType, formElement) {
-            var messageType = response.success ? 'success' : 'error';
-            var responseMessageHtml = this._responseMessageHtml(messageType, response.message);
+            let messageType = response.success ? 'success' : 'error';
+            let responseMessageHtml = this._responseMessageHtml(messageType, response.message);
             $(this.options.giftCardStatusId).html(responseMessageHtml);
 
             this._reloadCartAndTotals();
@@ -157,9 +157,9 @@ define([
          * @private
          */
         _collectFormData: function (formElement) {
-            var formData = {};
-            var self = this;
-            var selectedMethod = $('input[type="radio"][name^="ko_unique_"]:checked').val();
+            let formData = {};
+            let self = this;
+            let selectedMethod = $('input[type="radio"][name^="ko_unique_"]:checked').val();
 
             if (formElement) {
                 $(formElement).find('input').each(function () {
