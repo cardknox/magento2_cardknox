@@ -16,23 +16,14 @@ class UpdateOrderGiftCardCreditmemoAmount implements ObserverInterface
     protected $helper;
 
     /**
-     *
-     * @var Magento\Sales\Api\OrderRepositoryInterface
-     */
-    protected $orderRepository;
-
-    /**
      * Constructor
      *
      * @param Giftcard $helper
-     * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
-        Giftcard $helper,
-        OrderRepositoryInterface $orderRepository
+        Giftcard $helper
     ) {
         $this->helper = $helper;
-        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -58,27 +49,12 @@ class UpdateOrderGiftCardCreditmemoAmount implements ObserverInterface
 
             $order->setCkgiftCardsRefunded($order->getCkgiftCardsRefunded() + $creditmemo->getCkgiftcardAmount());
 
-            // gift:issue
-            $this->giftIssue($giftIssueAmount, $order);
+            if ($giftIssueAmount > 0) {
+                // gift:issue
+                $this->helper->giftIssue($giftIssueAmount, $order);
+            }
         }
 
         return $this;
-    }
-
-    /**
-     * Gift:issue while credit memo generate function
-     *
-     * @param int|float|mixed $giftIssueAmount
-     * @param mixed $order
-     * @return void
-     */
-    protected function giftIssue($giftIssueAmount, $order)
-    {
-        $this->helper->giftAmountRefund($giftIssueAmount, $order);
-        $ckGiftCardCode = $order->getCkgiftcardCode();
-        $giftCardAmountWithCurrency = $this->helper->getFormattedAmount($giftIssueAmount);
-        $ckGiftcardComment = 'The Cardknox gift card with code <b>'.$ckGiftCardCode.'</b> has been successfully issued for an amount of <b>'.$giftCardAmountWithCurrency.'</b>.';
-        $order->addStatusHistoryComment($ckGiftcardComment);
-        $this->orderRepository->save($order);
     }
 }

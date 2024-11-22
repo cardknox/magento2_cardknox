@@ -9,7 +9,7 @@ use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Quote\Api\CartRepositoryInterface;
-
+use Magento\Sales\Api\OrderRepositoryInterface;
 class Giftcard extends AbstractHelper
 {
     public const CARDKNOX_API_URL = 'https://x1.cardknox.com/gatewayjson';
@@ -42,12 +42,18 @@ class Giftcard extends AbstractHelper
     protected $quoteRepository;
 
     /**
+     * @var \Magento\Sales\Api\OrderRepositoryInterface
+     */
+    protected $orderRepository;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Framework\HTTP\Client\Curl $curl
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
      * @param \Magento\Framework\Pricing\Helper\Data $priceHelper
      * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
      * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+     * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      */
     public function __construct(
         Context $context,
@@ -55,13 +61,15 @@ class Giftcard extends AbstractHelper
         ProductMetadataInterface $productMetadata,
         PriceHelper $priceHelper,
         CardknoxDataHelper $helper,
-        CartRepositoryInterface $quoteRepository
+        CartRepositoryInterface $quoteRepository,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->curl = $curl;
         $this->productMetadata = $productMetadata;
         $this->priceHelper = $priceHelper;
         $this->helper = $helper;
         $this->quoteRepository = $quoteRepository;
+        $this->orderRepository = $orderRepository;
         parent::__construct($context);
     }
 
@@ -299,7 +307,7 @@ class Giftcard extends AbstractHelper
      * @param mixed $order
      * @return mixed
      */
-    public function giftAmountRefund($ckGiftCardAmount, $order)
+    public function giftAmountReIssue($ckGiftCardAmount, $order)
     {
         $billing = $order->getBillingAddress();
         $shipping = $order->getShippingAddress();
@@ -384,5 +392,22 @@ class Giftcard extends AbstractHelper
         $responseBody = json_decode($response, true);
 
         return $responseBody;
+    }
+
+    /**
+     * Gift:issue while credit memo|void generate function
+     *
+     * @param int|float|mixed $giftIssueAmount
+     * @param mixed $order
+     * @return void
+     */
+    public function giftIssue($giftIssueAmount, $order)
+    {
+        $this->giftAmountReIssue($giftIssueAmount, $order);
+        $ckGiftCardCode = $order->getCkgiftcardCode();
+        $giftCardAmountWithCurrency = $this->getFormattedAmount($giftIssueAmount);
+        $ckGiftcardComment = 'The Cardknox gift card with code <b>'.$ckGiftCardCode.'</b> has been successfully issued for an amount of <b>'.$giftCardAmountWithCurrency.'</b>.';
+        $order->addStatusHistoryComment($ckGiftcardComment);
+        $this->orderRepository->save($order);
     }
 }
