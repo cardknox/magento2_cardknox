@@ -4,7 +4,7 @@
 define([
     "jquery",
     "ifields",
-    "Magento_Checkout/js/model/quote",
+    "Magento_Checkout/js/model/quote"
 ],function ($,ifields,quote) {
     'use strict';
     let gPayConfig = window.checkoutConfig.payment.cardknox_google_pay;
@@ -52,12 +52,32 @@ define([
             } else {
                 countryCode = 'US';
             }
+            let currencyCode = quoteData.base_currency_code.toString();
+            const isEnabledShowSummary = gPayConfig.isEnabledGooglePayShowSummary ? gPayConfig.isEnabledGooglePayShowSummary : "";
+
+            if (!isEnabledShowSummary) {
+                let grandTotalAmount = getGrandTotalAmount();
+                return {
+                    displayItems: [
+                        {
+                            label: "Grandtotal",
+                            type: "SUBTOTAL",
+                            price: grandTotalAmount.toString(),
+                        }
+                    ],
+                    countryCode: countryCode,
+                    currencyCode: currencyCode,
+                    totalPriceStatus: "FINAL",
+                    totalPrice: grandTotalAmount.toString(),
+                    totalPriceLabel: "Total"
+                }
+            }
 
             let taxAmount = getTaxAmount();
             let discountAmount = getDiscountAmount();
 
             let shippingPrice = getShippingPrice();
-            const isEnabledShowSummary = gPayConfig.isEnabledGooglePayShowSummary ? gPayConfig.isEnabledGooglePayShowSummary : "";
+
             const lineItems = [
                 {
                     label: isEnabledShowSummary ? 'Subtotal' :'',
@@ -85,6 +105,19 @@ define([
                 });
             }
 
+            const isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
+
+            if (isEnabledCardknoxGiftcard) {
+                let giftcardAmount = getGiftcardAmount();
+                if (giftcardAmount > 0) {
+                    giftcardAmount = -giftcardAmount;
+                    lineItems.push({
+                        label: isEnabledShowSummary ? 'Gift Card' :'',
+                        type: 'LINE_ITEM',
+                        price: giftcardAmount.toString()
+                    });
+                }
+            }
             lineItems.push(taxLineItem);
 
             let totalAmount = 0;
@@ -96,7 +129,7 @@ define([
             return {
                 displayItems: lineItems,
                 countryCode: countryCode,
-                currencyCode: quoteData.base_currency_code.toString(),
+                currencyCode: currencyCode,
                 totalPriceStatus: 'FINAL',
                 totalPrice: totalAmount,
                 totalPriceLabel: 'GrandTotal'
@@ -233,7 +266,26 @@ define([
             shipping_amount = (totals || quote)['shipping_amount'];
         return parseFloat(shipping_amount).toFixed(2);
     }
+    function getGiftcardAmount() {
+        let totalSegments = quote.totals()['total_segments'];
+        let giftcard_amount = 0;
+        if (totalSegments && totalSegments.length) {
+            // Find the segment with code 'ckgiftcard'
+            var giftCardSegment = totalSegments.find(function (segment) {
+                return segment.code === 'ckgiftcard';
+            });
 
+            if (giftCardSegment) {
+                giftcard_amount = giftCardSegment.value;
+            }
+        }
+        return parseFloat(giftcard_amount).toFixed(2);
+    }
+    function getGrandTotalAmount() {
+        var totals = quote.totals();
+        var base_grand_total = (totals ? totals : quote)['base_grand_total'];
+        return parseFloat(base_grand_total).toFixed(2);
+    }
     function isExistLastNameShippingAddress(data) {
         let address = data.paymentData.shippingAddress;
         let addressNameArray = [];
