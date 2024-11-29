@@ -32,7 +32,7 @@ class GiftIssueOnVoidPayment implements \Magento\Framework\Event\ObserverInterfa
         $payment = $observer->getEvent()->getPayment(); // Get payment object
         $order = $payment->getOrder();
         $giftIssueAmount = $order->getCkgiftcardAmount();
-        if($giftIssueAmount > 0){
+        if ($giftIssueAmount > 0) {
             // gift:issue
             $this->helper->giftIssue($giftIssueAmount, $order);
         }

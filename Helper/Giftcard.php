@@ -309,86 +309,96 @@ class Giftcard extends AbstractHelper
      */
     public function giftAmountReIssue($ckGiftCardAmount, $order)
     {
-        $billing = $order->getBillingAddress();
-        $shipping = $order->getShippingAddress();
-        $ipAddress = $this->helper->getIpAddress();
-        $ckGiftCardCode = $order->getCkgiftcardCode();
-        $headers = ["Content-Type" => self::CONTENT_TYPE];
-        $this->curl->setHeaders($headers);
-        $xTimeoutSeconds = "10";
 
-        // Billing Params
-        $xBillFirstName = $billing->getFirstname();
-        $xBillLastName = $billing->getLastname();
-        $xBillCompany = $billing->getCompany();
-        $xBillStreet = $billing->getStreetLine1();
-        $xBillStreet2 = $billing->getStreetLine2();
-        $xBillCity = $billing->getCity();
-        $xBillState = $billing->getRegionCode();
-        $xBillZip = $billing->getPostcode();
-        $xBillCountry= $billing->getCountryId();
-        $xBillPhone = $billing->getTelephone();
-        $xEmail = $billing->getEmail();
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/CKGiftcard_ReIssue.log');
+        $logger = new \Zend_Log();
+        $logger->addWriter($writer);
+        $response = [];
+        try {
+            $billing = $order->getBillingAddress();
+            $shipping = $order->getShippingAddress();
+            $ipAddress = $this->helper->getIpAddress();
+            $ckGiftCardCode = $order->getCkgiftcardCode();
+            $headers = ["Content-Type" => self::CONTENT_TYPE];
+            $this->curl->setHeaders($headers);
+            $xTimeoutSeconds = "10";
 
-        $params = [
-            "xCardNum" => $ckGiftCardCode,
-            "xKey" => $this->getTransactionKey(),
-            "xSoftwareName" => $this->getMagentoEditionVersion(),
-            "xSoftwareVersion" => self::XSOFTWARE_VERSION,
-            'xVersion' => self::CARDKNOX_X_VERSION,
-            'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
-            'xSupports64BitRefnum' => true,
-            "xCommand" => "gift:issue",
-            "xAmount" =>  $ckGiftCardAmount,
-            "xOrderID" =>  $order->getIncrementId(),
-            "xExistingCustomer" => "TRUE",
-            "xTimeoutSeconds" => $xTimeoutSeconds,
-            'xBillFirstName' => $xBillFirstName,
-            'xBillLastName' => $xBillLastName,
-            'xBillCompany' => $xBillCompany,
-            'xBillStreet' => $xBillStreet,
-            'xBillStreet2' => $xBillStreet2,
-            'xBillCity' => $xBillCity,
-            'xBillState' => $xBillState,
-            'xBillZip' => $xBillZip,
-            'xBillCountry'=> $xBillCountry,
-            'xBillPhone' => $xBillPhone,
-            'xEmail' => $xEmail,
-        ];
+            // Billing Params
+            $xBillFirstName = $billing->getFirstname();
+            $xBillLastName = $billing->getLastname();
+            $xBillCompany = $billing->getCompany();
+            $xBillStreet = $billing->getStreetLine1();
+            $xBillStreet2 = $billing->getStreetLine2();
+            $xBillCity = $billing->getCity();
+            $xBillState = $billing->getRegionCode();
+            $xBillZip = $billing->getPostcode();
+            $xBillCountry= $billing->getCountryId();
+            $xBillPhone = $billing->getTelephone();
+            $xEmail = $billing->getEmail();
 
-        if ($shipping != "") {
-            // Shipping Params
-            $xShipFirstName = $shipping->getFirstname();
-            $xShipLastName = $shipping->getLastname();
-            $xShipCompany = $shipping->getCompany();
-            $xShipStreet = $shipping->getStreetLine1();
-            $xShipStreet2= $shipping->getStreetLine2();
-            $xShipCity = $shipping->getCity();
-            $xShipState = $shipping->getRegionCode();
-            $xShipZip = $shipping->getPostcode();
-            $xShipCountry = $shipping->getCountryId();
-
-            $shippingParams = [
-                'xShipFirstName' => $xShipFirstName,
-                'xShipLastName' => $xShipLastName,
-                'xShipCompany' => $xShipCompany,
-                'xShipStreet' => $xShipStreet,
-                'xShipStreet2'=> $xShipStreet2,
-                'xShipCity' => $xShipCity,
-                'xShipState' => $xShipState,
-                'xShipZip' => $xShipZip,
-                'xShipCountry' => $xShipCountry,
+            $params = [
+                "xCardNum" => $ckGiftCardCode,
+                "xKey" => $this->getTransactionKey(),
+                "xSoftwareName" => $this->getMagentoEditionVersion(),
+                "xSoftwareVersion" => self::XSOFTWARE_VERSION,
+                'xVersion' => self::CARDKNOX_X_VERSION,
+                'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
+                'xSupports64BitRefnum' => true,
+                "xCommand" => "gift:issue",
+                "xAmount" =>  $ckGiftCardAmount,
+                "xOrderID" =>  $order->getIncrementId(),
+                "xExistingCustomer" => "TRUE",
+                "xTimeoutSeconds" => $xTimeoutSeconds,
+                'xBillFirstName' => $xBillFirstName,
+                'xBillLastName' => $xBillLastName,
+                'xBillCompany' => $xBillCompany,
+                'xBillStreet' => $xBillStreet,
+                'xBillStreet2' => $xBillStreet2,
+                'xBillCity' => $xBillCity,
+                'xBillState' => $xBillState,
+                'xBillZip' => $xBillZip,
+                'xBillCountry'=> $xBillCountry,
+                'xBillPhone' => $xBillPhone,
+                'xEmail' => $xEmail,
             ];
-        } else {
-            $shippingParams = [];
+
+            if ($shipping != "") {
+                // Shipping Params
+                $xShipFirstName = $shipping->getFirstname();
+                $xShipLastName = $shipping->getLastname();
+                $xShipCompany = $shipping->getCompany();
+                $xShipStreet = $shipping->getStreetLine1();
+                $xShipStreet2= $shipping->getStreetLine2();
+                $xShipCity = $shipping->getCity();
+                $xShipState = $shipping->getRegionCode();
+                $xShipZip = $shipping->getPostcode();
+                $xShipCountry = $shipping->getCountryId();
+
+                $shippingParams = [
+                    'xShipFirstName' => $xShipFirstName,
+                    'xShipLastName' => $xShipLastName,
+                    'xShipCompany' => $xShipCompany,
+                    'xShipStreet' => $xShipStreet,
+                    'xShipStreet2'=> $xShipStreet2,
+                    'xShipCity' => $xShipCity,
+                    'xShipState' => $xShipState,
+                    'xShipZip' => $xShipZip,
+                    'xShipCountry' => $xShipCountry,
+                ];
+            } else {
+                $shippingParams = [];
+            }
+
+            $params = array_merge_recursive($params, $shippingParams);
+
+            $giftcardIssueParams = json_encode($params);
+            $this->curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
+
+            $response = $this->curl->getBody();
+            $logger->info('Gift card reissue sucessfully: ' . $response);
+        } catch (\Exception $e) {
+            $logger->info('Gift card reissue failed: ' . $e->getMessage());
         }
-
-        $params = array_merge_recursive($params, $shippingParams);
-
-        $giftcardIssueParams = json_encode($params);
-        $this->curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
-
-        $response = $this->curl->getBody();
         return json_decode($response, true);
     }
 
@@ -401,11 +411,31 @@ class Giftcard extends AbstractHelper
      */
     public function giftIssue($giftIssueAmount, $order)
     {
-        $this->giftAmountReIssue($giftIssueAmount, $order);
+        $result = $this->giftAmountReIssue($giftIssueAmount, $order);
+
         $ckGiftCardCode = $order->getCkgiftcardCode();
         $giftCardAmountWithCurrency = $this->getFormattedAmount($giftIssueAmount);
-        $ckGiftcardComment = 'The Cardknox gift card with code <b>'.$ckGiftCardCode.'</b> has been successfully issued for an amount of <b>'.$giftCardAmountWithCurrency.'</b>.';
-        $order->addStatusHistoryComment($ckGiftcardComment);
-        $this->orderRepository->save($order);
+        $ckGiftcardComment = null;
+        // Handle error status
+        if ($result['xStatus'] === "Error") {
+            $ckGiftcardComment = sprintf(
+                'The Cardknox gift card issue error occurred. xErrorCode: %s, xError: <b>%s</b>',
+                $result['xError'],
+                $result['xError']
+            );
+        }
+        // Handle approved status
+        if ($result['xStatus'] === "Approved") {
+            $ckGiftcardComment = sprintf(
+                'The Cardknox gift card with code <b>%s</b> has been successfully issued for an amount of <b>%s</b>. Transaction ID: %s.',
+                $result['xMaskedCardNumber'],
+                $giftCardAmountWithCurrency,
+                $result['xRefNum'],
+            );
+        }
+        if (!empty($ckGiftcardComment)) {
+            $order->addStatusHistoryComment($ckGiftcardComment);
+            $this->orderRepository->save($order);
+        }
     }
 }

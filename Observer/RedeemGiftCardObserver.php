@@ -96,14 +96,37 @@ class RedeemGiftCardObserver implements ObserverInterface
                 $ckGiftCardBaseAmount = $quote->getCkgiftcardBaseAmount();
 
                 $ckGiftCardAmountWithCurrency = $this->_giftcardHelper->getFormattedAmount($ckGiftCardAmount);
-                $ckGiftcardComment = 'The Cardknox gift card with code <b>'.$ckGiftCardCode.'</b> has been successfully redeemed for an amount of <b>'.$ckGiftCardAmountWithCurrency.'</b>.';
 
                 if ($ckGiftCardCode && $ckGiftCardAmount > 0) {
-                    $this->redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order);
-                    $order->addStatusHistoryComment($ckGiftcardComment);
-                    $order->setCkgiftcardCode($ckGiftCardCode);
-                    $order->setCkgiftcardAmount($ckGiftCardAmount);
-                    $order->setCkgiftcardBaseAmount($ckGiftCardBaseAmount);
+                    $result = $this->redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order);
+                    $ckGiftcardComment = null;
+
+                    // Handle error status
+                    if ($result['xStatus'] === "Error") {
+                        $ckGiftcardComment = sprintf(
+                            'The Cardknox gift card redeem error occurred. xErrorCode: %s, xError: <b>%s</b>',
+                            $result['xError'],
+                            $result['xError']
+                        );
+                    }
+
+                    // Handle approved status
+                    if ($result['xStatus'] === "Approved") {
+                        $ckGiftcardComment = sprintf(
+                            'The Cardknox gift card with code <b>%s</b> has been successfully redeemed for an amount of <b>%s</b>. Transaction ID: %s.',
+                            $result['xMaskedCardNumber'],
+                            $ckGiftCardAmountWithCurrency,
+                            $result['xRefNum'],
+                        );
+                        $order->setCkgiftcardCode($ckGiftCardCode)
+                              ->setCkgiftcardAmount($ckGiftCardAmount)
+                              ->setCkgiftcardBaseAmount($ckGiftCardBaseAmount);
+                    }
+                    // Add comment to ticket
+                    if (!empty($ckGiftcardComment)) {
+                        $order->addStatusHistoryComment($ckGiftcardComment);
+                    }
+                    // Save the order
                     $this->orderRepository->save($order);
 
                     // Delete the gift card code and amount in the session
@@ -114,7 +137,7 @@ class RedeemGiftCardObserver implements ObserverInterface
                 }
             }
         } catch (\Exception $e) {
-            $this->logger->error('Gift card redemption failed: ' . $e->getMessage());
+            $logger->error('Gift card redemption failed: ' . $e->getMessage());
         }
     }
 
@@ -133,8 +156,10 @@ class RedeemGiftCardObserver implements ObserverInterface
         $logger = new \Zend_Log();
         $logger->addWriter($writer);
         $orderIncrementId = $order->getIncrementId();
+        $apiResponse = [];
         try {
             $apiResponse = $this->_giftcardHelper->redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order);
+            $logger->info(print_r($apiResponse, true));
             if ($apiResponse['xStatus'] == "Approved") {
                 $logger->info("SUCCESS:: Gift card amount redeem for order #".$orderIncrementId);
                 $apiResponseData = [
@@ -153,8 +178,10 @@ class RedeemGiftCardObserver implements ObserverInterface
                 ];
                 $logger->info(print_r($apiResponseData, true));
             }
+            return $apiResponse;
         } catch (LocalizedException $e) {
             $logger->info(print_r($e->getMessage(), true));
+            return $apiResponse;
         }
     }
 }
