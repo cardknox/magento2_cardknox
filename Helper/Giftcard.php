@@ -188,7 +188,7 @@ class Giftcard extends AbstractHelper
             'xSupports64BitRefnum' => true,
             "xCommand" => "gift:redeem",
             "xAmount" =>  $ckGiftCardAmount,
-            "xOrderID" =>  $order->getIncrementId(),
+            "xInvoice" =>  $order->getIncrementId(),
             "xExistingCustomer" => "TRUE",
             "xTimeoutSeconds" => "10",
             'xBillFirstName' => $billing->getFirstname(),
@@ -346,7 +346,7 @@ class Giftcard extends AbstractHelper
                 'xSupports64BitRefnum' => true,
                 "xCommand" => "gift:issue",
                 "xAmount" =>  $ckGiftCardAmount,
-                "xOrderID" =>  $order->getIncrementId(),
+                "xInvoice" =>  $order->getIncrementId(),
                 "xExistingCustomer" => "TRUE",
                 "xTimeoutSeconds" => $xTimeoutSeconds,
                 'xBillFirstName' => $xBillFirstName,
@@ -419,7 +419,7 @@ class Giftcard extends AbstractHelper
         // Handle error status
         if ($result['xStatus'] === "Error") {
             $ckGiftcardComment = sprintf(
-                'The Cardknox gift card issue error occurred. xErrorCode: %s, xError: <b>%s</b>',
+                'Gift card issue failed. xErrorCode: %s, xError: %s',
                 $result['xError'],
                 $result['xError']
             );
@@ -427,7 +427,7 @@ class Giftcard extends AbstractHelper
         // Handle approved status
         if ($result['xStatus'] === "Approved") {
             $ckGiftcardComment = sprintf(
-                'The Cardknox gift card with code <b>%s</b> has been successfully issued for an amount of <b>%s</b>. Transaction ID: %s.',
+                'Gift card %s has been successfully issued for an amount of %s. Transaction ID: %s.',
                 $result['xMaskedCardNumber'],
                 $giftCardAmountWithCurrency,
                 $result['xRefNum'],

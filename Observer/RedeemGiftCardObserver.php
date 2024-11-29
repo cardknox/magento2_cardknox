@@ -104,7 +104,7 @@ class RedeemGiftCardObserver implements ObserverInterface
                     // Handle error status
                     if ($result['xStatus'] === "Error") {
                         $ckGiftcardComment = sprintf(
-                            'The Cardknox gift card redeem error occurred. xErrorCode: %s, xError: <b>%s</b>',
+                            'The Cardknox gift card redeem error occurred. xErrorCode: %s, xError: %s',
                             $result['xError'],
                             $result['xError']
                         );
@@ -113,9 +113,9 @@ class RedeemGiftCardObserver implements ObserverInterface
                     // Handle approved status
                     if ($result['xStatus'] === "Approved") {
                         $ckGiftcardComment = sprintf(
-                            'The Cardknox gift card with code <b>%s</b> has been successfully redeemed for an amount of <b>%s</b>. Transaction ID: %s.',
-                            $result['xMaskedCardNumber'],
+                            'Gift Card Authorized amount of %s. %s. Transaction ID: %s.',
                             $ckGiftCardAmountWithCurrency,
+                            $result['xMaskedCardNumber'],
                             $result['xRefNum'],
                         );
                         $order->setCkgiftcardCode($ckGiftCardCode)
