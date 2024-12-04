@@ -17,6 +17,7 @@ define(
         'ko',
         'Magento_Checkout/js/action/redirect-on-success',
         'Magento_Checkout/js/model/payment/additional-validators',
+        'mage/url'
     ],
     function (
         Component,
@@ -29,9 +30,71 @@ define(
         VaultEnabler,
         ko,
         redirectOnSuccessAction,
-        additionalValidators
+        additionalValidators,
+        urlBuilder
     ) {
         'use strict';
+
+        function handle3DSResults(
+            actionCode,
+            xCavv,
+            xEciFlag,
+            xRefNum,
+            xAuthenticateStatus,
+            xSignatureVerification
+        ) {
+            const postData = {
+                xKey: "logictechnpvtltddevf0475ff1f7664381aeb00110fc",
+                xRefNum: xRefNum,
+                xCavv: xCavv,
+                xEci: xEciFlag,
+                x3dsAuthenticationStatus: xAuthenticateStatus,
+                x3dsSignatureVerificationStatus: xSignatureVerification,
+                x3dsActionCode: actionCode,
+                x3dsError: ck3DS.error,
+                xVersion: '4.5.8',
+                xSoftwareName: 'Magento',
+                xSoftwareVersion: '1.0.27',
+                xAllowDuplicate: 1,
+            };
+        
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: urlBuilder.build('/cardknox/index/verifythreeds'),
+                data: postData,
+                success: function (resp) {
+                    if (resp.xResult == "E" || resp.xResult == "D") {
+                    //   $("#wc-cardknox-cc-form").after(
+                    //     '<p style="color: red;">' + resp.xError + "</p>"
+                    //   );
+                    // $(".woocommerce-error, .woocommerce-message").remove();
+                    // $("form.checkout")
+                    //     .prev(".woocommerce-notices-wrapper")
+                    //     .append(
+                    //     '<ul class="woocommerce-error" role="alert"><li>' +
+                    //         resp.xError +
+                    //         "</li></ul>"
+                    //     );
+                    }
+                    if (resp.xResult == "A") {
+                    window.location.href = resp.redirect;
+                    }
+                },
+            });
+        }
+
+        function urlEncodedToJson(data) {
+            return JSON.parse(
+            '{"' +
+                decodeURI(data)
+                .replace(/"/g, '\\"')
+                .replace(/&/g, '","')
+                .replace(/=/g, '":"') +
+                '"}'
+            );
+        }
+
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
             cvvIsValid: ko.observable(false),
@@ -237,6 +300,11 @@ define(
                     clearInterval(checkCardLoaded);
                     focusIfield('card-number');
                 }, 1000);
+                let isEnabledThreeDSEnabled = window.checkoutConfig.payment.cardknox.isEnabledThreeDSEnabled;
+                if (isEnabledThreeDSEnabled == true) {
+                    let threeDSEnvironment = window.checkoutConfig.payment.cardknox.ThreeDSEnvironment;
+                    enable3DS("staging", handle3DSResults);
+                }
             },
             /**
              * Prepare data to place order

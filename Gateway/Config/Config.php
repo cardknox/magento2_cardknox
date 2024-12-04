@@ -19,6 +19,8 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public const CC_PAYMENT_ACTION = "payment_action";
     public const CC_SPLIT_CAPTURE_ENABLED = "split_capture_enabled";
     public const CC_SELECT_RECAPTCHA_SOURCE = "select_recaptcha_source";
+    public const CARDKNOX_ENABLE_THREE_D_SECURE = "cardknox_enable_three_d_secure";
+    public const CARDKNOX_THREE_D_SECURE_ENVIRONMENT = "cardknox_three_d_secure_environment";
 
     /**
      * IsActive function
@@ -124,5 +126,25 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function getSelectReCaptchaSource()
     {
         return $this->getValue(self::CC_SELECT_RECAPTCHA_SOURCE);
+    }
+
+    /**
+     * IsActive 3D secure function
+     *
+     * @return boolean
+     */
+    public function isEnable3DSecure()
+    {
+        return (bool) $this->getValue(self::CARDKNOX_ENABLE_THREE_D_SECURE);
+    }
+
+    /**
+     * Get 3D secure environment function
+     *
+     * @return string
+     */
+    public function get3DSecureEnvironment()
+    {
+        return $this->getValue(self::CARDKNOX_THREE_D_SECURE_ENVIRONMENT);
     }
 }

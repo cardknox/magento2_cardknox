@@ -19,6 +19,7 @@ class ResponseCodeValidator extends AbstractValidator
     public const DECLINE = 'D';
     public const ERROR = 'E';
     public const SUCCESS = 'A';
+    public const VERIFY = 'V';
 
     /**
      * Logger variable
@@ -54,6 +55,23 @@ class ResponseCodeValidator extends AbstractValidator
         }
 
         $response = $validationSubject['response'];
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/cccc.log');
+        $logger = new \Zend_Log();
+        $logger->addWriter($writer);
+        $logger->info('starttttt');
+        $logger->info(print_r($response, true));
+        if ($this->isVerifyTransaction($response)) {
+            $log['Successful Transaction - 3D Secure Verification'] = $this->isVerifyTransaction($response);
+            $this->logger->debug($log);
+            $threeDSResult = $this->createResult(
+                true,
+                $this->get3DsVerifyResponse($response),
+                $this->getErrorCode($response)
+            );
+            $logger->info(print_r($threeDSResult, true));
+            return $threeDSResult;
+        }
+
         $log['Successful Transaction'] = $this->isSuccessfulTransaction($response);
         $this->logger->debug($log);
         if ($this->isSuccessfulTransaction($response)) {
@@ -102,5 +120,30 @@ class ResponseCodeValidator extends AbstractValidator
     {
         $errorCode = (isset($response['xErrorCode']) ? $response['xErrorCode'] : "");
         return [__($errorCode)];
+    }
+
+    /**
+     * IsVerifyTransaction
+     *
+     * @param array $response
+     * @return bool
+     */
+    private function isVerifyTransaction(array $response)
+    {
+        return isset($response[self::RESULT_CODE])
+        && $response[self::RESULT_CODE] == self::VERIFY;
+    }
+
+    /**
+     * Get3DsVerifyResponse function
+     *
+     * @param array $response
+     * @return array
+     */
+    private function get3DsVerifyResponse(array $response)
+    {
+        $errorMessage = (isset($response['xResult']) ? $response['xResult'] : "");
+        $refnum = (isset($response['xStatus']) ? $response['xStatus'] : "");
+        return [__("ck-3ds-".$errorMessage . "-" . $refnum)];
     }
 }

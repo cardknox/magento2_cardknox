@@ -55,6 +55,23 @@
                 <field id="cgi_url" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Cardknox Gateway Endpoint</label>
                 </field>
+                <field id="cardknox_enable_three_d_secure" translate="label" type="select" sortOrder="112" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable 3D Secure</label>
+                    <config_path>payment/cardknox/cardknox_enable_three_d_secure</config_path>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="cardknox_three_d_secure_environment" type="select" showInDefault="1" showInWebsite="1" showInStore="0" sortOrder="113">
+                        <label>3D Secure Environment </label>
+                        <source_model>CardknoxDevelopment\Cardknox\Model\Config\Backend\Source\ThreeDSecureEnvironment</source_model>
+                        <config_path>payment/cardknox/cardknox_three_d_secure_environment</config_path>
+                        <depends>
+                            <field id="active">1</field>
+                            <field id="cardknox_enable_three_d_secure">1</field>
+                        </depends>
+                    </field>
                 <field id="recaptchaEnabled" translate="label comment" type="select" sortOrder="151" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Google reCAPTCHA V2 Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

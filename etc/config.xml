@@ -40,6 +40,8 @@
                 <paymentInfoKeys>xCardType,xMaskedCardNumber,xAuthAmount,xAuthCode,xBatch,xAvsResult,xAvsResultCode,xCvvResult,xCvvResultCode,xExp,xRefNum</paymentInfoKeys>
                 <debugReplaceKeys>xKey,xCardNum,xCvv</debugReplaceKeys>
                 <recaptchaEnabled></recaptchaEnabled>
+                <cardknox_enable_three_d_secure>0</cardknox_enable_three_d_secure>
+                <cardknox_three_d_secure_environment>production</cardknox_three_d_secure_environment>
                 <visible_api_key></visible_api_key>
                 <visible_api_secret></visible_api_secret>
                 <select_recaptcha_source>google.com</select_recaptcha_source>
