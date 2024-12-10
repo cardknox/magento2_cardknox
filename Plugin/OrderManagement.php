@@ -105,7 +105,7 @@ class OrderManagement
      *
      * @param int $storeId
      * @param int $quoteId
-     * @return void
+     * @return mixed
      */
     public function getQuote($storeId, $quoteId)
     {

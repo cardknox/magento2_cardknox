@@ -1,0 +1,9 @@
+<!-- ko if: isDisplayedCardknoxGiftcard() && getHandlingfeeTotal() > 0 -->
+<tr class="totals coupon-fee excl">
+    <th class="mark" colspan="1" scope="row"><span class="title"><!-- ko i18n: 'Gift Card'--><!-- /ko --></span></th>
+
+    <td class="amount">
+        <span class="price" data-bind="text: getFormattedHandlingfeeTotal(), attr: {'data-th': ckgiftcard}"></span>
+    </td>
+</tr>
+<!-- /ko -->
