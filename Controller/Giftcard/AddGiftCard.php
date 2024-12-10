@@ -162,7 +162,7 @@ class AddGiftCard extends Action
         }
 
         if ($activationStatus === 'Inactive') {
-            return $this->jsonResponse(false, __('Your gift card account is inactive. Please activate it before proceeding.'));
+            return $this->jsonResponse(false, __('Your gift card account is inactive'));
         }
 
         if ((float)$remainingBalance === 0.0) {
