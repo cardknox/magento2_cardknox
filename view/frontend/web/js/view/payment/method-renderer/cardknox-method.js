@@ -57,7 +57,7 @@ define(
                 xSoftwareVersion: '1.0.27',
                 xAllowDuplicate: 1,
             };
-        
+            console.log('3ds-verify', postData)
             $.ajax({
                 type: "post",
                 dataType: "json",
@@ -78,7 +78,7 @@ define(
                     //     );
                     }
                     if (resp.xResult == "A") {
-                    window.location.href = resp.redirect;
+                        window.location.href = resp.redirect;
                     }
                 },
             });
@@ -365,7 +365,7 @@ define(
                             //onSuccess
                             //perform your own validation here...
                             self.isPlaceOrderActionAllowed(true);
-                            
+
                             /**
                              * Validation
                              * Place Order action
@@ -391,6 +391,8 @@ define(
                                         }
                                     ).fail(
                                         function (response) {
+                                            console.log('failed-response', response)
+                                            verify3DS(response);
                                             self.isPlaceOrderActionAllowed(true);
                                             var error = response.responseJSON.message;
                                             if (error == 'Duplicate Transaction') {

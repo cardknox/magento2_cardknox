@@ -55,25 +55,37 @@ class ResponseCodeValidator extends AbstractValidator
         }
 
         $response = $validationSubject['response'];
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/cccc.log');
+        
+        // Custom log
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/cc_response.log');
         $logger = new \Zend_Log();
         $logger->addWriter($writer);
-        $logger->info('starttttt');
-        $logger->info(print_r($response, true));
+        $logger->info('Start Debug');
+        $logger->info(print_r($response, true)); //phpcs:disable
+
+
         if ($this->isVerifyTransaction($response)) {
-            $log['Successful Transaction - 3D Secure Verification'] = $this->isVerifyTransaction($response);
+            $log['3D Secure Verification'] = $this->isVerifyTransaction($response);
             $this->logger->debug($log);
-            $threeDSResult = $this->createResult(
-                true,
-                $this->get3DsVerifyResponse($response),
-                $this->getErrorCode($response)
+            // $threeDSResult = $this->createResult(
+            //     true,
+            //     $this->get3DsVerifyResponse($response),
+            //     $this->getErrorCode($response)
+            // );
+            // $logger->info(print_r($threeDSResult, true));
+            // return $threeDSResult;
+
+            return $this->createResult(
+                false,
+                ['3DSecure Verification']
+                // $this->get3DsVerifyResponse($response),
+                // $this->getErrorCode($response),
             );
-            $logger->info(print_r($threeDSResult, true));
-            return $threeDSResult;
         }
 
         $log['Successful Transaction'] = $this->isSuccessfulTransaction($response);
         $this->logger->debug($log);
+        $logger->info('End Debug');
         if ($this->isSuccessfulTransaction($response)) {
             return $this->createResult(true);
         } else {
@@ -142,8 +154,8 @@ class ResponseCodeValidator extends AbstractValidator
      */
     private function get3DsVerifyResponse(array $response)
     {
-        $errorMessage = (isset($response['xResult']) ? $response['xResult'] : "");
+        $message = (isset($response['xResult']) ? $response['xResult'] : "");
         $refnum = (isset($response['xStatus']) ? $response['xStatus'] : "");
-        return [__("ck-3ds-".$errorMessage . "-" . $refnum)];
+        return [__("ck-3ds-".$message . "-" . $refnum)];
     }
 }
