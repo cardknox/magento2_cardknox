@@ -74,7 +74,7 @@ class AddGiftCard extends Action
     public function execute()
     {
         if (!$this->helper->isCardknoxGiftcardEnabled()) {
-            return $this->jsonResponse(false, __('Please enable Cardknox GiftCard.'));
+            return $this->jsonResponse(false, __('Please enable Cardknox Gift.'));
         }
 
         $giftCardCode = $this->getRequest()->getParam('giftcard_code');
@@ -98,7 +98,7 @@ class AddGiftCard extends Action
             }
 
             if ($this->isCartTotalZero($quote)) {
-                return $this->jsonResponse(false, __('Your cart total is zero, so there\'s no need to apply a Gift Card code.'));
+                return $this->jsonResponse(false, __('Your cart total is zero, Gift Card not applicable.'));
             }
 
             $apiResponse = $this->giftcardHelper->checkGiftCardBalanceStatus($giftCardCode);
@@ -166,7 +166,7 @@ class AddGiftCard extends Action
         }
 
         if ((float)$remainingBalance === 0.0) {
-            return $this->jsonResponse(false, __('Your gift card balance is zero. Please use another card number or credit your balance.'));
+            return $this->jsonResponse(false, __('Your gift card balance is zero. Please use another card.'));
         }
 
         if ($status === "Error") {

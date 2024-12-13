@@ -396,9 +396,9 @@ class Giftcard extends AbstractHelper
             $this->curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
 
             $response = $this->curl->getBody();
-            $logger->info('Gift card reissue sucessfully: ' . $response);
+            $logger->info('Gift reissue sucessfully: ' . $response);
         } catch (\Exception $e) {
-            $logger->info('Gift card reissue failed: ' . $e->getMessage());
+            $logger->info('Gift reissue failed: ' . $e->getMessage());
         }
         return json_decode($response, true);
     }
@@ -420,7 +420,7 @@ class Giftcard extends AbstractHelper
         // Handle error status
         if ($result['xStatus'] === "Error") {
             $ckGiftcardComment = sprintf(
-                'Gift card issue failed. xErrorCode: %s, xError: %s',
+                'Gift issue failed. xErrorCode: %s, xError: %s',
                 $result['xError'],
                 $result['xError']
             );

@@ -73,7 +73,7 @@ class CancelGiftCard extends Action
         if (!$isCardknoxGiftcardEnabled) {
             return $result->setData([
                 'success' => false,
-                'message' => __('Please enable Cardknox GiftCard.'),
+                'message' => __('Please enable Cardknox Gift.'),
             ]);
         }
 
@@ -103,8 +103,8 @@ class CancelGiftCard extends Action
             $quote->collectTotals();
 
             $this->quoteRepository->save($quote);
-            
-            $message = "Gift card cancelled successfully.";
+
+            $message = "Gift card has been cancelled successfully.";
             return $result->setData([
                 'success' => true,
                 'message' => $message

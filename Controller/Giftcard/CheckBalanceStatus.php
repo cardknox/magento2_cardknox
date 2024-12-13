@@ -55,7 +55,7 @@ class CheckBalanceStatus extends Action
         if (!$isCardknoxGiftcardEnabled) {
             return $result->setData([
                 'success' => false,
-                'message' => __('Please enable Cardknox GiftCard.'),
+                'message' => __('Please enable Cardknox Gift.'),
             ]);
         }
         $giftCardCode = $this->getRequest()->getParam('giftcard_code');
