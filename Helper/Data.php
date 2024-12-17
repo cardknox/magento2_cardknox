@@ -9,6 +9,8 @@ class Data extends AbstractHelper
 {
     public const IS_CC_SPLIT_CAPTURE_ENABLED = 'payment/cardknox/split_capture_enabled';
     public const IS_GPAY_SPLIT_CAPTURE_ENABLED = 'payment/cardknox_google_pay/split_capture_enabled';
+    public const IS_CARDKNOX_GIFTCARD_ENABLED = 'payment/cardknox/ck_giftcard_enabled';
+    public const IS_CARDKNOX_GIFTCARD_TEXT =  'payment/cardknox/ck_giftcard_text';
 
     /**
      * @var RemoteAddress
@@ -75,5 +77,30 @@ class Data extends AbstractHelper
         $ipAddress = null;
         $ipAddress = $this->remoteAddress->getRemoteAddress(false);
         return $ipAddress;
+    }
+    /**
+     * Check split capture enabled for GooglePay
+     *
+     * @return string|null
+     */
+    public function isCardknoxGiftcardEnabled()
+    {
+        return $this->scopeConfig->getValue(
+            self::IS_CARDKNOX_GIFTCARD_ENABLED,
+            \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE
+        );
+    }
+
+    /**
+     * Cardknox Gift card text
+     *
+     * @return string|null
+     */
+    public function cardknoxGiftcardText()
+    {
+        return $this->scopeConfig->getValue(
+            self::IS_CARDKNOX_GIFTCARD_TEXT,
+            \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE
+        );
     }
 }

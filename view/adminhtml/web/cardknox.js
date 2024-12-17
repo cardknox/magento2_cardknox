@@ -114,9 +114,8 @@ define([
         initCardknox: function () {
             var self = this;
             try {
-                //setAccount(this.saveOnlyKey, "Magento2", "0.1.2");
                 enableLogging();
-                setAccount(this.tokenKey, "Magento2", "1.2.69");
+                setAccount(this.tokenKey, "Magento2", "1.2.71");
                 enableAutoFormatting();
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);

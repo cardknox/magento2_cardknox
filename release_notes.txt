@@ -1,3 +1,6 @@
+1.2.71
+- Giftcard integration
+
 1.2.69
 - Fix GooglePay button style on cart & checkout page for responsive view
 

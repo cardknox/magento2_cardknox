@@ -46,6 +46,48 @@
                                                                 </item>
                                                             </item>
                                                         </item>
+                                                        <!-- Added Cardknox gift card coupon code -->
+                                                        <item name="afterMethods" xsi:type="array">
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="ckGiftCard" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">CardknoxDevelopment_Cardknox/js/view/checkout/giftcard/giftcard</item>
+                                                                    <item name="children" xsi:type="array">
+                                                                        <item name="errors" xsi:type="array">
+                                                                            <item name="sortOrder" xsi:type="string">0</item>
+                                                                            <item name="component" xsi:type="string">CardknoxDevelopment_Cardknox/js/view/checkout/giftcard/giftcard-messages</item>
+                                                                            <item name="displayArea" xsi:type="string">messages</item>
+                                                                        </item>
+                                                                    </item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                        <item name="shipping-step" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="custom-shipping-restriction" xsi:type="array">
+                                                    <item name="component" xsi:type="string">CardknoxDevelopment_Cardknox/js/view/cart/ckgiftcard-shipping</item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                                <!-- Added Cardknox gift card discount amount -->
+                                <item name="sidebar" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="summary" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="totals" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="ckGiftCard" xsi:type="array">
+                                                            <item name="component"  xsi:type="string">CardknoxDevelopment_Cardknox/js/view/checkout/summary/ckgiftcard</item>
+                                                            <item name="sortOrder" xsi:type="string">30</item>
+                                                            <item name="config" xsi:type="array">
+                                                                <item name="title" translate="true" xsi:type="string">Gift Card</item>
+                                                            </item>
+                                                        </item>
                                                     </item>
                                                 </item>
                                             </item>
