@@ -71,7 +71,6 @@ if ($isCardknoxGiftcardEnabled) {
                         <div class="control">
                             <input class="input-text" type="text" id="giftcard-code" name="giftcard_code"
                                     data-validate="{'required-entry':true}" value="<?= $giftcardCode; ?>"
-                                    placeholder="<?= $block->escapeHtml(__('Ex. 4444333322221111')) ?>"
                                     <?= $disableField ?>/>
                         </div>
                     </div>
@@ -88,7 +87,7 @@ if ($isCardknoxGiftcardEnabled) {
                                 <input class="input-text" type="hidden" name="giftcard_code" value="<?= $giftcardCode; ?>"/>
                             <?php endif;?>
                             <button class="action add primary"
-                                    id="giftcard-code-cancle-btn"
+                                    id="giftcard-code-cancel-btn"
                                     type="submit"
                                     value="<?= $block->escapeHtml(__('Cancel')) ?>"
                                     style="<?= !$isAppliedGiftcardCode ? 'display:none;' : 'display:block;' ?>">
