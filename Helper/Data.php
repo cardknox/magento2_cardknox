@@ -76,4 +76,19 @@ class Data extends AbstractHelper
         $ipAddress = $this->remoteAddress->getRemoteAddress(false);
         return $ipAddress;
     }
+
+    /**
+     * Get system config value function
+     *
+     * @param string $key
+     * @param int|string|null $storeId
+     * @return string|null
+     */
+    public function getConfigValue($key, $storeId = null)
+    {
+        return $this->scopeConfig->getValue(
+            $key,
+            $storeId
+        );
+    }
 }

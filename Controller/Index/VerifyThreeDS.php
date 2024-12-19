@@ -1,14 +1,17 @@
 <?php
 namespace CardknoxDevelopment\Cardknox\Controller\Index;
 
-use Magento\Framework\App\Action\Context;
+use CardknoxDevelopment\Cardknox\Helper\Data;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\HTTP\Client\Curl;
-use Magento\Sales\Model\OrderFactory;
-use Magento\Checkout\Model\Session;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\OrderFactory;
 
 class VerifyThreeDS extends Action implements HttpPostActionInterface
 {
@@ -18,20 +21,53 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      */
     protected $resultJsonFactory;
 
+    /**
+     * @var Curl
+     */
     protected $curl;
 
+    /**
+     * @var OrderFactory
+     */
     protected $orderFactory;
 
+    /**
+     * @var Session
+     */
     protected $_checkoutSession;
 
+    /**
+     * @var OrderRepositoryInterface
+     */
     protected $orderRepository;
 
     /**
-     * Login popup function
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @var ProductMetadataInterface
+     */
+    private $productMetadata;
+
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
+     * Undocumented function
      *
-     * @param Context $context
-     * @param JsonFactory $resultJsonFactory
-     * @param AddressHelper $addressHelper
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
+     * @param \Magento\Framework\HTTP\Client\Curl $curl
+     * @param \Magento\Sales\Model\OrderFactory $orderFactory
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
+     * @param \CardknoxDevelopment\Cardknox\Gateway\Config\Config $config
+     * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
+     * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
      */
     public function __construct(
         Context $context,
@@ -39,7 +75,10 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         Curl $curl,
         OrderFactory $orderFactory,
         Session $checkoutSession,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        Config $config,
+        ProductMetadataInterface $productMetadata,
+        Data $helper
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
@@ -47,6 +86,9 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $this->orderFactory = $orderFactory;
         $this->_checkoutSession = $checkoutSession;
         $this->orderRepository = $orderRepository;
+        $this->config = $config;
+        $this->productMetadata = $productMetadata;
+        $this->helper = $helper;
     }
 
     /**
@@ -67,19 +109,22 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
             ]);
         }
 
+        $newPostData = $this->baseRequestParams($postData);
         // Define API endpoint
         $endpoint = self::GETWAY_HOST . '/verify';
 
         try {
             $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-            $this->curl->post($endpoint, $postData);
-
+            $this->curl->post($endpoint, $newPostData);
+            // exit;
             // Get response and status code
             $response = $this->curl->getBody();
             $httpCode = $this->curl->getStatus();
 
             // Parse response if it's in query string format
             parse_str($response, $parsedResponse);
+            print_r($parsedResponse);
+            exit();
 
             if (!empty($parsedResponse)) {
                 if (isset($parsedResponse['xResult']) && $parsedResponse['xResult'] === 'E') {
@@ -141,5 +186,33 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     protected function jsonResponse(array $response)
     {
         return $this->resultJsonFactory->create()->setData($response);
+    }
+
+    /**
+     * Add Base Request Params function
+     *
+     * @param array $postData
+     * @return array
+     */
+    protected function baseRequestParams($postData)
+    {
+        $edition = $this->productMetadata->getEdition();
+        $version = $this->productMetadata->getVersion();
+        $ipAddress = $this->helper->getIpAddress();
+        $storeId = 1;
+        $newParams = [
+            'xVersion' => '5.0.0',
+            'xSoftwareName' => 'Magento ' . $edition . " ". $version,
+            'xSoftwareVersion' => '1.2.69',
+            'xAllowDuplicate' => 1,
+            'xKey' => $this->config->getValue(
+                'cardknox_transaction_key',
+                $storeId
+            ),
+        ];
+
+        // Merge arrays, giving precedence to $newParams
+        $requestParams = array_merge($postData, $newParams);
+        return $requestParams;
     }
 }

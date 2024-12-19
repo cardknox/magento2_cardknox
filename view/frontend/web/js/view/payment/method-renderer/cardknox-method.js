@@ -56,7 +56,6 @@ define(
             console.log("Called! 3DS verification started...");
             $('[data-role="checkout-messages"]').css('cssText', 'display: none');
             const postData = {
-                xKey: "logictechnpvtltddevf0475ff1f7664381aeb00110fc",
                 xRefNum: xRefNum,
                 xCavv: xCavv,
                 xEci: xEciFlag,
@@ -64,10 +63,6 @@ define(
                 x3dsSignatureVerificationStatus: xSignatureVerification,
                 x3dsActionCode: actionCode,
                 x3dsError: ck3DS.error,
-                xVersion: '4.5.8',
-                xSoftwareName: 'Magento',
-                xSoftwareVersion: '1.0.27',
-                xAllowDuplicate: 1,
             };
 
             console.log('3ds-verify', postData);

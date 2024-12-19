@@ -52,8 +52,11 @@ class ResponseCodeValidator extends AbstractValidator
 
         $response = $validationSubject['response'];
 
-        if ($this->systemConfig->isEnable3DSecure() && !empty($this->systemConfig->get3DSecureEnvironment())) {
-            return $this->processResponse($response);
+        if ($this->systemConfig->isEnable3DSecure() &&
+            !empty($this->systemConfig->get3DSecureEnvironment()) &&
+            $this->isVerifyTransaction($response)
+        ) {
+            return $this->processThreeDSResponse($response);
         }
 
         if ($this->isSuccessfulTransaction($response)) {
@@ -136,7 +139,7 @@ class ResponseCodeValidator extends AbstractValidator
      * @param mixed $response
      * @return ResultInterface
      */
-    protected function processResponse($response)
+    protected function processThreeDSResponse($response)
     {
         $validationResult = $this->validateApiResponse($response);
 
@@ -145,5 +148,17 @@ class ResponseCodeValidator extends AbstractValidator
         }
 
         return $this->createResult(true, []);
+    }
+
+    /**
+     * IsVerifyTransaction
+     *
+     * @param array $response
+     * @return bool
+     */
+    private function isVerifyTransaction(array $response)
+    {
+        return isset($response[self::RESULT_CODE])
+        && $response[self::RESULT_CODE] == self::VERIFY;
     }
 }
