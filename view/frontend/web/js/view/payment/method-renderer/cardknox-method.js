@@ -35,6 +35,8 @@ define(
     ) {
         'use strict';
 
+        let is3DSCallInProgress = false;
+
         function handle3DSResults(
             actionCode,
             xCavv,
@@ -43,6 +45,16 @@ define(
             xAuthenticateStatus,
             xSignatureVerification
         ) {
+            if (is3DSCallInProgress) {
+                console.log("3DS call already in progress. Skipping...");
+                return;
+            }
+
+            // Set the flag to true to indicate the call is in progress
+            is3DSCallInProgress = true;
+
+            console.log("Called! 3DS verification started...");
+            $('[data-role="checkout-messages"]').css('cssText', 'display: none');
             const postData = {
                 xKey: "logictechnpvtltddevf0475ff1f7664381aeb00110fc",
                 xRefNum: xRefNum,
@@ -57,30 +69,39 @@ define(
                 xSoftwareVersion: '1.0.27',
                 xAllowDuplicate: 1,
             };
-            console.log('3ds-verify', postData)
+
+            console.log('3ds-verify', postData);
+
             $.ajax({
                 type: "post",
                 dataType: "json",
                 url: urlBuilder.build('/cardknox/index/verifythreeds'),
                 data: postData,
                 success: function (resp) {
-                    if (resp.xResult == "E" || resp.xResult == "D") {
-                    //   $("#wc-cardknox-cc-form").after(
-                    //     '<p style="color: red;">' + resp.xError + "</p>"
-                    //   );
-                    // $(".woocommerce-error, .woocommerce-message").remove();
-                    // $("form.checkout")
-                    //     .prev(".woocommerce-notices-wrapper")
-                    //     .append(
-                    //     '<ul class="woocommerce-error" role="alert"><li>' +
-                    //         resp.xError +
-                    //         "</li></ul>"
-                    //     );
-                    }
-                    if (resp.xResult == "A") {
-                        window.location.href = resp.redirect;
+                    if (!resp.success) {
+                        // Handle error response
+                        console.error("3DS verification failed:", resp.message || "Unknown error");
+                        // Optionally redirect to cart page
+                        // if (resp.redirect) {
+                        //     window.location.href = resp.redirect;
+                        // }
+                    } else {
+                        // Handle success response
+                        console.log("3DS verification succeeded:", resp);
+                        // Optionally redirect to success page
+                        // if (resp.redirect) {
+                        //     window.location.href = resp.redirect;
+                        // }
                     }
                 },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX error: " + textStatus + ", " + errorThrown);
+                    alert("An unexpected error occurred. Please try again.");
+                },
+                complete: function () {
+                    // Reset the flag once the AJAX call is complete
+                    is3DSCallInProgress = false;
+                }
             });
         }
 
@@ -391,8 +412,8 @@ define(
                                         }
                                     ).fail(
                                         function (response) {
-                                            console.log('failed-response', response)
-                                            verify3DS(response);
+                                            $('[data-role="checkout-messages"]').css('cssText', 'display: none !important');
+                                            verify3DS(urlEncodedToJson(response.responseJSON.message));
                                             self.isPlaceOrderActionAllowed(true);
                                             var error = response.responseJSON.message;
                                             if (error == 'Duplicate Transaction') {
@@ -449,7 +470,7 @@ define(
                     placeOrderAction(this.getData(), this.messageContainer)
                 );
             },
-            
+
             additionalValidator: function () {
                 return additionalValidators.validate();
             },

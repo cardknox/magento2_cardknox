@@ -6,12 +6,10 @@
 
 namespace CardknoxDevelopment\Cardknox\Gateway\Validator;
 
-use CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client;
 use Magento\Payment\Gateway\Validator\AbstractValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
-use Magento\Payment\Model\Method\Logger;
-use Magento\Payment\Gateway\Command\CommandException;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config as SystemConfig;
 
 class ResponseCodeValidator extends AbstractValidator
 {
@@ -22,24 +20,22 @@ class ResponseCodeValidator extends AbstractValidator
     public const VERIFY = 'V';
 
     /**
-     * Logger variable
-     *
-     * @var Logger
+     * @var SystemConfig
      */
-    private $logger;
+    protected $systemConfig;
 
     /**
      * ResponseCodeValidator function
      *
-     * @param Logger $logger
-     * @param ResultInterfaceFactory $resultFactory
+     * @param \Magento\Payment\Gateway\Validator\ResultInterfaceFactory $resultFactory
+     * @param \CardknoxDevelopment\Cardknox\Gateway\Config\Config $systemConfig
      */
     public function __construct(
-        Logger $logger,
-        ResultInterfaceFactory $resultFactory
+        ResultInterfaceFactory $resultFactory,
+        SystemConfig $systemConfig
     ) {
         parent::__construct($resultFactory);
-        $this->logger = $logger;
+        $this->systemConfig = $systemConfig;
     }
 
     /**
@@ -55,37 +51,11 @@ class ResponseCodeValidator extends AbstractValidator
         }
 
         $response = $validationSubject['response'];
-        
-        // Custom log
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/cc_response.log');
-        $logger = new \Zend_Log();
-        $logger->addWriter($writer);
-        $logger->info('Start Debug');
-        $logger->info(print_r($response, true)); //phpcs:disable
 
-
-        if ($this->isVerifyTransaction($response)) {
-            $log['3D Secure Verification'] = $this->isVerifyTransaction($response);
-            $this->logger->debug($log);
-            // $threeDSResult = $this->createResult(
-            //     true,
-            //     $this->get3DsVerifyResponse($response),
-            //     $this->getErrorCode($response)
-            // );
-            // $logger->info(print_r($threeDSResult, true));
-            // return $threeDSResult;
-
-            return $this->createResult(
-                false,
-                ['3DSecure Verification']
-                // $this->get3DsVerifyResponse($response),
-                // $this->getErrorCode($response),
-            );
+        if ($this->systemConfig->isEnable3DSecure() && !empty($this->systemConfig->get3DSecureEnvironment())) {
+            return $this->processResponse($response);
         }
 
-        $log['Successful Transaction'] = $this->isSuccessfulTransaction($response);
-        $this->logger->debug($log);
-        $logger->info('End Debug');
         if ($this->isSuccessfulTransaction($response)) {
             return $this->createResult(true);
         } else {
@@ -135,27 +105,45 @@ class ResponseCodeValidator extends AbstractValidator
     }
 
     /**
-     * IsVerifyTransaction
-     *
-     * @param array $response
-     * @return bool
-     */
-    private function isVerifyTransaction(array $response)
-    {
-        return isset($response[self::RESULT_CODE])
-        && $response[self::RESULT_CODE] == self::VERIFY;
-    }
-
-    /**
-     * Get3DsVerifyResponse function
+     * Validate API response.
      *
      * @param array $response
      * @return array
      */
-    private function get3DsVerifyResponse(array $response)
+    protected function validateApiResponse(array $response): array
     {
-        $message = (isset($response['xResult']) ? $response['xResult'] : "");
-        $refnum = (isset($response['xStatus']) ? $response['xStatus'] : "");
-        return [__("ck-3ds-".$message . "-" . $refnum)];
+        $isValid = true;
+        $fails = [];
+
+        // Check if verification is required or there are generic errors
+        if (
+            (isset($response['xStatus'], $response['xResult']) && $response['xStatus'] === 'Verify' && $response['xResult'] === 'V') ||
+            (isset($response['xErrorCode']) && $response['xErrorCode'] !== '00000')
+        ) {
+            $fails['requires_verification'] = $response;
+            $isValid = false;
+        }
+
+        return [
+            'is_valid' => $isValid,
+            'fails' => $fails
+        ];
+    }
+
+    /**
+     * Process the API response and return a result if needed
+     *
+     * @param mixed $response
+     * @return ResultInterface
+     */
+    protected function processResponse($response)
+    {
+        $validationResult = $this->validateApiResponse($response);
+
+        if (!$validationResult['is_valid'] || !empty($validationResult['fails'])) {
+            return $this->createResult($validationResult['is_valid'], $validationResult['fails']);
+        }
+
+        return $this->createResult(true, []);
     }
 }

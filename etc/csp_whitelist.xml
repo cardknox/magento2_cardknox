@@ -4,6 +4,7 @@
         <policy id="script-src">
             <values>
                 <value id="cardknox-ifields-script" type="host">https://cdn.cardknox.com/ifields/2.15.2405.1601/ifields.min.js</value>
+                <value id="cardknox-3ds-script" type="host">https://cdn.cardknox.com/sdk-3ds/1.0.2203.2501-beta/cardknox-3ds.min.js</value>
                 <value id="fue-source" type="host">*.googleapis.com</value>
                 <value id="google-source" type="host">*.google.com</value>
                 <value id="gstatic-source" type="host">*.gstatic.com</value>
@@ -31,9 +32,11 @@
         <policy id="connect-src">
             <values>
                 <value id="fue-connect" type="host">http://dpm.demdex.net</value>
+                <value id="jwt-staging-connect" type="host">https://api.cardknox.com/threeds/v1/jwt/staging</value>
+                <value id="aws-api-connect" type="host">https://kg668dbov0.execute-api.us-east-1.amazonaws.com/stag/log</value>
                 <value id="google-connect" type="host">https://www.google.com</value>
                 <value id="gstatic-connect" type="host">https://www.gstatic.com</value>
             </values>
-        </policy> 
+        </policy>
     </policies>
 </csp_whitelist>
