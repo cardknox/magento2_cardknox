@@ -11,6 +11,7 @@ use CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 use Magento\Payment\Model\Method\Logger;
+use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 
 class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -39,6 +40,11 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
      */
     private $validator;
 
+    /**
+     * @var Config
+     */
+    private $systemConfig;
+
     public function setUp(): void
     {
         $this->resultFactory = $this->getMockBuilder(
@@ -49,7 +55,8 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->resultMock = $this->createMock(ResultInterface::class);
         $this->mockLogger = $this->createMock(Logger::class);
-        $this->validator = new ResponseCodeValidator($this->mockLogger, $this->resultFactory);
+        $this->systemConfig = $this->createMock(Config::class);
+        $this->validator = new ResponseCodeValidator($this->resultFactory, $this->systemConfig);
     }
 
     /**
@@ -99,7 +106,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
                     'failsDescription' => [],
                     'errorCodes' => []
                 ],
-            ],
+            ]
         ];
     }
 
