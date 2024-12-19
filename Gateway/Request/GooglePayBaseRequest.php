@@ -66,7 +66,7 @@ class GooglePayBaseRequest implements BuilderInterface
         $xSoftwareName = 'Magento ' . $this->productMetadata->getEdition() . " ". $this->productMetadata->getVersion();
         $_ipAddress = $this->dataHelper->getIpAddress();
         return [
-            'xVersion' => '4.5.8',
+            'xVersion' => '5.0.0',
             'xSoftwareName' => $xSoftwareName,
             'xSoftwareVersion' => '1.2.69',
             'xKey' => $this->config->getValue(
