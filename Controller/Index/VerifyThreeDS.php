@@ -13,6 +13,7 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Quote\Model\QuoteManagement;
+use Magento\Payment\Model\Method\Logger;
 
 class VerifyThreeDS extends Action implements HttpPostActionInterface
 {
@@ -68,6 +69,30 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     protected $cartManagementInterface;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * AdditionalInformationMapping variable
+     *
+     * @var array
+     */
+    protected $additionalInformationMapping = [
+        'xMaskedCardNumber',
+        'xAvsResult',
+        'xCvvResult',
+        'xCardType',
+        'xExp',
+        'xBatch',
+        'xRefNum',
+        'xAuthCode',
+        'xAvsResultCode',
+        'xCvvResultCode',
+        'xAuthAmount'
+    ];
+
+    /**
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Framework\HTTP\Client\Curl $curl
@@ -79,6 +104,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
      * @param \Magento\Quote\Model\QuoteManagement $quoteManagement
      * @param \Magento\Quote\Api\CartManagementInterface $cartManagementInterface
+     * @param \Magento\Payment\Model\Method\Logger $logger
      */
     public function __construct(
         Context $context,
@@ -92,6 +118,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         Data $helper,
         QuoteManagement $quoteManagement,
         \Magento\Quote\Api\CartManagementInterface $cartManagementInterface,
+        Logger $logger
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
@@ -104,6 +131,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $this->helper = $helper;
         $this->quoteManagement = $quoteManagement;
         $this->cartManagementInterface = $cartManagementInterface;
+        $this->logger = $logger;
     }
 
     /**
@@ -115,7 +143,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     {
         $resultJson = $this->resultJsonFactory->create();
         $postData = $this->getRequest()->getPostValue();
-
+        
         if (empty($postData)) {
             return $this->createErrorResponse(__('No data received in the request.'), 'checkout/cart');
         }
@@ -124,8 +152,22 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $endpoint = self::GETWAY_HOST . '/verify';
 
         try {
+            $log = [
+                'request' => $newPostData,
+                'request_uri' => $endpoint
+            ];
             $response = $this->sendPostRequest($endpoint, $newPostData);
             $parsedResponse = $this->parseResponse($response);
+            $log['response'] = $parsedResponse;
+
+            $storeId = $this->getStoreIdFromQuote();
+            $isDebug = $this->config->getValue(
+                'cardknox_transaction_key',
+                $storeId
+            );
+            if ($isDebug) {
+                $this->logger->debug($log, null, true);
+            }
 
             if ($this->isErrorResponse($parsedResponse)) {
                 return $this->createErrorResponse(
@@ -212,7 +254,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         // Place the order and retrieve the order details
         $orderId = $this->cartManagementInterface->placeOrder($quote->getId());
         $order = $this->orderFactory->create()->load($orderId);
-        $this->updateOrderDetails($order, $response['xInvoice']);
+        $this->updateOrderDetails($order, $response);
 
         return $this->createSuccessResponse(
             __('Thank you for your purchase!'),
@@ -225,12 +267,35 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      * Updates order details such as increment ID and session data.
      *
      * @param \Magento\Sales\Model\Order $order
-     * @param string $incrementId
+     * @param array $response
+     * @return void
      */
-    private function updateOrderDetails($order, $incrementId)
+    private function updateOrderDetails($order, $response)
     {
+        $incrementId = $response['xInvoice'];
         $order->setIncrementId($incrementId);
         $order->setEmailSent(0);
+
+        // Set transaction ID and additional information
+        $payment = $order->getPayment();
+        /** @var $payment \Magento\Sales\Model\Order\Payment */
+        $payment->setTransactionId($response["xRefNum"]);
+        $payment->setLastTransId($response["xRefNum"]);
+        $payment->setIsTransactionClosed(false);
+        // if ($payment->getLastTransId() == '') {
+            foreach ($this->additionalInformationMapping as $item) {
+                if (!isset($response[$item])) {
+                    continue;
+                }
+                $payment->setAdditionalInformation($item, $response[$item]);
+            }
+        /*} else {
+            if (isset($response["xBatch"])) {
+                //batch only gets added after capturing
+                $payment->setAdditionalInformation("xBatch", $response["xBatch"]);
+            }
+        }*/
+        $payment->save();
         $order->save();
 
         // Set session data for success page
@@ -287,7 +352,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $edition = $this->productMetadata->getEdition();
         $version = $this->productMetadata->getVersion();
         $ipAddress = $this->helper->getIpAddress();
-        $storeId = 1;
+        $storeId = $this->getStoreIdFromQuote();
         $newParams = [
             'xVersion' => '5.0.0',
             'xSoftwareName' => 'Magento ' . $edition . " ". $version,
@@ -302,5 +367,18 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         // Merge arrays, giving precedence to $newParams
         $requestParams = array_merge($postData, $newParams);
         return $requestParams;
+    }
+
+    /**
+     * Get Store ID from quote
+     *
+     * @return int
+     */
+    protected function getStoreIdFromQuote()
+    {
+        if ($this->_checkoutSession->getQuote()) {
+            return $this->_checkoutSession->getQuote()->getStore()->getId();
+        }
+        return 1;
     }
 }
