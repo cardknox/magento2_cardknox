@@ -47,9 +47,9 @@ class ApplePayConfigProvider implements ConfigProviderInterface
     }
 
     /**
-     * GetConfig function
+     * Summary of getConfig
      *
-     * @return void
+     * @return array[]
      */
     public function getConfig()
     {

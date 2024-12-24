@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+
+    <!-- Extension attributes for the Quote entity -->
+    <extension_attributes for="Magento\Quote\Api\Data\CartInterface">
+        <attribute code="ckgiftcard_code" type="string" />
+        <attribute code="ckgiftcard_amount" type="float" />
+        <attribute code="ckgiftcard_base_amount" type="float" />
+        <attribute code="base_grand_total_without_ckgiftcard" type="float" />
+        <attribute code="grand_total_without_ckgiftcard" type="float" />
+    </extension_attributes>
+
+    <!-- Extension attributes for the Order entity -->
+    <extension_attributes for="Magento\Sales\Api\Data\OrderInterface">
+        <attribute code="ckgiftcard_code" type="string" />
+        <attribute code="ckgiftcard_amount" type="float" />
+        <attribute code="ckgiftcard_base_amount" type="float" />
+        <attribute code="base_grand_total_without_ckgiftcard" type="float" />
+        <attribute code="grand_total_without_ckgiftcard" type="float" />
+        <attribute code="base_ckgift_cards_invoiced" type="float" />
+        <attribute code="ckgift_cards_invoiced" type="float" />
+        <attribute code="base_ckgift_cards_refunded" type="float" />
+        <attribute code="ckgift_cards_refunded" type="float" />
+    </extension_attributes>
+
+    <!-- Extension attributes for the Invoice entity -->
+    <extension_attributes for="Magento\Sales\Api\Data\InvoiceInterface">
+        <attribute code="ckgiftcard_code" type="string" />
+        <attribute code="ckgiftcard_amount" type="float" />
+        <attribute code="ckgiftcard_base_amount" type="float" />
+    </extension_attributes>
+
+    <!-- Extension attributes for the Credit Memo entity -->
+    <extension_attributes for="Magento\Sales\Api\Data\CreditmemoInterface">
+        <attribute code="ckgiftcard_code" type="string" />
+        <attribute code="ckgiftcard_amount" type="float" />
+        <attribute code="ckgiftcard_base_amount" type="float" />
+    </extension_attributes>
+
+</config>

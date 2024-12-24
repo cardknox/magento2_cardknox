@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Pdf/etc/pdf.xsd">
+    <totals>
+        <total name="ckgiftcard_amount">
+            <title translate="true">Cardknox Giftcard Amount</title>
+            <source_field>ckgiftcard_amount</source_field>
+            <font_size>7</font_size>
+            <display_zero>false</display_zero>
+            <sort_order>400</sort_order>
+            <model>CardknoxDevelopment\Cardknox\Model\Order\Pdf\GiftCardAmount</model>
+        </total>
+    </totals>
+</config>

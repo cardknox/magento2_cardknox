@@ -1,0 +1,49 @@
+
+<!-- ko if: isDisplayedCKGiftcard() -->
+    <div class="payment-option _collapsible opc-payment-additional ckgiftcard-code" id="ckgiftcard-placer"
+        data-bind="mageInit: {'collapsible':{'openedState': '_active'}}">
+        <div class="payment-option-title field choice" data-role="title">
+            <span class="action action-toggle" id="block-ckgiftcard-heading" role="heading" aria-level="2">
+                <span data-bind="text: cardknoxGiftcardValue"></span>
+            </span>
+        </div>
+        <div class="payment-option-content" data-role="content">
+            <!-- ko foreach: getRegion('messages') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+            <form class="form form-ckgiftcard" id="ckgiftcard-form" method="post" data-bind="blockLoader: isLoading">
+                <div class="payment-option-inner">
+                    <div class="field">
+                        <div class="control">
+                            <input class="input-text"
+                                type="text"
+                                id="ckgiftcard-code"
+                                name="ckgiftcard_code"
+                                data-validate="{'required-entry':true}"
+                                data-bind="value: ckGiftCardCode, disable: isCkGiftCardApplied" />
+                        </div>
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <!-- ko ifnot: isCkGiftCardApplied() -->
+                            <button class="action action-add primary" type="submit" data-bind="'value': $t('Apply'), click: addGiftCard">
+                                <span><!-- ko i18n: 'Apply Gift Card'--><!-- /ko --></span>
+                            </button>
+                        <!-- /ko -->
+                        <!-- ko if: isCkGiftCardApplied() -->
+                            <button id="cancel-gift-card" class="action action-cancel primary" type="submit" data-bind="'value': $t('Cancel'), click: cancelGiftCard">
+                                <span><!-- ko i18n: 'Cancel'--><!-- /ko --></span>
+                            </button>
+                        <!-- /ko -->
+                    </div>
+                    <div class="secondary">
+                        <button class="action action-check" type="submit" data-bind="'value': $t('Check Balance'), click: checkBalance">
+                            <span><!-- ko i18n: 'Check Balance'--><!-- /ko --></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+<!-- /ko -->
