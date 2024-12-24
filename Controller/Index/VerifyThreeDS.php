@@ -12,6 +12,7 @@ use Magento\Framework\HTTP\Client\Curl;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\OrderFactory;
+use Magento\Quote\Model\QuoteManagement;
 
 class VerifyThreeDS extends Action implements HttpPostActionInterface
 {
@@ -57,8 +58,16 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     private $helper;
 
     /**
-     * Undocumented function
-     *
+     * @var quoteManagement
+     */
+    protected $quoteManagement;
+
+    /**
+     * @var cartManagementInterface
+     */
+    protected $cartManagementInterface;
+
+    /**
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Framework\HTTP\Client\Curl $curl
@@ -68,6 +77,8 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      * @param \CardknoxDevelopment\Cardknox\Gateway\Config\Config $config
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
      * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
+     * @param \Magento\Quote\Model\QuoteManagement $quoteManagement
+     * @param \Magento\Quote\Api\CartManagementInterface $cartManagementInterface
      */
     public function __construct(
         Context $context,
@@ -78,7 +89,9 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         OrderRepositoryInterface $orderRepository,
         Config $config,
         ProductMetadataInterface $productMetadata,
-        Data $helper
+        Data $helper,
+        QuoteManagement $quoteManagement,
+        \Magento\Quote\Api\CartManagementInterface $cartManagementInterface,
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
@@ -89,6 +102,8 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $this->config = $config;
         $this->productMetadata = $productMetadata;
         $this->helper = $helper;
+        $this->quoteManagement = $quoteManagement;
+        $this->cartManagementInterface = $cartManagementInterface;
     }
 
     /**
@@ -102,90 +117,163 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $postData = $this->getRequest()->getPostValue();
 
         if (empty($postData)) {
-            return $resultJson->setData([
-                'success' => false,
-                'message' => __('No data received in the request.'),
-                'redirect' => $this->_url->getUrl('checkout/cart'), // Redirect to cart page
-            ]);
+            return $this->createErrorResponse(__('No data received in the request.'), 'checkout/cart');
         }
 
         $newPostData = $this->baseRequestParams($postData);
-        // Define API endpoint
         $endpoint = self::GETWAY_HOST . '/verify';
 
         try {
-            $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-            $this->curl->post($endpoint, $newPostData);
-            // exit;
-            // Get response and status code
-            $response = $this->curl->getBody();
-            $httpCode = $this->curl->getStatus();
+            $response = $this->sendPostRequest($endpoint, $newPostData);
+            $parsedResponse = $this->parseResponse($response);
 
-            // Parse response if it's in query string format
-            parse_str($response, $parsedResponse);
-            print_r($parsedResponse);
-            exit();
-
-            if (!empty($parsedResponse)) {
-                if (isset($parsedResponse['xResult']) && $parsedResponse['xResult'] === 'E') {
-                    // $order = $this->orderFactory->create()->loadByIncrementId(000000407);
-
-                    // // print_r($order->getData());
-                    // // die;
-                    // $order->setEmailSent(emailSent: 0); // Optional: Prevent email from being sent immediately
-                    // $this->orderRepository->save($order);
-
-                    // // it's require for redirect order success page
-                    // $this->_checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
-                    // $this->_checkoutSession->setLastQuoteId($order->getQuoteId());
-                    // $this->_checkoutSession->setLastOrderId($order->getEntityId());
-
-
-                    // if ($order) {
-                    //     // it's require for get original order id to order success page
-                    //     $this->_checkoutSession->setLastOrderId($order->getId())
-                    //                        ->setLastRealOrderId($order->getIncrementId())
-                    //                        ->setLastOrderStatus($order->getStatus());
-                    // }
-                    return $resultJson->setData([
-                        'success' => false,
-                        'message' => $parsedResponse['xError'] ?? __('An error occurred.'),
-                        'redirect' => $this->_url->getUrl('checkout/cart'), // Redirect to cart page
-                    ]);
-                }
-
-                if (isset($parsedResponse['xResult']) && $parsedResponse['xResult'] === 'A') {
-                    return $resultJson->setData([
-                        'success' => true,
-                        'message' => __('Thank you for your purchase!'),
-                        'redirect' => $this->_url->getUrl('checkout/onepage/success'),
-                    ]);
-                }
+            if ($this->isErrorResponse($parsedResponse)) {
+                return $this->createErrorResponse(
+                    $parsedResponse['xError'] ?? __('An error occurred.'),
+                    'checkout/cart'
+                );
             }
 
-            return $resultJson->setData([
-                'success' => false,
-                'message' => __('Unexpected response format.'),
-                'redirect' => $this->_url->getUrl('checkout/cart'), // Redirect to cart page
-            ]);
+            if ($this->isApprovedResponse($parsedResponse)) {
+                return $this->processApprovedResponse($parsedResponse);
+            }
+
+            return $this->createErrorResponse(__('Unexpected response format.'), 'checkout/cart');
         } catch (\Exception $e) {
-            return $resultJson->setData([
-                'success' => false,
-                'message' => __('Error: %1', $e->getMessage()),
-                'redirect' => $this->_url->getUrl('checkout/cart'), // Redirect to cart page
-            ]);
+            return $this->createErrorResponse(__('Error: %1', $e->getMessage()), 'checkout/cart');
         }
     }
 
     /**
-     * Return JSON response.
+     * Sends a POST request to the given endpoint with provided data.
+     *
+     * @param string $endpoint
+     * @param array $data
+     * @return string
+     * @throws \Exception
+     */
+    private function sendPostRequest($endpoint, $data)
+    {
+        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+        $this->curl->post($endpoint, $data);
+        return $this->curl->getBody();
+    }
+
+    /**
+     * Parses the response string into an associative array.
+     *
+     * @param string $response
+     * @return array
+     */
+    private function parseResponse($response)
+    {
+        parse_str($response, $parsedResponse);
+        return $parsedResponse;
+    }
+
+    /**
+     * Checks if the response indicates an error.
+     *
+     * @param array $response
+     * @return bool
+     */
+    private function isErrorResponse($response)
+    {
+        return isset($response['xResult']) && $response['xResult'] === 'E';
+    }
+
+    /**
+     * Checks if the response is approved.
+     *
+     * @param array $response
+     * @return bool
+     */
+    private function isApprovedResponse($response)
+    {
+        return isset($response['xResult']) && $response['xResult'] === 'A';
+    }
+
+    /**
+     * Handles the approved response logic.
      *
      * @param array $response
      * @return \Magento\Framework\Controller\Result\Json
+     * @throws \Exception
      */
-    protected function jsonResponse(array $response)
+    private function processApprovedResponse($response)
     {
-        return $this->resultJsonFactory->create()->setData($response);
+        $this->_checkoutSession->setSkipValidation(true);
+        $quote = $this->_checkoutSession->getQuote();
+
+        // Set the custom reserved order ID and save the quote
+        $quote->setReservedOrderId($response['xInvoice']);
+        $quote->save();
+
+        // Place the order and retrieve the order details
+        $orderId = $this->cartManagementInterface->placeOrder($quote->getId());
+        $order = $this->orderFactory->create()->load($orderId);
+        $this->updateOrderDetails($order, $response['xInvoice']);
+
+        return $this->createSuccessResponse(
+            __('Thank you for your purchase!'),
+            'checkout/onepage/success',
+            $order
+        );
+    }
+
+    /**
+     * Updates order details such as increment ID and session data.
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @param string $incrementId
+     */
+    private function updateOrderDetails($order, $incrementId)
+    {
+        $order->setIncrementId($incrementId);
+        $order->setEmailSent(0);
+        $order->save();
+
+        // Set session data for success page
+        $this->_checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
+        $this->_checkoutSession->setLastQuoteId($order->getQuoteId());
+        $this->_checkoutSession->setLastOrderId($order->getId())
+            ->setLastRealOrderId($order->getIncrementId())
+            ->setLastOrderStatus($order->getStatus());
+    }
+
+    /**
+     * Creates a success response with a redirect.
+     *
+     * @param string $message
+     * @param string $redirectUrl
+     * @param \Magento\Sales\Model\Order|null $order
+     * @return \Magento\Framework\Controller\Result\Json
+     */
+    private function createSuccessResponse($message, $redirectUrl, $order = null)
+    {
+        return $this->resultJsonFactory->create()->setData([
+            'success' => true,
+            'message' => $message,
+            'redirect' => $this->_url->getUrl($redirectUrl),
+        ]);
+    }
+
+    /**
+     * Creates an error response with a redirect.
+     *
+     * @param string $message
+     * @param string $redirectPath
+     * @return \Magento\Framework\Controller\Result\Json
+     */
+    private function createErrorResponse($message, $redirectPath)
+    {
+        $this->messageManager->addError($message);
+
+        return $this->resultJsonFactory->create()->setData([
+            'success' => false,
+            'message' => $message,
+            'redirect' => $this->_url->getUrl($redirectPath),
+        ]);
     }
 
     /**

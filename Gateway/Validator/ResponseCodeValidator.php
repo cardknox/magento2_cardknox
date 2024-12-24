@@ -10,6 +10,7 @@ use Magento\Payment\Gateway\Validator\AbstractValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config as SystemConfig;
+use Magento\Checkout\Model\Session;
 
 class ResponseCodeValidator extends AbstractValidator
 {
@@ -25,17 +26,25 @@ class ResponseCodeValidator extends AbstractValidator
     protected $systemConfig;
 
     /**
+     * @var Session
+     */
+    protected $_checkoutSession;
+
+    /**
      * ResponseCodeValidator function
      *
      * @param \Magento\Payment\Gateway\Validator\ResultInterfaceFactory $resultFactory
      * @param \CardknoxDevelopment\Cardknox\Gateway\Config\Config $systemConfig
+     * @param \Magento\Checkout\Model\Session $checkoutSession
      */
     public function __construct(
         ResultInterfaceFactory $resultFactory,
-        SystemConfig $systemConfig
+        SystemConfig $systemConfig,
+        Session $checkoutSession
     ) {
         parent::__construct($resultFactory);
         $this->systemConfig = $systemConfig;
+        $this->_checkoutSession = $checkoutSession;
     }
 
     /**
@@ -46,6 +55,11 @@ class ResponseCodeValidator extends AbstractValidator
      */
     public function validate(array $validationSubject)
     {
+        if ($this->_checkoutSession->getSkipValidation()) {
+            $this->_checkoutSession->unsSkipValidation(); // Clear the flag to avoid future issues
+            return $this->createResult(true); // Assume validation passes
+        }
+
         if (!isset($validationSubject['response']) || !is_array($validationSubject['response'])) {
             throw new \InvalidArgumentException('Response does not exist');
         }
@@ -56,6 +70,7 @@ class ResponseCodeValidator extends AbstractValidator
             !empty($this->systemConfig->get3DSecureEnvironment()) &&
             $this->isVerifyTransaction($response)
         ) {
+            // Trigger 3DS verification response handling
             return $this->processThreeDSResponse($response);
         }
 
@@ -69,6 +84,7 @@ class ResponseCodeValidator extends AbstractValidator
             );
         }
     }
+
 
     /**
      * IsSuccessfulTransaction

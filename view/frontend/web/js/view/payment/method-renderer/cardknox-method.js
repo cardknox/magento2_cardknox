@@ -53,8 +53,6 @@ define(
             // Set the flag to true to indicate the call is in progress
             is3DSCallInProgress = true;
 
-            console.log("Called! 3DS verification started...");
-            $('[data-role="checkout-messages"]').css('cssText', 'display: none');
             const postData = {
                 xRefNum: xRefNum,
                 xCavv: xCavv,
@@ -67,26 +65,44 @@ define(
 
             console.log('3ds-verify', postData);
 
+            // Show loader initially
+            fullScreenLoader.startLoader();
+
+            // Monitor the 3DS popup
+            const popupElement = document.getElementById("Cardinal-ElementContainer");
+            if (popupElement) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.attributeName === "style") {
+                            const isHidden = window.getComputedStyle(popupElement).display === "none";
+                            if (isHidden) {
+                                console.log("3DS popup closed. Showing loader...");
+                                fullScreenLoader.startLoader(); // Show the loader again
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(popupElement, { attributes: true });
+            }
+
             $.ajax({
                 type: "post",
                 dataType: "json",
-                url: urlBuilder.build('/cardknox/index/verifythreeds'),
+                url: urlBuilder.build('cardknox/index/verifythreeds'),
                 data: postData,
                 success: function (resp) {
                     if (!resp.success) {
-                        // Handle error response
+                        fullScreenLoader.stopLoader();
                         console.error("3DS verification failed:", resp.message || "Unknown error");
-                        // Optionally redirect to cart page
-                        // if (resp.redirect) {
-                        //     window.location.href = resp.redirect;
-                        // }
+                        if (resp.redirect) {
+                            window.location.href = resp.redirect;
+                        }
                     } else {
-                        // Handle success response
                         console.log("3DS verification succeeded:", resp);
-                        // Optionally redirect to success page
-                        // if (resp.redirect) {
-                        //     window.location.href = resp.redirect;
-                        // }
+                        if (resp.redirect) {
+                            window.location.href = resp.redirect;
+                        }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -94,8 +110,9 @@ define(
                     alert("An unexpected error occurred. Please try again.");
                 },
                 complete: function () {
-                    // Reset the flag once the AJAX call is complete
+                    // Reset the flag and hide the loader once the AJAX call is complete
                     is3DSCallInProgress = false;
+                    fullScreenLoader.stopLoader();
                 }
             });
         }
@@ -407,8 +424,14 @@ define(
                                         }
                                     ).fail(
                                         function (response) {
-                                            $('[data-role="checkout-messages"]').css('cssText', 'display: none !important');
-                                            verify3DS(urlEncodedToJson(response.responseJSON.message));
+                                            const message = response.responseJSON.message;
+                                            const regex = /xResult=V&xStatus=Verify&xError=&xErrorCode=00000&xRefNum=/;
+
+                                            if (regex.test(message)) {
+                                                $('[data-role="checkout-messages"]').css('cssText', 'display: none !important');
+                                            }
+
+                                            verify3DS(urlEncodedToJson(message));
                                             self.isPlaceOrderActionAllowed(true);
                                             var error = response.responseJSON.message;
                                             if (error == 'Duplicate Transaction') {
