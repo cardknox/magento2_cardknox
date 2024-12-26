@@ -593,6 +593,4 @@
         </arguments>
     </virtualType>
 
-    <!-- <preference for="CardknoxAuthorizeCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand" />
-    <preference for="CardknoxCaptureCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand" /> -->
 </config>

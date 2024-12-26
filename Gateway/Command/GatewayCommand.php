@@ -15,6 +15,7 @@ use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Payment\Gateway\Validator\ValidatorInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config as SystemConfig;
 use Psr\Log\LoggerInterface;
+use Magento\Checkout\Model\Session;
 
 class GatewayCommand implements CommandInterface
 {
@@ -60,24 +61,31 @@ class GatewayCommand implements CommandInterface
     private $systemConfig;
 
     /**
+     * @var Session
+     */
+    protected $checkoutSession;
+
+    /**
      * @param \Magento\Payment\Gateway\Request\BuilderInterface $requestBuilder
      * @param \Magento\Payment\Gateway\Http\TransferFactoryInterface $transferFactory
      * @param \Magento\Payment\Gateway\Http\ClientInterface $client
      * @param \Psr\Log\LoggerInterface $logger
+     * @param \CardknoxDevelopment\Cardknox\Gateway\Config\Config $systemConfig
+     * @param Session $checkoutSession
      * @param \Magento\Payment\Gateway\Response\HandlerInterface|null $handler
      * @param \Magento\Payment\Gateway\Validator\ValidatorInterface|null $validator
      * @param \Magento\Payment\Gateway\ErrorMapper\ErrorMessageMapperInterface|null $errorMessageMapper
-     * @param \CardknoxDevelopment\Cardknox\Gateway\Config\Config $systemConfig
      */
     public function __construct(
         BuilderInterface $requestBuilder,
         TransferFactoryInterface $transferFactory,
         ClientInterface $client,
         LoggerInterface $logger,
+        SystemConfig $systemConfig,
+        Session $checkoutSession,
         HandlerInterface $handler = null,
         ValidatorInterface $validator = null,
         ErrorMessageMapperInterface $errorMessageMapper = null,
-        SystemConfig $systemConfig
     ) {
         $this->requestBuilder = $requestBuilder;
         $this->transferFactory = $transferFactory;
@@ -87,6 +95,7 @@ class GatewayCommand implements CommandInterface
         $this->logger = $logger;
         $this->errorMessageMapper = $errorMessageMapper;
         $this->systemConfig = $systemConfig;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -96,6 +105,7 @@ class GatewayCommand implements CommandInterface
      * @return void
      * @throws ClientException
      * @throws ConverterException
+     * @throws LocalizedException
      */
     public function execute(array $commandSubject)
     {
@@ -103,6 +113,11 @@ class GatewayCommand implements CommandInterface
         $transferO = $this->transferFactory->create(
             $this->requestBuilder->build($commandSubject)
         );
+
+        if ($this->checkoutSession->getSkipValidation()) {
+            $this->checkoutSession->unsSkipValidation(); // Clear the flag to avoid future issues
+            return ''; // Assume validation passes
+        }
 
         $response = $this->client->placeRequest($transferO);
         if ($this->validator !== null) {

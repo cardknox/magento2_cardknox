@@ -334,9 +334,12 @@ define(
                     focusIfield('card-number');
                 }, 1000);
                 let isEnabledThreeDSEnabled = window.checkoutConfig.payment.cardknox.isEnabledThreeDSEnabled;
+                let threeDSEnvironment = window.checkoutConfig.payment.cardknox.ThreeDSEnvironment ?? "staging";
                 if (isEnabledThreeDSEnabled == true) {
-                    let threeDSEnvironment = window.checkoutConfig.payment.cardknox.ThreeDSEnvironment;
-                    enable3DS("staging", handle3DSResults);
+                    // enable3DS("staging", handle3DSResults);
+                    enable3DS(threeDSEnvironment, handle3DSResults);
+                } else {
+                    enable3DS(threeDSEnvironment,null);
                 }
             },
             /**
@@ -398,7 +401,7 @@ define(
                             //onSuccess
                             //perform your own validation here...
                             self.isPlaceOrderActionAllowed(true);
-                            
+
                             /**
                              * Validation
                              * Place Order action
@@ -429,9 +432,8 @@ define(
 
                                             if (regex.test(message)) {
                                                 $('[data-role="checkout-messages"]').css('cssText', 'display: none !important');
+                                                verify3DS(urlEncodedToJson(message));
                                             }
-
-                                            verify3DS(urlEncodedToJson(message));
                                             self.isPlaceOrderActionAllowed(true);
                                             var error = response.responseJSON.message;
                                             if (error == 'Duplicate Transaction') {
