@@ -17,7 +17,7 @@ class Giftcard extends AbstractHelper
     public const CARDKNOX_TRANSACTION_KEY = 'payment/cardknox/cardknox_transaction_key';
     public const CARDKNOX_X_VERSION = "4.5.8";
     public const CONTENT_TYPE = "application/json";
-    public const XSOFTWARE_VERSION = "1.2.71";
+    public const XSOFTWARE_VERSION = "1.2.72";
 
     /**
      * @var Curl
