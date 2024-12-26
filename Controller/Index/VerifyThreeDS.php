@@ -74,6 +74,11 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     private $logger;
 
     /**
+     * @var \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface
+     */
+    protected $transactionBuilder;
+
+    /**
      * AdditionalInformationMapping variable
      *
      * @var array
@@ -91,6 +96,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         'xCvvResultCode',
         'xAuthAmount'
     ];
+    public const MASK_KEYS =  '****';
 
     /**
      * @param \Magento\Framework\App\Action\Context $context
@@ -105,6 +111,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      * @param \Magento\Quote\Model\QuoteManagement $quoteManagement
      * @param \Magento\Quote\Api\CartManagementInterface $cartManagementInterface
      * @param \Magento\Payment\Model\Method\Logger $logger
+     * @param \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder
      */
     public function __construct(
         Context $context,
@@ -118,7 +125,8 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         Data $helper,
         QuoteManagement $quoteManagement,
         \Magento\Quote\Api\CartManagementInterface $cartManagementInterface,
-        Logger $logger
+        Logger $logger,
+        \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
@@ -132,6 +140,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $this->quoteManagement = $quoteManagement;
         $this->cartManagementInterface = $cartManagementInterface;
         $this->logger = $logger;
+        $this->transactionBuilder = $transactionBuilder;
     }
 
     /**
@@ -143,7 +152,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     {
         $resultJson = $this->resultJsonFactory->create();
         $postData = $this->getRequest()->getPostValue();
-        
+
         if (empty($postData)) {
             return $this->createErrorResponse(__('No data received in the request.'), 'checkout/cart');
         }
@@ -152,13 +161,28 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $endpoint = self::GETWAY_HOST . '/verify';
 
         try {
-            $log = [
-                'request' => $newPostData,
-                'request_uri' => $endpoint
-            ];
+
             $response = $this->sendPostRequest($endpoint, $newPostData);
             $parsedResponse = $this->parseResponse($response);
-            $log['response'] = $parsedResponse;
+
+            // Replace original data with mask keys
+            if (array_key_exists('xCardNum', $newPostData)) {
+                $newPostData['xCardNum'] = self::MASK_KEYS;
+            }
+
+            if (array_key_exists('xCVV', $newPostData)) {
+                $newPostData['xCVV'] = self::MASK_KEYS;
+            }
+
+            if (array_key_exists('xKey', $newPostData)) {
+                $newPostData['xKey'] = self::MASK_KEYS;
+            }
+
+            $log = [
+                'request' => $newPostData,
+                'request_uri' => $endpoint,
+                'response' => $parsedResponse
+            ];
 
             $storeId = $this->getStoreIdFromQuote();
             $isDebug = $this->config->getValue(
@@ -276,27 +300,43 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $order->setIncrementId($incrementId);
         $order->setEmailSent(0);
 
-        // Set transaction ID and additional information
+        /**
+         * Save payment information
+         * Set transaction ID and additional information
+         */
         $payment = $order->getPayment();
         /** @var $payment \Magento\Sales\Model\Order\Payment */
         $payment->setTransactionId($response["xRefNum"]);
         $payment->setLastTransId($response["xRefNum"]);
         $payment->setIsTransactionClosed(false);
-        // if ($payment->getLastTransId() == '') {
-            foreach ($this->additionalInformationMapping as $item) {
-                if (!isset($response[$item])) {
-                    continue;
-                }
-                $payment->setAdditionalInformation($item, $response[$item]);
+        // Set payment additional information
+        foreach ($this->additionalInformationMapping as $item) {
+            if (!isset($response[$item])) {
+                continue;
             }
-        /*} else {
-            if (isset($response["xBatch"])) {
-                //batch only gets added after capturing
-                $payment->setAdditionalInformation("xBatch", $response["xBatch"]);
-            }
-        }*/
+            $payment->setAdditionalInformation($item, $response[$item]);
+        }
+
+        // Save transation
+        $storeId = $this->getStoreIdFromQuote();
+        $paymentAction = $this->config->getValue(
+            'payment_action',
+            $storeId
+        );
+        if ($paymentAction === 'authorize') {
+            $transactionType = \Magento\Sales\Model\Order\Payment\Transaction::TYPE_AUTH;
+        } else {
+            $transactionType = \Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE;
+        }
+        $transaction = $this->transactionBuilder->setPayment($payment)
+            ->setOrder($order)
+            ->setTransactionId($response['xRefNum'])
+            ->setFailSafe(true)
+            ->build($transactionType);
+
         $payment->save();
         $order->save();
+        $transaction->save();
 
         // Set session data for success page
         $this->_checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
