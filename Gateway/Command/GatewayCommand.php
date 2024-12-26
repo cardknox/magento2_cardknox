@@ -147,7 +147,7 @@ class GatewayCommand implements CommandInterface
     private function processErrors(ResultInterface $result)
     {
         if ($this->systemConfig->isEnable3DSecure() && !empty($this->systemConfig->get3DSecureEnvironment())) {
-            return $this->process3DSErrors($result);
+            $this->process3DSErrors($result);
         }
 
         $messages = [];
