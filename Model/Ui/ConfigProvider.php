@@ -43,9 +43,9 @@ class ConfigProvider implements ConfigProviderInterface
     }
 
     /**
-     * GetConfig function
+     * Summary of getConfig
      *
-     * @return void
+     * @return array[]
      */
     public function getConfig()
     {
@@ -60,6 +60,8 @@ class ConfigProvider implements ConfigProviderInterface
                     'isCCSplitCaptureEnabled' => $this->config->isCCSplitCaptureEnabled(),
                     'xPaymentAction' => $this->config->getCCPaymentAction(),
                     'selectRecaptchaSource' => $this->config->getSelectReCaptchaSource(),
+                    'isEnabledCardknoxGiftcard' => $this->config->isCardknoxGiftcardEnabled(),
+                    'cardknoxGiftcardText' => $this->config->cardknoxGiftcardText(),
                     'isEnabledThreeDSEnabled' => $this->config->isEnable3DSecure(),
                     'ThreeDSEnvironment' => $this->config->get3DSecureEnvironment()
                 ]

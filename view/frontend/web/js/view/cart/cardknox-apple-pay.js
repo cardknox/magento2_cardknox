@@ -26,11 +26,20 @@ define([
 
             try {
                 const isEnabledAPShowSummary = applePayConfig.isEnabledApplePayShowSummary ? applePayConfig.isEnabledApplePayShowSummary : "";
+                const apAmt = _getAmount();
+                if (!isEnabledAPShowSummary) {
+                    return {
+                        total: {
+                            type: 'final',
+                            label: 'Grand Total',
+                            amount: apAmt.toString(),
+                        }
+                    };
+                }
                 const subTotal = getSubTotal();
                 const shippingPrice = getShippingPrice();
                 const discountAmount = getDiscountAmount();
                 const taxAmount = getTax();
-                const apAmt = _getAmount();
 
                 const lineItems = [
                     {
@@ -50,7 +59,19 @@ define([
                     "amount": discountAmount ?? 0,
                     "type": 'final'
                 });
+                const isEnabledCardknoxGiftcard = window.checkoutConfig.payment.cardknox.isEnabledCardknoxGiftcard;
 
+                if (isEnabledCardknoxGiftcard) {
+                    let giftcard_amount = _getGiftcardAmount();
+                    if (giftcard_amount > 0) {
+                        giftcard_amount = -giftcard_amount;
+                        lineItems.push({
+                            "label": isEnabledAPShowSummary ? 'Gift Card' : '',
+                            "amount": giftcard_amount ?? 0,
+                            "type": 'final'
+                        });
+                    }
+                }
                 lineItems.push({
                     "label": isEnabledAPShowSummary ? "Tax" : '',
                     "amount": taxAmount ?? 0,
@@ -315,6 +336,22 @@ define([
             throw new Error("Please check the shipping address information. Lastname is required. Enter and try again.");
         }
     }
+    function _getGiftcardAmount() {
+        let totalSegments = quote.totals()['total_segments'];
+        let giftcard_amount = 0;
+        if (totalSegments && totalSegments.length) {
+            // Find the segment with code 'ckgiftcard'
+            let giftCardSegment = totalSegments.find(function (segment) {
+                return segment.code === 'ckgiftcard';
+            });
+
+            if (giftCardSegment) {
+                giftcard_amount = giftCardSegment.value;
+            }
+        }
+        return parseFloat(giftcard_amount).toFixed(2);
+    }
+
     function isExistLastNameBillingAddress(data) {
         let lastname = data.billingContact.familyName;
         if (!lastname || lastname.trim().length === 0) {

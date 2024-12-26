@@ -258,7 +258,7 @@ define(
                  * [Required]
                  * Set your account data using setAccount(ifieldKey, yourSoftwareName, yourSoftwareVersion).
                  */
-                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.2.69");
+                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.2.71");
 
                 /*
                  * [Optional]
@@ -398,7 +398,7 @@ define(
                             //onSuccess
                             //perform your own validation here...
                             self.isPlaceOrderActionAllowed(true);
-
+                            
                             /**
                              * Validation
                              * Place Order action
