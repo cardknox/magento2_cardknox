@@ -17,7 +17,6 @@ use Magento\Payment\Model\Method\Logger;
 
 class VerifyThreeDS extends Action implements HttpPostActionInterface
 {
-    private const GETWAY_HOST = 'https://x1.cardknox.com';
     /**
      * @var JsonFactory
      */
@@ -158,7 +157,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         }
 
         $newPostData = $this->baseRequestParams($postData);
-        $endpoint = self::GETWAY_HOST . '/verify';
+        $endpoint = $this->config->getThreeDSVeryfyUrl();
 
         try {
 

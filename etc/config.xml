@@ -42,6 +42,7 @@
                 <recaptchaEnabled></recaptchaEnabled>
                 <cardknox_enable_three_d_secure>0</cardknox_enable_three_d_secure>
                 <cardknox_three_d_secure_environment>production</cardknox_three_d_secure_environment>
+                <three_ds_verify_url>https://x1.cardknox.com/verify</three_ds_verify_url>
                 <visible_api_key></visible_api_key>
                 <visible_api_secret></visible_api_secret>
                 <select_recaptcha_source>google.com</select_recaptcha_source>
