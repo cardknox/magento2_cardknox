@@ -272,6 +272,20 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
 
         // Set the custom reserved order ID and save the quote
         $quote->setReservedOrderId($response['xInvoice']);
+        $payment = $quote->getPayment();
+        /** @var $payment \Magento\Sales\Model\Order\Payment */
+        $payment->setTransactionId($response["xRefNum"]);
+        $payment->setLastTransId($response["xRefNum"]);
+        $payment->setIsTransactionClosed(false);
+        // Set payment additional information
+        foreach ($this->additionalInformationMapping as $item) {
+            if (!isset($response[$item])) {
+                continue;
+            }
+            $payment->setAdditionalInformation($item, $response[$item]);
+        }
+        $payment->save();
+
         $quote->save();
 
         // Place the order and retrieve the order details
@@ -299,22 +313,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $order->setIncrementId($incrementId);
         $order->setEmailSent(0);
 
-        /**
-         * Save payment information
-         * Set transaction ID and additional information
-         */
         $payment = $order->getPayment();
-        /** @var $payment \Magento\Sales\Model\Order\Payment */
-        $payment->setTransactionId($response["xRefNum"]);
-        $payment->setLastTransId($response["xRefNum"]);
-        $payment->setIsTransactionClosed(false);
-        // Set payment additional information
-        foreach ($this->additionalInformationMapping as $item) {
-            if (!isset($response[$item])) {
-                continue;
-            }
-            $payment->setAdditionalInformation($item, $response[$item]);
-        }
 
         // Save transation
         $storeId = $this->getStoreIdFromQuote();
@@ -333,7 +332,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
             ->setFailSafe(true)
             ->build($transactionType);
 
-        $payment->save();
+        
         $order->save();
         $transaction->save();
 
@@ -394,10 +393,8 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $storeId = $this->getStoreIdFromQuote();
         $newParams = [
             'xVersion' => '5.0.0',
-            // 'xSoftwareName' => 'Magento ' . $edition . " ". $version,
-            // 'xSoftwareVersion' => '1.2.72',
-            'xSoftwareName' => 'ifields_sample',
-            'xSoftwareVersion' => '2.13',
+            'xSoftwareName' => 'Magento ' . $edition . " ". $version,
+            'xSoftwareVersion' => '1.2.72',
             'xAllowDuplicate' => 1,
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',

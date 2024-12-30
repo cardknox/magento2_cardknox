@@ -142,7 +142,7 @@ class GatewayCommand implements CommandInterface
      * Throws an exception with mapped message or default error.
      *
      * @param ResultInterface $result
-     * @throws CommandException
+     * @throws LocalizedException
      */
     private function processErrors(ResultInterface $result)
     {
@@ -166,7 +166,7 @@ class GatewayCommand implements CommandInterface
             $this->logger->critical('Payment Error: ' . $errorCodeOrMessage);
         }
 
-        throw new CommandException(
+        throw new LocalizedException(
             !empty($messages)
                 ? __(implode(PHP_EOL, $messages))
                 : __('Transaction has been declined. Please try again later.')
@@ -190,10 +190,5 @@ class GatewayCommand implements CommandInterface
                 __('%1', http_build_query($response)) // Encode and pass the response in the exception message
             );
         }
-
-        // Handle other cases if needed
-        throw new LocalizedException(
-            __('Transaction has been declined. Please try again later.')
-        );
     }
 }

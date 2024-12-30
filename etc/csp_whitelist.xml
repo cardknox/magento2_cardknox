@@ -8,11 +8,17 @@
                 <value id="fue-source" type="host">*.googleapis.com</value>
                 <value id="google-source" type="host">*.google.com</value>
                 <value id="gstatic-source" type="host">*.gstatic.com</value>
+                <value id="cdn.cardknox.com" type="host">cdn.cardknox.com</value>
+                <value id="*.cardinalcommerce.com" type="host">*.cardinalcommerce.com</value>
+                <value id="www.gstatic.com" type="host">www.gstatic.com</value>
             </values>
         </policy>
         <policy id="frame-src">
             <values>
                 <value id="cardknox-ifields" type="host">https://cdn.cardknox.com/</value>
+                <value id="cdn.cardknox.com" type="host">cdn.cardknox.com</value>
+                <value id="*.cardinalcommerce.com" type="host">*.cardinalcommerce.com</value>
+                <value id="pay.google.com" type="host">pay.google.com</value>
             </values>
         </policy>
         <policy id="style-src">
@@ -36,6 +42,16 @@
                 <value id="aws-api-connect" type="host">https://kg668dbov0.execute-api.us-east-1.amazonaws.com/stag/log</value>
                 <value id="google-connect" type="host">https://www.google.com</value>
                 <value id="gstatic-connect" type="host">https://www.gstatic.com</value>
+                <value id="api.cardknox.com" type="host">api.cardknox.com</value>
+                <value id="*.cardinalcommerce.com" type="host">*.cardinalcommerce.com</value>
+                <value id="kg668dbov0.execute-api.us-east-1.amazonaws.com" type="host">kg668dbov0.execute-api.us-east-1.amazonaws.com</value>
+                <value id="pay.google.com" type="host">pay.google.com</value>
+                <value id="play.google.com" type="host">play.google.com</value>
+            </values>
+        </policy>
+        <policy id="img-src">
+            <values>
+                <value id="www.gstatic.com" type="host">www.gstatic.com</value>
             </values>
         </policy>
     </policies>
