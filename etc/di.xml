@@ -178,7 +178,7 @@
         </arguments>
     </virtualType>
     <!-- Authorize command -->
-    <virtualType name="CardknoxAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+    <virtualType name="CardknoxAuthorizeCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand">
         <arguments>
             <argument name="requestBuilder" xsi:type="object">CardknoxAuthorizationRequest</argument>
             <argument name="handler" xsi:type="object">CardknoxVaultResponseHandler</argument>
@@ -204,7 +204,7 @@
         </arguments>
     </type>
     <!-- Capture command -->
-    <virtualType name="CardknoxCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+    <virtualType name="CardknoxCaptureCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand">
         <arguments>
             <argument name="requestBuilder" xsi:type="object">CardknoxCaptureRequest</argument>
             <argument name="handler" xsi:type="object">CardknoxVaultResponseHandler</argument>
@@ -592,4 +592,5 @@
             </argument>
         </arguments>
     </virtualType>
+
 </config>
