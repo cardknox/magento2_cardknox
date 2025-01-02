@@ -10,6 +10,8 @@ use Magento\Payment\Gateway\Validator\AbstractValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config as SystemConfig;
+use Magento\Payment\Model\Method\Logger;
+use Magento\Payment\Gateway\Command\CommandException;
 
 class ResponseCodeValidator extends AbstractValidator
 {
@@ -25,17 +27,27 @@ class ResponseCodeValidator extends AbstractValidator
     protected $systemConfig;
 
     /**
+     * Logger variable
+     *
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * ResponseCodeValidator function
      *
      * @param \Magento\Payment\Gateway\Validator\ResultInterfaceFactory $resultFactory
      * @param \CardknoxDevelopment\Cardknox\Gateway\Config\Config $systemConfig
+     * @param Logger $logger
      */
     public function __construct(
         ResultInterfaceFactory $resultFactory,
-        SystemConfig $systemConfig
+        SystemConfig $systemConfig,
+        Logger $logger
     ) {
         parent::__construct($resultFactory);
         $this->systemConfig = $systemConfig;
+        $this->logger = $logger;
     }
 
     /**
@@ -61,6 +73,8 @@ class ResponseCodeValidator extends AbstractValidator
             return $this->processThreeDSResponse($response);
         }
 
+        $log['Successful Transaction'] = $this->isSuccessfulTransaction($response);
+        $this->logger->debug($log);
         if ($this->isSuccessfulTransaction($response)) {
             return $this->createResult(true);
         } else {

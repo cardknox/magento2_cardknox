@@ -58,7 +58,8 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
         $this->systemConfig = $this->createMock(Config::class);
         $this->validator = new ResponseCodeValidator(
             $this->resultFactory,
-            $this->systemConfig
+            $this->systemConfig,
+            $this->mockLogger
         );
     }
 
