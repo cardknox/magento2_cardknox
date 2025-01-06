@@ -88,6 +88,6 @@
         <message code="01704" translate="true">Refund not allowed; issue void</message>
         <message code="01721" translate="true">Transaction can no longer be voided</message>
         <message code="01758" translate="true">Transaction already settled, issue refund (P)</message>
-        <message code="99999" translate="true">3DS Authentication Error: Please refresh your page and try again</message>
+        <message code="99999" translate="true">3DS Authentication Error</message>
     </message_list>
 </mapping>

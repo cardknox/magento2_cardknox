@@ -68,8 +68,10 @@ class BaseRequest implements BuilderInterface
 
         return [
             'xVersion' => '5.0.0',
-            'xSoftwareName' => 'Magento ' . $edition . " ". $version,
-            'xSoftwareVersion' => '1.2.72',
+            // 'xSoftwareName' => 'Magento ' . $edition . " ". $version,
+            // 'xSoftwareVersion' => '1.2.72',
+            'xSoftwareName' => 'ifields_sample',
+            'xSoftwareVersion' => '2.13',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $order->getStoreId()
@@ -77,5 +79,6 @@ class BaseRequest implements BuilderInterface
             'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
             'xSupports64BitRefnum' => true,
         ];
+        
     }
 }
