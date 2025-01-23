@@ -11,16 +11,18 @@ define([
 ],function ($, ko, Component, getGiftCardAction, addGiftCardAction, cancelGiftCardAction, giftCardAccount, customerData, quote)
 {
     'use strict';
-
+    customerData.reload(['checkout_ckgiftcard', 'cart','checkout-data'], true);
     let checkoutCkGiftCard = customerData.get('checkout_ckgiftcard');
+
     let { ckgiftcard_code: ckGiftCardCodeSession } = checkoutCkGiftCard();
     let ckGiftCardCode = giftCardAccount.getCkGiftCardCode();
     let isCkGiftCardApplied = giftCardAccount.getIsCkGiftCardApplied();
     let quoteGiftCardCode = window.checkoutConfig.quoteData.ckgiftcard_code;
     let cardknoxGiftcardText = window.checkoutConfig.payment.cardknox.cardknoxGiftcardText;
+    console.log('checkoutCkGiftCard', checkoutCkGiftCard());
 
     // Check if quoteGiftCardCode is defined and matches ckGiftCardCodeSession
-    if (quoteGiftCardCode !== null && ckGiftCardCodeSession === quoteGiftCardCode) {
+    if (ckGiftCardCodeSession !== null) {
         ckGiftCardCode(ckGiftCardCodeSession);
         isCkGiftCardApplied(true);
     }
