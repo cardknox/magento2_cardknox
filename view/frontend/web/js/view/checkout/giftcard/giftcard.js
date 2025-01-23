@@ -17,16 +17,13 @@ define([
     let { ckgiftcard_code: ckGiftCardCodeSession } = checkoutCkGiftCard();
     let ckGiftCardCode = giftCardAccount.getCkGiftCardCode();
     let isCkGiftCardApplied = giftCardAccount.getIsCkGiftCardApplied();
-    let quoteGiftCardCode = window.checkoutConfig.quoteData.ckgiftcard_code;
     let cardknoxGiftcardText = window.checkoutConfig.payment.cardknox.cardknoxGiftcardText;
-    console.log('checkoutCkGiftCard', checkoutCkGiftCard());
 
-    // Check if quoteGiftCardCode is defined and matches ckGiftCardCodeSession
+    // Check if Gift card code is exist on checkout session
     if (ckGiftCardCodeSession !== null) {
         ckGiftCardCode(ckGiftCardCodeSession);
         isCkGiftCardApplied(true);
     }
-
 
     return Component.extend({
 
@@ -45,8 +42,6 @@ define([
          */
         initialize: function () {
             this._super();
-            let grandTotal = quote.totals().grand_total;
-            console.log("grandTotal :- " + grandTotal);
             $('#cancel-gift-card').trigger('click');
             if (this.isDisplayedCKGiftcard() === false) {
                 let sections = ['cart'];
