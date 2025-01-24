@@ -11,20 +11,19 @@ define([
 ],function ($, ko, Component, getGiftCardAction, addGiftCardAction, cancelGiftCardAction, giftCardAccount, customerData, quote)
 {
     'use strict';
-
+    customerData.reload(['checkout_ckgiftcard', 'cart','checkout-data'], true);
     let checkoutCkGiftCard = customerData.get('checkout_ckgiftcard');
+
     let { ckgiftcard_code: ckGiftCardCodeSession } = checkoutCkGiftCard();
     let ckGiftCardCode = giftCardAccount.getCkGiftCardCode();
     let isCkGiftCardApplied = giftCardAccount.getIsCkGiftCardApplied();
-    let quoteGiftCardCode = window.checkoutConfig.quoteData.ckgiftcard_code;
     let cardknoxGiftcardText = window.checkoutConfig.payment.cardknox.cardknoxGiftcardText;
 
-    // Check if quoteGiftCardCode is defined and matches ckGiftCardCodeSession
-    if (quoteGiftCardCode !== null && ckGiftCardCodeSession === quoteGiftCardCode) {
+    // Check if Gift card code is exist on checkout session
+    if (ckGiftCardCodeSession !== null) {
         ckGiftCardCode(ckGiftCardCodeSession);
         isCkGiftCardApplied(true);
     }
-
 
     return Component.extend({
 
@@ -43,8 +42,6 @@ define([
          */
         initialize: function () {
             this._super();
-            let grandTotal = quote.totals().grand_total;
-            console.log("grandTotal :- " + grandTotal);
             $('#cancel-gift-card').trigger('click');
             if (this.isDisplayedCKGiftcard() === false) {
                 let sections = ['cart'];
