@@ -219,7 +219,6 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      */
     private function sendPostRequest($endpoint, $data)
     {
-        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->curl->post($endpoint, $data);
         return $this->curl->getBody();
     }
