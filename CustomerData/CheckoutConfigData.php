@@ -6,6 +6,7 @@ use Magento\Checkout\Model\Cart;
 use Magento\Checkout\Block\Onepage;
 use Magento\Checkout\Helper\Cart as CartHelper;
 use Magento\Framework\App\Request\Http;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 class CheckoutConfigData implements SectionSourceInterface
 {
@@ -30,23 +31,31 @@ class CheckoutConfigData implements SectionSourceInterface
     protected $_httpRequest;
 
     /**
+     * @var CheckoutSession
+     */
+    protected $checkoutSession;
+
+    /**
      * __construct function
      *
      * @param Cart $cartModel
      * @param Onepage $onepageBlock
      * @param CartHelper $cartHelper
      * @param Http $httpRequest
+     * @param CheckoutSession $checkoutSession
      */
     public function __construct(
         Cart $cartModel,
         Onepage $onepageBlock,
         CartHelper $cartHelper,
-        Http $httpRequest
+        Http $httpRequest,
+        CheckoutSession $checkoutSession
     ) {
         $this->_cartModel = $cartModel;
         $this->_onepageBlock = $onepageBlock;
         $this->_cartHelper = $cartHelper;
         $this->_httpRequest = $httpRequest;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -89,15 +98,39 @@ class CheckoutConfigData implements SectionSourceInterface
         $cartId = $this->getCurrentQuoteId();
         $itemCount = $this->getCartItemCount();
         $moduleName = $this->getModuleName();
+        $quote = $this->_cartModel->getQuote();
 
+        if ($this->isQuoteEmpty($quote)) {
+            $ckGiftCardCode = $quote->setCkgiftcardCode("");
+            $ckGiftCardAmount = $quote->setCkgiftcardAmount("");
+            $ckGiftCardBaseAmount = $quote->setCkgiftcardBaseAmount("");
+            $quote->save();
+
+            $this->checkoutSession->unsCardknoxGiftCardCode();
+            $this->checkoutSession->unsCardknoxGiftCardAmount();
+            $this->checkoutSession->unsCardknoxGiftCardBalance();
+        }
         $checkoutData = '';
         if ($cartId && $itemCount > 0 && $moduleName != 'checkout') {
             $serializedCheckoutConfig = $this->_onepageBlock->getSerializedCheckoutConfig();
             $checkoutData = "<script> window.checkoutConfig = ". $serializedCheckoutConfig ."; </script>";
         }
+
         return [
             'cart_id' => $itemCount,
             'config_data' => $checkoutData
         ];
+    }
+
+    /**
+     * Check if the quote is empty function
+     *
+     * @param mixed $quote
+     * @return bool
+     */
+    public function isQuoteEmpty($quote): bool
+    {
+        // Check if there are no items in the quote
+        return !$quote->hasItems();
     }
 }

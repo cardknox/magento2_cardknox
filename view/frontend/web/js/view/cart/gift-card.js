@@ -19,6 +19,7 @@ define([
          */
         _create: function () {
             this._bindEvents();
+            this._reloadCartAndTotals();
         },
 
         /**

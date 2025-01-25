@@ -30,9 +30,11 @@ class CheckoutGiftCardData implements SectionSourceInterface
      */
     public function getSectionData()
     {
+        $ckGiftCardCode = null;
+        $ckGiftCardAmount = null;
         // Retrieve custom data from the checkout session
-        $ckGiftCardCode = $this->checkoutSession->getCardknoxGiftCardCode();
-        $ckGiftCardAmount = $this->checkoutSession->getCardknoxGiftCardAmount();
+        $ckGiftCardCode = $this->checkoutSession->getCardknoxGiftCardCode() ?? null;
+        $ckGiftCardAmount = $this->checkoutSession->getCardknoxGiftCardAmount() ?? null;
  
         return [
             'ckgiftcard_code' => $ckGiftCardCode,
