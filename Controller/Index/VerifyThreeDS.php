@@ -157,7 +157,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         }
 
         $newPostData = $this->baseRequestParams($postData);
-        $endpoint = $this->config->getThreeDSVeryfyUrl();
+        $endpoint = $this->config->getThreeDSVerifyUrl();
 
         try {
 
