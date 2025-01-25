@@ -174,7 +174,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      *
      * @return string
      */
-    public function getThreeDSVeryfyUrl()
+    public function getThreeDSVerifyUrl()
     {
         return $this->getValue(self::CARDKNOX_THREE_D_SECURE_VERIFY_URL);
     }
