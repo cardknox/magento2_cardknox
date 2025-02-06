@@ -162,7 +162,7 @@ define(
                  * [Required]
                  * Set your account data using setAccount(ifieldKey, yourSoftwareName, yourSoftwareVersion).
                  */
-                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.2.71");
+                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.2.72");
 
                 /*
                  * [Optional]
