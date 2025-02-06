@@ -107,5 +107,31 @@
                 <ap_enable_show_summary>0</ap_enable_show_summary>
             </cardknox_apple_pay>
         </payment>
+        <csp>
+            <policies>
+                <storefront>
+                    <frame-ancestors>
+                        <inline>0</inline>
+                    </frame-ancestors>
+                </storefront>
+                <admin>
+                    <frame-ancestors>
+                        <inline>0</inline>
+                    </frame-ancestors>
+                </admin>
+                <storefront_checkout_index_index>
+                    <scripts>
+                        <inline>1</inline>
+                        <event_handlers>1</event_handlers>
+                    </scripts>
+                </storefront_checkout_index_index>
+                <admin_sales_order_create_index>
+                    <scripts>
+                        <inline>1</inline>
+                        <event_handlers>1</event_handlers>
+                    </scripts>
+                </admin_sales_order_create_index>
+            </policies>
+        </csp>
     </default>
 </config>
