@@ -1,3 +1,6 @@
+1.2.72
+- Magento 3D Secure integration
+
 1.2.71
 - Giftcard integration
 

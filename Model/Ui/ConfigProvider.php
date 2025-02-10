@@ -61,7 +61,9 @@ class ConfigProvider implements ConfigProviderInterface
                     'xPaymentAction' => $this->config->getCCPaymentAction(),
                     'selectRecaptchaSource' => $this->config->getSelectReCaptchaSource(),
                     'isEnabledCardknoxGiftcard' => $this->config->isCardknoxGiftcardEnabled(),
-                    'cardknoxGiftcardText' => $this->config->cardknoxGiftcardText()
+                    'cardknoxGiftcardText' => $this->config->cardknoxGiftcardText(),
+                    'isEnabledThreeDSEnabled' => $this->config->isEnable3DSecure(),
+                    'ThreeDSEnvironment' => $this->config->get3DSecureEnvironment()
                 ]
             ]
         ];

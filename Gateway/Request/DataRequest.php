@@ -51,20 +51,19 @@ class DataRequest implements BuilderInterface
             'xBillZip' => $billing->getPostcode(),
             'xBillCountry'=> $billing->getCountryId(),
             'xBillPhone' => $billing->getTelephone(),
-
+            'xEmail' => $billing->getEmail(),
         ];
         if ($shipping != "") {
             $result2 = [
-            'xShipFirstName' => $shipping->getFirstname(),
-            'xShipLastName' => $shipping->getLastname(),
-            'xShipCompany' => $shipping->getCompany(),
-            'xShipStreet' => $shipping->getStreetLine1(),
-            'xShipStreet2'=> $shipping->getStreetLine2(),
-            'xShipCity' => $shipping->getCity(),
-            'xShipState' => $shipping->getRegionCode(),
-            'xShipZip' => $shipping->getPostcode(),
-            'xShipCountry' => $shipping->getCountryId(),
-            'xEmail' => $billing->getEmail(),
+                'xShipFirstName' => $shipping->getFirstname(),
+                'xShipLastName' => $shipping->getLastname(),
+                'xShipCompany' => $shipping->getCompany(),
+                'xShipStreet' => $shipping->getStreetLine1(),
+                'xShipStreet2'=> $shipping->getStreetLine2(),
+                'xShipCity' => $shipping->getCity(),
+                'xShipState' => $shipping->getRegionCode(),
+                'xShipZip' => $shipping->getPostcode(),
+                'xShipCountry' => $shipping->getCountryId(),
             ];
         } else {
             $result2 = [];

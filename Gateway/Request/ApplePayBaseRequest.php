@@ -66,9 +66,9 @@ class ApplePayBaseRequest implements BuilderInterface
         $xSoftwareName = 'Magento ' . $this->productMetadata->getEdition() . " ". $this->productMetadata->getVersion();
         $ipAddress = $this->helper->getIpAddress();
         return [
-            'xVersion' => '4.5.8',
+            'xVersion' => '5.0.0',
             'xSoftwareName' => $xSoftwareName,
-            'xSoftwareVersion' => '1.2.71',
+            'xSoftwareVersion' => '1.2.72',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $order->getStoreId()

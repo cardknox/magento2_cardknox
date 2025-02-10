@@ -21,7 +21,9 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public const CC_SELECT_RECAPTCHA_SOURCE = "select_recaptcha_source";
     public const IS_CARDKNOX_GIFTCARD_ENABLED = "ck_giftcard_enabled";
     public const IS_CARDKNOX_GIFTCARD_TEXT = "ck_giftcard_text";
-
+    public const CARDKNOX_ENABLE_THREE_D_SECURE = "cardknox_enable_three_d_secure";
+    public const CARDKNOX_THREE_D_SECURE_ENVIRONMENT = "cardknox_three_d_secure_environment";
+    public const CARDKNOX_THREE_D_SECURE_VERIFY_URL = "three_ds_verify_url";
     /**
      * IsActive function
      *
@@ -146,5 +148,34 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function cardknoxGiftcardText()
     {
         return $this->getValue(self::IS_CARDKNOX_GIFTCARD_TEXT);
+    }
+    /**
+     * IsActive 3D secure function
+     *
+     * @return boolean
+     */
+    public function isEnable3DSecure()
+    {
+        return (bool) $this->getValue(self::CARDKNOX_ENABLE_THREE_D_SECURE);
+    }
+
+    /**
+     * Get 3D secure environment function
+     *
+     * @return string
+     */
+    public function get3DSecureEnvironment()
+    {
+        return $this->getValue(self::CARDKNOX_THREE_D_SECURE_ENVIRONMENT);
+    }
+
+    /**
+     * Get Cardknox 3DS verify URL function
+     *
+     * @return string
+     */
+    public function getThreeDSVerifyUrl()
+    {
+        return $this->getValue(self::CARDKNOX_THREE_D_SECURE_VERIFY_URL);
     }
 }
