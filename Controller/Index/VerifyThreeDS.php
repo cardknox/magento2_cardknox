@@ -399,6 +399,8 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
                 'cardknox_transaction_key',
                 $storeId
             ),
+            'xIP' => $ipAddress,
+
         ];
 
         // Merge arrays, giving precedence to $newParams
