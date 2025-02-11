@@ -17,6 +17,7 @@ define(
         'ko',
         'Magento_Checkout/js/action/redirect-on-success',
         'Magento_Checkout/js/model/payment/additional-validators',
+        'mage/url'
     ],
     function (
         Component,
@@ -29,9 +30,104 @@ define(
         VaultEnabler,
         ko,
         redirectOnSuccessAction,
-        additionalValidators
+        additionalValidators,
+        urlBuilder
     ) {
         'use strict';
+
+        let is3DSCallInProgress = false;
+
+        function handle3DSResults(
+            actionCode,
+            xCavv,
+            xEciFlag,
+            xRefNum,
+            xAuthenticateStatus,
+            xSignatureVerification
+        ) {
+            if (is3DSCallInProgress) {
+                console.log("3DS call already in progress. Skipping...");
+                return;
+            }
+
+            // Set the flag to true to indicate the call is in progress
+            is3DSCallInProgress = true;
+
+            const postData = {
+                xRefNum: xRefNum,
+                xCavv: xCavv,
+                xEci: xEciFlag,
+                x3dsAuthenticationStatus: xAuthenticateStatus,
+                x3dsSignatureVerificationStatus: xSignatureVerification,
+                x3dsActionCode: actionCode,
+                x3dsError: ck3DS.error,
+            };
+
+            console.log('3ds-verify', postData);
+
+            // Show loader initially
+            fullScreenLoader.startLoader();
+
+            // Monitor the 3DS popup
+            const popupElement = document.getElementById("Cardinal-ElementContainer");
+            if (popupElement) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.attributeName === "style") {
+                            const isHidden = window.getComputedStyle(popupElement).display === "none";
+                            if (isHidden) {
+                                console.log("3DS popup closed. Showing loader...");
+                                fullScreenLoader.startLoader(); // Show the loader again
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(popupElement, { attributes: true });
+            }
+
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: urlBuilder.build('cardknox/index/verifythreeds'),
+                data: postData,
+                success: function (resp) {
+                    if (!resp.success) {
+                        fullScreenLoader.stopLoader();
+                        console.error("3DS verification failed:", resp.message || "Unknown error");
+                        if (resp.redirect) {
+                            window.location.href = resp.redirect;
+                        }
+                    } else {
+                        console.log("3DS verification succeeded:", resp);
+                        if (resp.redirect) {
+                            window.location.href = resp.redirect;
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX error: " + textStatus + ", " + errorThrown);
+                    alert("An unexpected error occurred. Please try again.");
+                },
+                complete: function () {
+                    // Reset the flag and hide the loader once the AJAX call is complete
+                    is3DSCallInProgress = false;
+                    fullScreenLoader.stopLoader();
+                }
+            });
+        }
+
+        function urlEncodedToJson(data) {
+            return JSON.parse(
+            '{"' +
+                decodeURI(data)
+                .replace(/"/g, '\\"')
+                .replace(/&/g, '","')
+                .replace(/=/g, '":"') +
+                '"}'
+            );
+        }
+
         return Component.extend({
             cardNumberIsValid: ko.observable(false),
             cvvIsValid: ko.observable(false),
@@ -237,6 +333,14 @@ define(
                     clearInterval(checkCardLoaded);
                     focusIfield('card-number');
                 }, 1000);
+                let isEnabledThreeDSEnabled = window.checkoutConfig.payment.cardknox.isEnabledThreeDSEnabled;
+                let threeDSEnvironment = window.checkoutConfig.payment.cardknox.ThreeDSEnvironment ?? "staging";
+                if (isEnabledThreeDSEnabled == true) {
+                    // enable3DS("staging", handle3DSResults);
+                    enable3DS(threeDSEnvironment, handle3DSResults);
+                } else {
+                    enable3DS(threeDSEnvironment,null);
+                }
             },
             /**
              * Prepare data to place order
@@ -297,7 +401,7 @@ define(
                             //onSuccess
                             //perform your own validation here...
                             self.isPlaceOrderActionAllowed(true);
-                            
+
                             /**
                              * Validation
                              * Place Order action
@@ -323,6 +427,13 @@ define(
                                         }
                                     ).fail(
                                         function (response) {
+                                            const message = response.responseJSON.message;
+                                            const regex = /xResult=V&xStatus=Verify&xError=&xErrorCode=00000&xRefNum=/;
+
+                                            if (regex.test(message)) {
+                                                $('[data-role="checkout-messages"]').css('cssText', 'display: none !important');
+                                                verify3DS(urlEncodedToJson(message));
+                                            }
                                             self.isPlaceOrderActionAllowed(true);
                                             var error = response.responseJSON.message;
                                             if (error == 'Duplicate Transaction') {
@@ -379,7 +490,7 @@ define(
                     placeOrderAction(this.getData(), this.messageContainer)
                 );
             },
-            
+
             additionalValidator: function () {
                 return additionalValidators.validate();
             },

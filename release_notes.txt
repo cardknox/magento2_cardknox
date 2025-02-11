@@ -1,10 +1,12 @@
-1.2.72
+1.2.73
 - Add compatibility with CSP
-- Update xVersion 5.0.0
-- Fix giftcard cart and checkout page issues
+
+1.2.72
+- Magento 3D Secure integration
 
 1.2.71
 - Giftcard integration
+- Fix giftcard cart and checkout page issues
 
 1.2.69
 - Fix GooglePay button style on cart & checkout page for responsive view
