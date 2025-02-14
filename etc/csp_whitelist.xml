@@ -15,8 +15,7 @@
         </policy>
         <policy id="frame-src">
             <values>
-                <value id="cardknox-ifields" type="host">https://cdn.cardknox.com/</value>
-                <value id="cdn.cardknox.com" type="host">cdn.cardknox.com</value>
+                <value id="cardknox-ifields" type="host">cdn.cardknox.com</value>
                 <value id="*.cardinalcommerce.com" type="host">*.cardinalcommerce.com</value>
                 <value id="pay.google.com" type="host">pay.google.com</value>
             </values>
@@ -26,13 +25,14 @@
                 <value id="fue-style" type="host">*.googleapis.com</value>
                 <value id="google-style" type="host">*.google.com</value>
                 <value id="gstatic-style" type="host">*.gstatic.com</value>
+                <value id="style-src-cardknox" type="host">cdn.cardknox.com/</value>
             </values>
         </policy>
         <policy id="font-src">
             <values>
-                <value id="googleapis" type="host">https://fonts.gstatic.com</value>
-                <value id="googlesrc" type="host">https://www.google.com</value>
-                <value id="gstaticsrc" type="host">https://www.gstatic.com</value>
+                <value id="googleapis" type="host">fonts.gstatic.com</value>
+                <value id="googlesrc" type="host">www.google.com</value>
+                <value id="gstaticsrc" type="host">www.gstatic.com</value>
             </values>
         </policy>
         <policy id="connect-src">
@@ -47,6 +47,7 @@
                 <value id="kg668dbov0.execute-api.us-east-1.amazonaws.com" type="host">kg668dbov0.execute-api.us-east-1.amazonaws.com</value>
                 <value id="pay.google.com" type="host">pay.google.com</value>
                 <value id="play.google.com" type="host">play.google.com</value>
+                <value id="connect-cardknox" type="host">cdn.cardknox.com/</value>
             </values>
         </policy>
         <policy id="img-src">
