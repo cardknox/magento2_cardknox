@@ -18,7 +18,7 @@ define([
     return Component.extend({
         initialize: function () {
             this._super();
-
+            this.previousShippingMethod = null;
             // Subscribe to changes in the shipping method
             this.subscribeToShippingMethod();
 
@@ -30,12 +30,20 @@ define([
         },
 
         handleShippingMethodChange: function (newShippingMethod) {
-            if (this.isValidShippingMethod(newShippingMethod)) {
-                let selectedShippingMethodCode = newShippingMethod.method_code;
-                let selectedShippingCarrierCode = newShippingMethod.carrier_code;
-                let selectedShippingMethod = selectedShippingCarrierCode + '_' + selectedShippingMethodCode
+            if (!this.isValidShippingMethod(newShippingMethod)) {
+                return;
+            }
+
+            let selectedShippingMethodCode = newShippingMethod.method_code;
+            let selectedShippingCarrierCode = newShippingMethod.carrier_code;
+            let selectedShippingMethod = selectedShippingCarrierCode + '_' + selectedShippingMethodCode
+            // Check if the new shipping method is different from the previous one
+            if (this.previousShippingMethod !== selectedShippingMethod) {
                 this.updateGiftCard(newShippingMethod, selectedShippingMethod);
             }
+
+            // Update previous shipping method
+            this.previousShippingMethod = selectedShippingMethod;
         },
 
         isValidShippingMethod: function (shippingMethod) {
