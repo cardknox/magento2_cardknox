@@ -7,12 +7,12 @@
     </section>
     <section name="order_invoice">
         <group name="totals">
-            <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcardInvoice" sort_order="165"/>
+            <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcardInvoice" sort_order="9999"/>
         </group>
 	</section>
     <section name="order_creditmemo">
         <group name="totals">
-            <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcardCreditmemo" sort_order="165"/>
+            <item name="ckgiftcard" instance="CardknoxDevelopment\Cardknox\Model\Quote\Total\CKGiftcardCreditmemo" sort_order="999"/>
         </group>
     </section>
 </config>

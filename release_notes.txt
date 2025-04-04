@@ -1,3 +1,7 @@
+1.2.74
+- Fix Giftcard has been cancelled when free shipping code is applied
+- Fix Tax is not covered on the invoice by the gift card
+
 1.2.73
 - Add compatibility with CSP
 
