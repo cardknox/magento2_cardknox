@@ -20,7 +20,7 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
     public const XCVV = '123';
     public const CC_EXP_MONTH = 10;
     public const CC_EXP_YEAR = 2018;
-    
+
     /**
      * @var Event\Observer
      */
@@ -86,33 +86,18 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->paymentInfoModel->expects(static::at(0))
+        // Account for all the setAdditionalInformation calls in the observer
+        $this->paymentInfoModel->expects($this->exactly(6))
             ->method('setAdditionalInformation')
-            ->with(
-                'xCardNum',
-                self::XCARDNUM
-            );
-        $this->paymentInfoModel->expects(static::at(1))
-            ->method('setAdditionalInformation')
-            ->with(
-                'xCVV',
-                self::XCVV
-            );
-
-        $this->paymentInfoModel->expects(static::at(2))
-            ->method('setAdditionalInformation')
-            ->with(
-                'cc_exp_month',
-                self::CC_EXP_MONTH
+            ->withConsecutive(
+                ['xCardNum', self::XCARDNUM],
+                ['xCVV', self::XCVV],
+                ['cc_exp_month', self::CC_EXP_MONTH],
+                ['cc_exp_year', self::CC_EXP_YEAR],
+                ['xAmount', null],
+                ['shippingAddressFirstname', null]
             );
 
-        $this->paymentInfoModel->expects(static::at(3))
-            ->method('setAdditionalInformation')
-            ->with(
-                'cc_exp_year',
-                self::CC_EXP_YEAR
-            );
-        
         $this->observer->execute($this->observerContainer);
     }
 }

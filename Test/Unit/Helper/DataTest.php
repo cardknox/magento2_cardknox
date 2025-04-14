@@ -45,6 +45,11 @@ class DataTest extends TestCase
     private $_outputConfig;
 
     /**
+     * @var RemoteAddress&MockObject
+     */
+    private $remoteAddress;
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -70,65 +75,110 @@ class DataTest extends TestCase
             ->getMock();
 
         $this->_outputConfig = $this->getMockForAbstractClass(ConfigInterface::class);
-        $this->helper = new Data($this->contextMock, $this->remoteAddress);
-    }
 
-    /**
-     * @return ScopeConfigInterface
-     */
-    private function getScopeConfigMock(): ScopeConfigInterface
-    {
-        return $this->createMock(ScopeConfigInterface::class);
-    }
-
-    /**
-     * @param ScopeConfigInterface $scopeConfig
-     * @return Context
-     */
-    private function getContext(ScopeConfigInterface $scopeConfig): Context
-    {
-        $context = $this->createMock(Context::class);
-        $context->expects($this->once())
+        $this->contextMock->expects($this->any())
             ->method('getScopeConfig')
-            ->willReturn($scopeConfig);
-        return $context;
-    }
+            ->willReturn($this->scopeConfig);
 
-    private function getObjectTest(?Context $context = null)
-    {
-        if ($context) {
-            $args = [
-                'context' => $context
-            ];
-        } else {
-            $args = [];
-        }
-        return $this->objectManager->getObject(Data::class, $args);
+        $this->helper = new Data($this->contextMock, $this->remoteAddress);
     }
 
     public function testFormatPrice()
     {
         $price = 1.00;
-        $this->helper->formatPrice($price);
+        $result = $this->helper->formatPrice($price);
+        $this->assertEquals('1.00', $result);
+
+        $price = 10.5;
+        $result = $this->helper->formatPrice($price);
+        $this->assertEquals('10.50', $result);
+
+        $price = 0;
+        $result = $this->helper->formatPrice($price);
+        $this->assertEquals('0.00', $result);
     }
 
     public function testIsCCSplitCaptureEnabled()
     {
-        $scopeConfig = $this->getScopeConfigMock();
-        $scopeConfig->expects($this->once())
-            ->method('getValue');
-        $context = $this->getContext($scopeConfig);
-        $subject = $this->getObjectTest($context);
-        $subject->isCCSplitCaptureEnabled();
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(
+                Data::IS_CC_SPLIT_CAPTURE_ENABLED,
+                ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn('1');
+
+        $result = $this->helper->isCCSplitCaptureEnabled();
+        $this->assertEquals('1', $result);
     }
 
     public function testIsGPaySplitCaptureEnabled()
     {
-        $scopeConfig = $this->getScopeConfigMock();
-        $scopeConfig->expects($this->once())
-            ->method('getValue');
-        $context = $this->getContext($scopeConfig);
-        $subject = $this->getObjectTest($context);
-        $subject->isGPaySplitCaptureEnabled();
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(
+                Data::IS_GPAY_SPLIT_CAPTURE_ENABLED,
+                ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn('1');
+
+        $result = $this->helper->isGPaySplitCaptureEnabled();
+        $this->assertEquals('1', $result);
+    }
+
+    public function testGetIpAddress()
+    {
+        $ipAddress = '127.0.0.1';
+        $this->remoteAddress->expects($this->once())
+            ->method('getRemoteAddress')
+            ->with(false)
+            ->willReturn($ipAddress);
+
+        $result = $this->helper->getIpAddress();
+        $this->assertEquals($ipAddress, $result);
+    }
+
+    public function testIsCardknoxGiftcardEnabled()
+    {
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(
+                Data::IS_CARDKNOX_GIFTCARD_ENABLED,
+                ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn('1');
+
+        $result = $this->helper->isCardknoxGiftcardEnabled();
+        $this->assertEquals('1', $result);
+    }
+
+    public function testCardknoxGiftcardText()
+    {
+        $text = 'Test Gift Card Text';
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(
+                Data::IS_CARDKNOX_GIFTCARD_TEXT,
+                ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn($text);
+
+        $result = $this->helper->cardknoxGiftcardText();
+        $this->assertEquals($text, $result);
+    }
+
+    public function testGetConfigValue()
+    {
+        $key = 'payment/cardknox/title';
+        $value = 'Credit Card';
+        $storeId = 1;
+
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with($key, $storeId)
+            ->willReturn($value);
+
+        $result = $this->helper->getConfigValue($key, $storeId);
+        $this->assertEquals($value, $result);
     }
 }

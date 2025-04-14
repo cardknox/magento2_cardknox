@@ -30,13 +30,123 @@ class DataTest extends TestCase
         $this->viewModel = new Data($this->scopeConfig);
     }
 
-    public function testIsActiveGooglePay()
+    public function testIsActiveGooglePayWhenDisabled()
+    {
+        $expectedData = false;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::XPATH_FIELD_GOOGLEPAY_ENABLED, ScopeInterface::SCOPE_STORE)
+            ->willReturn(false);
+        $this->assertEquals($expectedData, $this->viewModel->isActiveGooglePay());
+    }
+
+    public function testIsActiveGooglePayWhenNull()
+    {
+        $expectedData = false;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::XPATH_FIELD_GOOGLEPAY_ENABLED, ScopeInterface::SCOPE_STORE)
+            ->willReturn(null);
+        $this->assertEquals($expectedData, $this->viewModel->isActiveGooglePay());
+    }
+
+    public function testIsActiveApplePay()
     {
         $expectedData = true;
         $this->scopeConfig->expects($this->once())
             ->method('getValue')
-            ->with(Data::XPATH_FIELD_GOOGLEPAY_ENABLED, ScopeInterface::SCOPE_STORE)
+            ->with(Data::XPATH_FIELD_APPLEPAY_ENABLED, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
-        $this->assertEquals($expectedData, $this->viewModel->isActiveGooglePay());
+        $this->assertEquals($expectedData, $this->viewModel->isActiveApplePay());
+    }
+
+    public function testIsActiveApplePayWhenDisabled()
+    {
+        $expectedData = false;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::XPATH_FIELD_APPLEPAY_ENABLED, ScopeInterface::SCOPE_STORE)
+            ->willReturn(false);
+        $this->assertEquals($expectedData, $this->viewModel->isActiveApplePay());
+    }
+
+    public function testIsEnabledReCaptcha()
+    {
+        $expectedData = true;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::IS_ENABLE_GOOGLE_REPCAPTCHA, ScopeInterface::SCOPE_STORE)
+            ->willReturn(true);
+        $this->assertEquals($expectedData, $this->viewModel->isEnabledReCaptcha());
+    }
+
+    public function testIsEnabledReCaptchaWhenDisabled()
+    {
+        $expectedData = false;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::IS_ENABLE_GOOGLE_REPCAPTCHA, ScopeInterface::SCOPE_STORE)
+            ->willReturn(false);
+        $this->assertEquals($expectedData, $this->viewModel->isEnabledReCaptcha());
+    }
+
+    public function testGetSelectReCaptchaSource()
+    {
+        $expectedData = true;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::XPATH_FIELD_CC_SELECT_RECAPTCHA_SOURCE, ScopeInterface::SCOPE_STORE)
+            ->willReturn(true);
+        $this->assertEquals($expectedData, $this->viewModel->getSelectReCaptchaSource());
+    }
+
+    public function testGetSelectReCaptchaSourceWhenDisabled()
+    {
+        $expectedData = false;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::XPATH_FIELD_CC_SELECT_RECAPTCHA_SOURCE, ScopeInterface::SCOPE_STORE)
+            ->willReturn(false);
+        $this->assertEquals($expectedData, $this->viewModel->getSelectReCaptchaSource());
+    }
+
+    public function testIsEnabledApplyPayOnCartPage()
+    {
+        $expectedData = true;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::APPLEPAY_ENABLE_ON_CARTPAGE, ScopeInterface::SCOPE_STORE)
+            ->willReturn(true);
+        $this->assertEquals($expectedData, $this->viewModel->isEnabledApplyPayOnCartPage());
+    }
+
+    public function testIsEnabledApplyPayOnCartPageWhenDisabled()
+    {
+        $expectedData = false;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::APPLEPAY_ENABLE_ON_CARTPAGE, ScopeInterface::SCOPE_STORE)
+            ->willReturn(false);
+        $this->assertEquals($expectedData, $this->viewModel->isEnabledApplyPayOnCartPage());
+    }
+
+    public function testIsEnabledGooglePayOnCartPage()
+    {
+        $expectedData = true;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::GOOGLEPAY_ENABLE_ON_CARTPAGE, ScopeInterface::SCOPE_STORE)
+            ->willReturn(true);
+        $this->assertEquals($expectedData, $this->viewModel->isEnabledGooglePayOnCartPage());
+    }
+
+    public function testIsEnabledGooglePayOnCartPageWhenDisabled()
+    {
+        $expectedData = false;
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with(Data::GOOGLEPAY_ENABLE_ON_CARTPAGE, ScopeInterface::SCOPE_STORE)
+            ->willReturn(false);
+        $this->assertEquals($expectedData, $this->viewModel->isEnabledGooglePayOnCartPage());
     }
 }
