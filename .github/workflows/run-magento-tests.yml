@@ -1,19 +1,19 @@
 name: Magento2 Build & Run Unit Tests
 
-on: 
+on:
   push:
-    branches-ignore: 
+    branches-ignore:
       - 'master'
       - 'rc/*/*/*'
   pull_request:
     types:
       - opened
-          
+
 jobs:
   magento2-build:
     runs-on: ubuntu-latest
     name: Magento2 Build & Run Unit Tests
-    
+
     services:
       mysql:
         image: docker://mysql:8.0
@@ -28,11 +28,19 @@ jobs:
         ports:
           - 9200:9200
         options: -e="discovery.type=single-node" -e "plugins.security.disabled=true" -e "plugins.security.ssl.http.enabled=false" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
-     
+
     steps:
     - uses: actions/checkout@v3
       with:
         path: Cardknox
+
+    # Add PHP setup step
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, intl, gd, xml, soap, zip, bcmath, opcache, pdo_mysql, curl, dom, hash, iconv, json, simplexml, xsl, xmlreader, xmlwriter, session
+        tools: composer:v2
 
     - name: Install Magento
       uses: MAD-I-T/magento-actions@v3.20
@@ -40,7 +48,7 @@ jobs:
         process: 'install-mage-os'
         magento_version: 2.4.6
         no_push: 1
-    
+
     - name: Install Dependencies
       run: |
         cd magento
@@ -53,18 +61,18 @@ jobs:
         sudo mkdir code
         cd code
         sudo mkdir CardknoxDevelopment
-      
+
     - name: Move Cardknox Module
       run: |
         sudo mv Cardknox magento/app/code/CardknoxDevelopment
 
-    - name: Enable Cardknox module 
+    - name: Enable Cardknox module
       run: |
         sudo php magento/bin/magento module:enable CardknoxDevelopment_Cardknox --clear-static-content
         sudo php magento/bin/magento setup:di:compile
         sudo chmod -R 777 magento/generated/ magento/var/ magento/pub/
         sudo php magento/bin/magento module:status
-    
+
     - name: Run Unit Tests
       run: |
         cd magento
