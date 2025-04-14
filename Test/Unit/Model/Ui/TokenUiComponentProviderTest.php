@@ -17,6 +17,8 @@ use PHPUnit\Framework\TestCase;
 
 class TokenUiComponentProviderTest extends TestCase
 {
+    private const VAULT_COMPONENT_PATH = 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/vault';
+
     /**
      * @var TokenUiComponentProvider
      */
@@ -93,7 +95,7 @@ class TokenUiComponentProviderTest extends TestCase
                     TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
                     TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $publicHash
                 ],
-                'name' => 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/vault'
+                'name' => self::VAULT_COMPONENT_PATH
             ])
             ->willReturn($this->tokenUiComponent);
 
@@ -126,7 +128,7 @@ class TokenUiComponentProviderTest extends TestCase
                     TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
                     TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $publicHash
                 ],
-                'name' => 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/vault'
+                'name' => self::VAULT_COMPONENT_PATH
             ])
             ->willReturn($this->tokenUiComponent);
 
@@ -159,7 +161,7 @@ class TokenUiComponentProviderTest extends TestCase
                     TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
                     TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $publicHash
                 ],
-                'name' => 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/vault'
+                'name' => self::VAULT_COMPONENT_PATH
             ])
             ->willReturn($this->tokenUiComponent);
 
