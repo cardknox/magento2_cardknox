@@ -45,6 +45,11 @@ class DataTest extends TestCase
     private $_outputConfig;
 
     /**
+     * @var RemoteAddress&MockObject
+     */
+    private $remoteAddress;
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -98,10 +103,13 @@ class DataTest extends TestCase
     {
         if ($context) {
             $args = [
-                'context' => $context
+                'context' => $context,
+                'remoteAddress' => $this->remoteAddress,
             ];
         } else {
-            $args = [];
+            $args = [
+                'remoteAddress' => $this->remoteAddress,
+            ];
         }
         return $this->objectManager->getObject(Data::class, $args);
     }
