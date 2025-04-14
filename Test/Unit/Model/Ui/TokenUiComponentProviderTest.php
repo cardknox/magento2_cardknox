@@ -17,6 +17,9 @@ use PHPUnit\Framework\TestCase;
 
 class TokenUiComponentProviderTest extends TestCase
 {
+    /**
+     * Constants
+     */
     private const VAULT_COMPONENT_PATH = 'CardknoxDevelopment_Cardknox/js/view/payment/method-renderer/vault';
 
     /**
@@ -71,14 +74,15 @@ class TokenUiComponentProviderTest extends TestCase
     }
 
     /**
-     * Test getComponentForToken with token details
+     * Helper method to set up common expectations and execute the test
+     *
+     * @param string|null $tokenDetails The token details JSON string
+     * @param string $publicHash The public hash value
+     * @param array|null $expectedJsonDetails The expected decoded JSON details
+     * @return void
      */
-    public function testGetComponentForToken()
+    private function executeComponentTest($tokenDetails, $publicHash, $expectedJsonDetails)
     {
-        $tokenDetails = '{"maskedCC":"411111******1111","expirationDate":"01/2025","type":"VI"}';
-        $publicHash = 'public_hash_value';
-        $jsonDetails = json_decode($tokenDetails, true);
-
         $this->paymentToken->expects($this->once())
             ->method('getTokenDetails')
             ->willReturn($tokenDetails);
@@ -92,7 +96,7 @@ class TokenUiComponentProviderTest extends TestCase
             ->with([
                 'config' => [
                     'code' => ConfigProvider::CC_VAULT_CODE,
-                    TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
+                    TokenUiComponentProviderInterface::COMPONENT_DETAILS => $expectedJsonDetails,
                     TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $publicHash
                 ],
                 'name' => self::VAULT_COMPONENT_PATH
@@ -101,6 +105,18 @@ class TokenUiComponentProviderTest extends TestCase
 
         $result = $this->tokenUiComponentProvider->getComponentForToken($this->paymentToken);
         $this->assertSame($this->tokenUiComponent, $result);
+    }
+
+    /**
+     * Test getComponentForToken with token details
+     */
+    public function testGetComponentForToken()
+    {
+        $tokenDetails = '{"maskedCC":"411111******1111","expirationDate":"01/2025","type":"VI"}';
+        $publicHash = 'public_hash_value';
+        $jsonDetails = json_decode($tokenDetails, true);
+
+        $this->executeComponentTest($tokenDetails, $publicHash, $jsonDetails);
     }
 
     /**
@@ -112,28 +128,7 @@ class TokenUiComponentProviderTest extends TestCase
         $publicHash = 'public_hash_value';
         $jsonDetails = []; // json_decode('{}', true) returns an empty array
 
-        $this->paymentToken->expects($this->once())
-            ->method('getTokenDetails')
-            ->willReturn($tokenDetails);
-
-        $this->paymentToken->expects($this->once())
-            ->method('getPublicHash')
-            ->willReturn($publicHash);
-
-        $this->componentFactory->expects($this->once())
-            ->method('create')
-            ->with([
-                'config' => [
-                    'code' => ConfigProvider::CC_VAULT_CODE,
-                    TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
-                    TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $publicHash
-                ],
-                'name' => self::VAULT_COMPONENT_PATH
-            ])
-            ->willReturn($this->tokenUiComponent);
-
-        $result = $this->tokenUiComponentProvider->getComponentForToken($this->paymentToken);
-        $this->assertSame($this->tokenUiComponent, $result);
+        $this->executeComponentTest($tokenDetails, $publicHash, $jsonDetails);
     }
 
     /**
@@ -145,27 +140,6 @@ class TokenUiComponentProviderTest extends TestCase
         $publicHash = 'public_hash_value';
         $jsonDetails = null; // json_decode returns null for invalid JSON
 
-        $this->paymentToken->expects($this->once())
-            ->method('getTokenDetails')
-            ->willReturn($tokenDetails);
-
-        $this->paymentToken->expects($this->once())
-            ->method('getPublicHash')
-            ->willReturn($publicHash);
-
-        $this->componentFactory->expects($this->once())
-            ->method('create')
-            ->with([
-                'config' => [
-                    'code' => ConfigProvider::CC_VAULT_CODE,
-                    TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
-                    TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $publicHash
-                ],
-                'name' => self::VAULT_COMPONENT_PATH
-            ])
-            ->willReturn($this->tokenUiComponent);
-
-        $result = $this->tokenUiComponentProvider->getComponentForToken($this->paymentToken);
-        $this->assertSame($this->tokenUiComponent, $result);
+        $this->executeComponentTest($tokenDetails, $publicHash, $jsonDetails);
     }
 }
