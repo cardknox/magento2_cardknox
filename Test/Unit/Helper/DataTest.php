@@ -164,7 +164,7 @@ class DataTest extends TestCase
 
     public function testGetIpAddress()
     {
-        $ipAddress = '192.168.1.1';
+        $ipAddress = '127.0.0.1';
         $this->remoteAddress->expects($this->once())
             ->method('getRemoteAddress')
             ->with(false)
