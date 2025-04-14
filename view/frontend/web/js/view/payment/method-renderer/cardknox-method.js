@@ -247,6 +247,7 @@ define(
             initCardknox: function () {
                 var self = this;
                 enableLogging();
+                enableBlockNonNumericInput()
                 /*
                  * [Optional]
                  * Use enableAutoFormatting(separator) to automatically format the card number field making it easier to read
