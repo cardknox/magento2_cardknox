@@ -83,42 +83,6 @@ class DataTest extends TestCase
         $this->helper = new Data($this->contextMock, $this->remoteAddress);
     }
 
-    /**
-     * @return ScopeConfigInterface
-     */
-    private function getScopeConfigMock(): ScopeConfigInterface
-    {
-        return $this->createMock(ScopeConfigInterface::class);
-    }
-
-    /**
-     * @param ScopeConfigInterface $scopeConfig
-     * @return Context
-     */
-    private function getContext(ScopeConfigInterface $scopeConfig): Context
-    {
-        $context = $this->createMock(Context::class);
-        $context->expects($this->once())
-            ->method('getScopeConfig')
-            ->willReturn($scopeConfig);
-        return $context;
-    }
-
-    private function getObjectTest(?Context $context = null)
-    {
-        if ($context) {
-            $args = [
-                'context' => $context,
-                'remoteAddress' => $this->remoteAddress,
-            ];
-        } else {
-            $args = [
-                'remoteAddress' => $this->remoteAddress,
-            ];
-        }
-        return $this->objectManager->getObject(Data::class, $args);
-    }
-
     public function testFormatPrice()
     {
         $price = 1.00;
