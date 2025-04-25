@@ -1,3 +1,6 @@
+1.2.75
+- Update the plugin to the latest version of iFields 3.0.2503.2101
+
 1.2.74
 - Fix Giftcard has been cancelled when free shipping code is applied
 - Fix Tax is not covered on the invoice by the gift card
