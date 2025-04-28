@@ -116,27 +116,27 @@ class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
             'amount' => $amount
         ];
 
-        $this->payment->expects(static::exactly(7))
+        $this->payment->expects($this->exactly(7))
             ->method('getAdditionalInformation')
             ->willReturnMap($additionalData);
 
-        $this->order->expects(static::once())
+        $this->order->expects($this->once())
             ->method('getOrderIncrementId')
             ->willReturn($invoiceId);
 
-        $this->order->expects(static::once())
+        $this->order->expects($this->once())
             ->method('getCurrencyCode')
             ->willReturn($currencyCode);
 
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getPayment')
             ->willReturn($this->payment);
 
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getOrder')
             ->willReturn($this->order);
 
-        static::assertEquals(
+        $this->assertEquals(
             $expectation,
             $this->authorizationRequest->build($buildSubject)
         );

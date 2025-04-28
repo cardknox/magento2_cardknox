@@ -56,7 +56,7 @@ class GooglePayConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConfig()
     {
-        static::assertEquals(
+        $this->assertEquals(
             [
                 'payment' => [
                     GooglePayConfigProvider::CODE => [

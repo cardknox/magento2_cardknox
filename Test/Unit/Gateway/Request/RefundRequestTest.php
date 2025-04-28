@@ -84,15 +84,15 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
             'xAmount'   => $this->helper->formatPrice($amount),
             'xRefNum' => null,
         ];
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getPayment')
             ->willReturn($this->paymentModel);
 
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getOrder')
             ->willReturn($this->orderMock);
 
-        static::assertEquals(
+        $this->assertEquals(
             $expectation,
             $this->refundRequest->build($buildSubject)
         );
@@ -114,19 +114,19 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
             'amount' => $amount
         ];
 
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getPayment')
             ->willReturn($this->paymentModel);
 
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getOrder')
             ->willReturn($this->orderMock);
 
-        $this->orderMock->expects(static::any())
+        $this->orderMock->expects($this->any())
             ->method('getGrandTotalAmount')
             ->willReturn($amount);
 
-        static::assertEquals(
+        $this->assertEquals(
             $expectation,
             $this->refundRequest->build($buildSubject)
         );

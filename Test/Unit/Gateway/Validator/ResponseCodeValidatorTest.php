@@ -71,18 +71,18 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidate(array $response, array $expectationToResultCreation)
     {
-        $this->resultFactory->expects(static::once())
+        $this->resultFactory->expects($this->once())
             ->method('create')
             ->with($expectationToResultCreation)
             ->willReturn($this->resultMock);
 
-        static::assertInstanceOf(
+        $this->assertInstanceOf(
             ResultInterface::class,
             $this->validator->validate(['response' => $response])
         );
     }
 
-    public function validateDataProvider(): array
+    public static function validateDataProvider(): array
     {
         return [
             'fail_1' => [
