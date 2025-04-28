@@ -1,10 +1,8 @@
 <?php
-
 /**
  * Copyright © 2024 Cardknox Development Inc. All rights reserved.
  * See LICENSE for license details.
  */
-
 namespace CardknoxDevelopment\Cardknox\Test\Unit\Gateway\Validator;
 
 use CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator;
@@ -12,16 +10,17 @@ use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 use Magento\Payment\Model\Method\Logger;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResultInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResultInterfaceFactory|MockObject
      */
     private $resultFactory;
 
     /**
-     * @var ResultInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResultInterface|MockObject
      */
     private $resultMock;
 
@@ -47,15 +46,16 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp(): void
     {
-        $this->resultFactory = $this->getMockBuilder(
-            'Magento\Payment\Gateway\Validator\ResultInterfaceFactory'
-        )
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Replace setMethods() with a simple createMock
+        $this->resultFactory = $this->createMock(ResultInterfaceFactory::class);
         $this->resultMock = $this->createMock(ResultInterface::class);
         $this->mockLogger = $this->createMock(Logger::class);
         $this->systemConfig = $this->createMock(Config::class);
+        
+        // Configure the mock method
+        $this->resultFactory->method('create')
+            ->willReturn($this->resultMock);
+
         $this->validator = new ResponseCodeValidator(
             $this->resultFactory,
             $this->systemConfig,
@@ -73,18 +73,16 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->resultFactory->expects(static::once())
             ->method('create')
-            ->with(
-                $expectationToResultCreation
-            )
+            ->with($expectationToResultCreation)
             ->willReturn($this->resultMock);
-        
+
         static::assertInstanceOf(
             ResultInterface::class,
             $this->validator->validate(['response' => $response])
         );
     }
 
-    public function validateDataProvider()
+    public function validateDataProvider(): array
     {
         return [
             'fail_1' => [
@@ -119,6 +117,7 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
         $buildSubject = [
             'response' => null,
         ];
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Response does not exist');
         $this->validator->validate($buildSubject);

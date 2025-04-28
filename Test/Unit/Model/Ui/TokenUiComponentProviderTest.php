@@ -54,16 +54,10 @@ class TokenUiComponentProviderTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->componentFactory = $this->getMockBuilder(TokenUiComponentInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
-        $this->paymentToken = $this->getMockBuilder(PaymentTokenInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->tokenUiComponent = $this->getMockBuilder(TokenUiComponentInterface::class)
-            ->getMockForAbstractClass();
+        // Replace setMethods() with createMock
+        $this->componentFactory = $this->createMock(TokenUiComponentInterfaceFactory::class);
+        $this->paymentToken = $this->createMock(PaymentTokenInterface::class);
+        $this->tokenUiComponent = $this->createMock(TokenUiComponentInterface::class);
 
         $this->tokenUiComponentProvider = $this->objectManager->getObject(
             TokenUiComponentProvider::class,
