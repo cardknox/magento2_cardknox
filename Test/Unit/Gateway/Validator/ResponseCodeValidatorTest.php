@@ -46,13 +46,11 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp(): void
     {
-        // Replace setMethods() with a simple createMock
         $this->resultFactory = $this->createMock(ResultInterfaceFactory::class);
         $this->resultMock = $this->createMock(ResultInterface::class);
         $this->mockLogger = $this->createMock(Logger::class);
         $this->systemConfig = $this->createMock(Config::class);
-        
-        // Configure the mock method
+
         $this->resultFactory->method('create')
             ->willReturn($this->resultMock);
 

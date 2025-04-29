@@ -53,7 +53,7 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
         $this->observerContainer = $this->createMock(Event\Observer::class);
         $this->event = $this->createMock(Event::class);
         $this->paymentInfoModel = $this->createMock(InfoInterface::class);
-        
+
         $this->dataObject = new DataObject(
             [
                 PaymentInterface::KEY_ADDITIONAL_DATA => [
@@ -64,7 +64,7 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         );
-        
+
         $this->observer = new DataAssignObserver();
     }
 
@@ -87,13 +87,12 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
                 return null;
             });
 
-        // Use willReturnSelf() to allow chaining of method calls
         $this->paymentInfoModel->method('setAdditionalInformation')
             ->willReturnSelf();
-            
+
         // Execute the observer
         $this->observer->execute($this->observerContainer);
-        
+
         // Test passes if no exceptions are thrown
         $this->assertTrue(true);
     }

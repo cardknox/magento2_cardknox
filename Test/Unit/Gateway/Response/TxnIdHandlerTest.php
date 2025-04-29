@@ -71,13 +71,11 @@ class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
             "Diners" => "DN",
             "CUP" => "CUP"
         ];
-        
-        // Create the config mock - removed setMethods()
+
         $this->config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
-            
-        // Configure the mock method
+
         $this->config->method('getCctypesMapper')
             ->willReturn($mapperArray);
 
