@@ -44,7 +44,7 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConfig()
     {
-        static::assertEquals(
+        $this->assertEquals(
             [
                 'payment' => [
                     ConfigProvider::CODE => [

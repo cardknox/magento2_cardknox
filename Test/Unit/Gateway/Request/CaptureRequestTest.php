@@ -92,22 +92,22 @@ class CaptureRequestTest extends \PHPUnit\Framework\TestCase
             'xIgnoreInvoice' => true
         ];
 
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getOrder')
             ->willReturn($this->orderMock);
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getPayment')
             ->willReturn($this->paymentModel);
 
-        $this->paymentModel->expects(static::exactly(2))
+        $this->paymentModel->expects($this->exactly(2))
             ->method('getLastTransId')
             ->willReturn($refnum);
 
-        $this->orderMock->expects(static::any())
+        $this->orderMock->expects($this->any())
             ->method('getStoreId')
             ->willReturn($storeId);
         
-        static::assertEquals(
+        $this->assertEquals(
             $expectation,
             $this->captureRequest->build(['payment' => $this->paymentDO, 'amount' => 1])
         );

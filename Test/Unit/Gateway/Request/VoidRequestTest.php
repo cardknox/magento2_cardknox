@@ -60,22 +60,22 @@ class VoidRequestTest extends \PHPUnit\Framework\TestCase
             'xRefNum' => $txnId,
         ];
 
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getOrder')
             ->willReturn($this->orderMock);
-        $this->paymentDO->expects(static::once())
+        $this->paymentDO->expects($this->once())
             ->method('getPayment')
             ->willReturn($this->paymentModel);
 
-        $this->paymentModel->expects(static::once())
+        $this->paymentModel->expects($this->once())
             ->method('getParentTransactionId')
             ->willReturn($txnId);
 
-        $this->orderMock->expects(static::any())
+        $this->orderMock->expects($this->any())
             ->method('getStoreId')
             ->willReturn($storeId);
 
-        static::assertEquals(
+        $this->assertEquals(
             $expectation,
             $this->voidRequest->build(['payment' => $this->paymentDO])
         );

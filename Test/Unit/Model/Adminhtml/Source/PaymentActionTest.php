@@ -13,7 +13,7 @@ class PaymentActionTest extends \PHPUnit\Framework\TestCase
     {
         $sourceModel = new PaymentAction();
 
-        static::assertEquals(
+        $this->assertEquals(
             [
                 [
                     'value' => 'authorize',

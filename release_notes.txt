@@ -1,3 +1,7 @@
+1.2.76
+- Make Cardknox plugin compatible with PHPUnit 10
+- Fix warnings/deprecations for PHPUnit 10
+
 1.2.75
 - Update the plugin to the latest version of iFields 3.0.2503.2101
 
