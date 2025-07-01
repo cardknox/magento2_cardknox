@@ -331,7 +331,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
             ->setFailSafe(true)
             ->build($transactionType);
 
-        
+
         $order->save();
         $transaction->save();
 
@@ -399,8 +399,6 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
                 'cardknox_transaction_key',
                 $storeId
             ),
-            'xIP' => $ipAddress,
-
         ];
 
         // Merge arrays, giving precedence to $newParams
