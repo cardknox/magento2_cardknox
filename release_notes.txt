@@ -1,4 +1,9 @@
 1.2.78
+- Integrated 3D Secure to enhance payment security.
+- Enabled gift card support, allowing merchants to accept gift cards.
+- Updated iField to the latest version for improved reliability and performance.
+- Made the plugin compatible with PHPUnit 10 and resolved all warnings and deprecations.
+- Added Content Security Policy (CSP) compatibility to improve site security.
 
 1.2.76
 - Make Cardknox plugin compatible with PHPUnit 10
