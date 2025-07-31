@@ -388,7 +388,6 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     {
         $edition = $this->productMetadata->getEdition();
         $version = $this->productMetadata->getVersion();
-        $ipAddress = $this->helper->getIpAddress();
         $storeId = $this->getStoreIdFromQuote();
         $newParams = [
             'xVersion' => '5.0.0',
