@@ -78,7 +78,7 @@ class ValidateGiftCard extends Action implements HttpPostActionInterface
 
         // Check if Cardknox GiftCard is enabled
         if (!$this->helper->isCardknoxGiftcardEnabled()) {
-            return $this->createResponse(false, __('Please enable Cardknox GiftCard.'));
+            return $this->createResponse(false, __('Please enable Sola GiftCard.'));
         }
 
         try {

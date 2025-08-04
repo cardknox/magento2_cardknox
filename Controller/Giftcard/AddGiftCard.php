@@ -74,7 +74,7 @@ class AddGiftCard extends Action
     public function execute()
     {
         if (!$this->helper->isCardknoxGiftcardEnabled()) {
-            return $this->jsonResponse(false, __('Please enable Cardknox Gift.'));
+            return $this->jsonResponse(false, __('Please enable Sola Gift.'));
         }
 
         $giftCardCode = $this->getRequest()->getParam('giftcard_code');
