@@ -331,7 +331,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
             ->setFailSafe(true)
             ->build($transactionType);
 
-        
+
         $order->save();
         $transaction->save();
 
@@ -393,14 +393,12 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $newParams = [
             'xVersion' => '5.0.0',
             'xSoftwareName' => 'Magento ' . $edition . " ". $version,
-            'xSoftwareVersion' => '1.2.76',
+            'xSoftwareVersion' => '1.2.78',
             'xAllowDuplicate' => 1,
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $storeId
             ),
-            'xIP' => $ipAddress,
-
         ];
 
         // Merge arrays, giving precedence to $newParams
