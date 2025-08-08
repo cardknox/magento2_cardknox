@@ -73,7 +73,7 @@ class CancelGiftCard extends Action
         if (!$isCardknoxGiftcardEnabled) {
             return $result->setData([
                 'success' => false,
-                'message' => __('Please enable Cardknox Gift.'),
+                'message' => __('Please enable Sola Gift.'),
             ]);
         }
 
