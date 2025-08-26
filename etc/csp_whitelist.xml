@@ -11,6 +11,8 @@
                 <value id="cdn.cardknox.com" type="host">cdn.cardknox.com</value>
                 <value id="*.cardinalcommerce.com" type="host">*.cardinalcommerce.com</value>
                 <value id="www.gstatic.com" type="host">www.gstatic.com</value>
+                <value id="*.solapayments.com" type="host">*.solapayments.com</value>
+                <value id="*.cardknox.com" type="host">*.cardknox.com</value>
             </values>
         </policy>
         <policy id="frame-src">
@@ -18,6 +20,8 @@
                 <value id="cardknox-ifields" type="host">cdn.cardknox.com</value>
                 <value id="*.cardinalcommerce.com" type="host">*.cardinalcommerce.com</value>
                 <value id="pay.google.com" type="host">pay.google.com</value>
+                <value id="*.solapayments.com" type="host">*.solapayments.com</value>
+                <value id="*.cardknox.com" type="host">*.cardknox.com</value>
             </values>
         </policy>
         <policy id="style-src">
@@ -53,6 +57,8 @@
         <policy id="img-src">
             <values>
                 <value id="www.gstatic.com" type="host">www.gstatic.com</value>
+                <value id="*.solapayments.com" type="host">*.solapayments.com</value>
+                <value id="*.cardknox.com" type="host">*.cardknox.com</value>
             </values>
         </policy>
     </policies>
