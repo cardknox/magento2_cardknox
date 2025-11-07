@@ -1,9 +1,7 @@
 1.2.81
-- Added compatibility with WooCommerce Block Editor Checkout.
-- Updated all Cardknox references to Sola.
-- Added compatibility with WooCommerce High-Performance Order Storage (HPOS).
-- Fixed critical get_billing_country error .
-- Limited expiration year input to two digits on checkout.
+- Updated Cardknox references to Sola for consistency across the platform.
+- Fixed an issue with 3DS where the system was sending an incorrect IP field.
+- Fixed issue causing subscription renewals to fail with “payment method not available.”
 
 1.2.78
 - Integrated 3D Secure to enhance payment security.
