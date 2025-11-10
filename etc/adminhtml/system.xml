@@ -10,7 +10,7 @@
     <system>
         <section id="payment">
             <group id="cardknox" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Cardknox</label>
+                <label>Sola Payments</label>
                 <!-- Credit Card Configuration Start -->
                 <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
@@ -29,11 +29,11 @@
                     <label>Credit Card Title</label>
                 </field>
                 <field id="cardknox_transaction_key" translate="label" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Cardknox Transaction Key (xKey or Gateway Key)</label>
+                    <label>Sola API Key (Transaction Key) </label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
                 <field id="cardknox_token_key" translate="label" type="obscure" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Cardknox Token Key (iFields Key)</label>
+                    <label>Sola iFields Key (Token Key)</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
                 <field id="debug" translate="label" type="select" sortOrder="85" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -53,7 +53,7 @@
                     </depends>
                 </field>
                 <field id="cgi_url" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Cardknox Gateway Endpoint</label>
+                    <label>Sola Payments Gateway Endpoint</label>
                 </field>
                 <field id="cardknox_enable_three_d_secure" translate="label" type="select" sortOrder="112" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable 3D Secure</label>
@@ -74,7 +74,7 @@
                     </depends>
                 </field>
                 <field id="three_ds_verify_url" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Cardknox Gateway 3D Secure Verify Endpoint</label>
+                    <label>Sola Payments Gateway 3D Secure Verify Endpoint</label>
                 </field>
                 <field id="recaptchaEnabled" translate="label comment" type="select" sortOrder="151" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Google reCAPTCHA V2 Enable</label>
@@ -95,13 +95,13 @@
                     </depends>
                 </field>
                 <field id="ck_giftcard_enabled" translate="label" type="select" sortOrder="153" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Enable Cardknox Giftcard</label>
+                    <label>Enable Sola Giftcard</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <config_path>payment/cardknox/ck_giftcard_enabled</config_path>
                 </field>
                 <!-- Dependent Text Field -->
                 <field id="ck_giftcard_text" translate="label" type="text" sortOrder="154" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Cardknox Giftcard Title</label>
+                    <label>Sola Giftcard Title</label>
                     <config_path>payment/cardknox/ck_giftcard_text</config_path>
                     <!-- Make the field dependent on 'ck_giftcard_enabled' being set to '1' (Yes) -->
                     <depends>
@@ -136,7 +136,7 @@
 
                 <!-- Google Pay Configuration -->
                 <group id="cardknox_google_pay" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Cardknox Google Pay</label>
+                    <label>Sola Google Pay</label>
                     <field id="cardknox_gpay_active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Enabled</label>
                         <config_path>payment/cardknox_google_pay/active</config_path>
@@ -255,7 +255,7 @@
 
                 <!-- Apple Pay Configuration -->
                 <group id="cardknox_apple_pay" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Cardknox Apple Pay</label>
+                    <label>Sola Apple Pay</label>
                     <field id="cardknox_applepay_info" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="8">
                         <frontend_model>CardknoxDevelopment\Cardknox\Block\Adminhtml\System\Config\ApplePay\Info</frontend_model>
                         <config_path>payment/cardknox_apple_pay/domain_registration_info</config_path>
