@@ -115,10 +115,7 @@ define(
                     console.error("3DS verification error:", textStatus, errorThrown);
 
                     // Display error message to user
-                    var errorMsg = "An unexpected error occurred during 3DS verification. Please try again.";
-                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
-                        errorMsg = jqXHR.responseJSON.message;
-                    }
+                    const errorMsg = jqXHR.responseJSON?.message || "An unexpected error occurred during 3DS verification. Please try again.";
                     messageList.addErrorMessage({
                         message: errorMsg
                     });
@@ -476,16 +473,16 @@ define(
 
                                                 // Prevent checkout navigation during 3DS
                                                 // Only apply hash protection if using standard Magento checkout (not OneStep/custom)
-                                                var isStandardCheckout = window.location.pathname.indexOf('/checkout/') !== -1 &&
+                                                const isStandardCheckout = window.location.pathname.indexOf('/checkout/') !== -1 &&
                                                                         (window.location.hash.indexOf('#shipping') !== -1 ||
                                                                          window.location.hash.indexOf('#payment') !== -1);
 
                                                 if (isStandardCheckout) {
                                                     // Save current URL state
-                                                    var originalHash = window.location.hash || '#payment';
+                                                    const originalHash = window.location.hash || '#payment';
 
                                                     // Prevent hash changes during 3DS - use both hashchange and history
-                                                    var preventHashChange = function(e) {
+                                                    const preventHashChange = function(e) {
                                                         if (window.location.hash !== originalHash) {
                                                             if (e && e.preventDefault) {
                                                                 e.preventDefault();
@@ -507,7 +504,7 @@ define(
                                                     }
 
                                                     // Monitor for hash changes with interval as backup
-                                                    var hashMonitor = setInterval(function() {
+                                                    const hashMonitor = setInterval(function() {
                                                         if (is3DSVerificationInProgress && window.location.hash !== originalHash) {
                                                             history.replaceState(null, null, originalHash);
                                                         }
@@ -522,8 +519,8 @@ define(
                                                 return;
                                             }
                                             self.isPlaceOrderActionAllowed(true);
-                                            var error = response.responseJSON.message;
-                                            if (error == 'Duplicate Transaction') {
+                                            const error = response.responseJSON?.message;
+                                            if (error === 'Duplicate Transaction') {
                                                 self.isAllowDuplicateTransaction(true);
                                             } else {
                                                 self.isAllowDuplicateTransaction(false);
