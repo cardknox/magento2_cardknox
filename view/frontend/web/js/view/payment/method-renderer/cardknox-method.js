@@ -102,11 +102,11 @@ define(
                     if (!resp.success) {
                         fullScreenLoader.stopLoader();
                         if (resp.redirect) {
-                            window.location.href = resp.redirect;
+                            globalThis.location.href = resp.redirect;
                         }
                     } else {
                         if (resp.redirect) {
-                            window.location.href = resp.redirect;
+                            globalThis.location.href = resp.redirect;
                         }
                     }
                 },
@@ -131,15 +131,15 @@ define(
                     $(window).off('popstate.prevent3DS');
 
                     // Clear the hash monitor interval
-                    if (window.threeDSHashMonitor) {
-                        clearInterval(window.threeDSHashMonitor);
-                        window.threeDSHashMonitor = null;
+                    if (globalThis.threeDSHashMonitor) {
+                        clearInterval(globalThis.threeDSHashMonitor);
+                        globalThis.threeDSHashMonitor = null;
                     }
 
                     // Restore original is_virtual value
-                    if (window.checkoutConfig && window.checkoutConfig.quoteData && typeof window.originalIsVirtual !== 'undefined') {
-                        window.checkoutConfig.quoteData.is_virtual = window.originalIsVirtual;
-                        window.originalIsVirtual = undefined;
+                    if (globalThis.checkoutConfig?.quoteData && typeof globalThis.originalIsVirtual !== 'undefined') {
+                        globalThis.checkoutConfig.quoteData.is_virtual = globalThis.originalIsVirtual;
+                        globalThis.originalIsVirtual = undefined;
                     }
                 }
             });
@@ -473,22 +473,22 @@ define(
 
                                                 // Prevent checkout navigation during 3DS
                                                 // Only apply hash protection if using standard Magento checkout (not OneStep/custom)
-                                                const isStandardCheckout = window.location.pathname.indexOf('/checkout/') !== -1 &&
-                                                                        (window.location.hash.indexOf('#shipping') !== -1 ||
-                                                                         window.location.hash.indexOf('#payment') !== -1);
+                                                const isStandardCheckout = globalThis.location.pathname.includes('/checkout/') &&
+                                                                        (globalThis.location.hash.includes('#shipping') ||
+                                                                         globalThis.location.hash.includes('#payment'));
 
                                                 if (isStandardCheckout) {
                                                     // Save current URL state
-                                                    const originalHash = window.location.hash || '#payment';
+                                                    const originalHash = globalThis.location.hash || '#payment';
 
                                                     // Prevent hash changes during 3DS - use both hashchange and history
                                                     const preventHashChange = function(e) {
-                                                        if (window.location.hash !== originalHash) {
+                                                        if (globalThis.location.hash !== originalHash) {
                                                             if (e && e.preventDefault) {
                                                                 e.preventDefault();
                                                             }
                                                             // Force the hash back immediately
-                                                            history.replaceState(null, null, originalHash);
+                                                            globalThis.history.replaceState(null, null, originalHash);
                                                         }
                                                     };
 
@@ -497,21 +497,21 @@ define(
                                                     $(window).on('popstate.prevent3DS', preventHashChange);
 
                                                     // Also prevent Magento checkout from changing steps
-                                                    if (window.checkoutConfig && window.checkoutConfig.quoteData) {
+                                                    if (globalThis.checkoutConfig?.quoteData) {
                                                         // Store original value to restore later
-                                                        window.originalIsVirtual = window.checkoutConfig.quoteData.is_virtual;
-                                                        window.checkoutConfig.quoteData.is_virtual = false;
+                                                        globalThis.originalIsVirtual = globalThis.checkoutConfig.quoteData.is_virtual;
+                                                        globalThis.checkoutConfig.quoteData.is_virtual = false;
                                                     }
 
                                                     // Monitor for hash changes with interval as backup
                                                     const hashMonitor = setInterval(function() {
-                                                        if (is3DSVerificationInProgress && window.location.hash !== originalHash) {
-                                                            history.replaceState(null, null, originalHash);
+                                                        if (is3DSVerificationInProgress && globalThis.location.hash !== originalHash) {
+                                                            globalThis.history.replaceState(null, null, originalHash);
                                                         }
                                                     }, 100);
 
                                                     // Store the interval ID so we can clear it later
-                                                    window.threeDSHashMonitor = hashMonitor;
+                                                    globalThis.threeDSHashMonitor = hashMonitor;
                                                 }
 
                                                 verify3DS(urlEncodedToJson(message));
