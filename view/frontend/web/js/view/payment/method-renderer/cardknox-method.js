@@ -36,6 +36,7 @@ define(
         'use strict';
 
         let is3DSCallInProgress = false;
+        let is3DSVerificationInProgress = false;
 
         function handle3DSResults(
             actionCode,
@@ -46,7 +47,16 @@ define(
             xSignatureVerification
         ) {
             if (is3DSCallInProgress) {
-                console.log("3DS call already in progress. Skipping...");
+                return;
+            }
+
+            // Validate that we have required data before proceeding
+            if (!xRefNum || !actionCode) {
+                return;
+            }
+
+            // Only proceed if the user has completed authentication (actionCode should be SUCCESS, FAILURE, ERROR, or NOACTION)
+            if (actionCode !== 'SUCCESS' && actionCode !== 'FAILURE' && actionCode !== 'ERROR' && actionCode !== 'NOACTION') {
                 return;
             }
 
@@ -63,8 +73,6 @@ define(
                 x3dsError: ck3DS.error,
             };
 
-            console.log('3ds-verify', postData);
-
             // Show loader initially
             fullScreenLoader.startLoader();
 
@@ -76,8 +84,7 @@ define(
                         if (mutation.attributeName === "style") {
                             const isHidden = window.getComputedStyle(popupElement).display === "none";
                             if (isHidden) {
-                                console.log("3DS popup closed. Showing loader...");
-                                fullScreenLoader.startLoader(); // Show the loader again
+                                fullScreenLoader.startLoader();
                             }
                         }
                     });
@@ -89,30 +96,51 @@ define(
             $.ajax({
                 type: "post",
                 dataType: "json",
-                url: urlBuilder.build('cardknox/index/verifythreeds'),
+                url: urlBuilder.build('cardknox/index/VerifyThreeDS'),
                 data: postData,
                 success: function (resp) {
                     if (!resp.success) {
                         fullScreenLoader.stopLoader();
-                        console.error("3DS verification failed:", resp.message || "Unknown error");
                         if (resp.redirect) {
-                            window.location.href = resp.redirect;
+                            globalThis.location.href = resp.redirect;
                         }
                     } else {
-                        console.log("3DS verification succeeded:", resp);
                         if (resp.redirect) {
-                            window.location.href = resp.redirect;
+                            globalThis.location.href = resp.redirect;
                         }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    console.error("AJAX error: " + textStatus + ", " + errorThrown);
-                    alert("An unexpected error occurred. Please try again.");
+                    fullScreenLoader.stopLoader();
+                    console.error("3DS verification error:", textStatus, errorThrown);
+
+                    // Display error message to user
+                    const errorMsg = jqXHR.responseJSON?.message || "An unexpected error occurred during 3DS verification. Please try again.";
+                    messageList.addErrorMessage({
+                        message: errorMsg
+                    });
                 },
                 complete: function () {
-                    // Reset the flag and hide the loader once the AJAX call is complete
+                    // Reset the flags and hide the loader once the AJAX call is complete
                     is3DSCallInProgress = false;
+                    is3DSVerificationInProgress = false;
                     fullScreenLoader.stopLoader();
+
+                    // Re-enable hash change events after 3DS completes
+                    $(window).off('hashchange.prevent3DS');
+                    $(window).off('popstate.prevent3DS');
+
+                    // Clear the hash monitor interval
+                    if (globalThis.threeDSHashMonitor) {
+                        clearInterval(globalThis.threeDSHashMonitor);
+                        globalThis.threeDSHashMonitor = null;
+                    }
+
+                    // Restore original is_virtual value
+                    if (globalThis.checkoutConfig?.quoteData && typeof globalThis.originalIsVirtual !== 'undefined') {
+                        globalThis.checkoutConfig.quoteData.is_virtual = globalThis.originalIsVirtual;
+                        globalThis.originalIsVirtual = undefined;
+                    }
                 }
             });
         }
@@ -424,7 +452,10 @@ define(
                                         }
                                     ).always(
                                         function () {
-                                            self.isPlaceOrderActionAllowed(true);
+                                            // Don't re-enable button if 3DS verification is in progress
+                                            if (!is3DSVerificationInProgress) {
+                                                self.isPlaceOrderActionAllowed(true);
+                                            }
                                         }
                                     ).fail(
                                         function (response) {
@@ -432,12 +463,64 @@ define(
                                             const regex = /xResult=V&xStatus=Verify&xError=&xErrorCode=00000&xRefNum=/;
 
                                             if (regex.test(message)) {
+                                                is3DSVerificationInProgress = true;
+                                                // Hide all error messages
                                                 $('[data-role="checkout-messages"]').css('cssText', 'display: none !important');
+                                                $('.message.error').hide();
+                                                $('.messages').hide();
+                                                // Clear the message container
+                                                self.messageContainer.clear();
+
+                                                // Prevent checkout navigation during 3DS
+                                                // Only apply hash protection if using standard Magento checkout (not OneStep/custom)
+                                                const isStandardCheckout = globalThis.location.pathname.includes('/checkout/') &&
+                                                                        (globalThis.location.hash.includes('#shipping') ||
+                                                                         globalThis.location.hash.includes('#payment'));
+
+                                                if (isStandardCheckout) {
+                                                    // Save current URL state
+                                                    const originalHash = globalThis.location.hash || '#payment';
+
+                                                    // Prevent hash changes during 3DS - use both hashchange and history
+                                                    const preventHashChange = function(e) {
+                                                        if (globalThis.location.hash !== originalHash) {
+                                                            if (e && e.preventDefault) {
+                                                                e.preventDefault();
+                                                            }
+                                                            // Force the hash back immediately
+                                                            globalThis.history.replaceState(null, null, originalHash);
+                                                        }
+                                                    };
+
+                                                    // Listen to both hashchange and popstate
+                                                    $(window).on('hashchange.prevent3DS', preventHashChange);
+                                                    $(window).on('popstate.prevent3DS', preventHashChange);
+
+                                                    // Also prevent Magento checkout from changing steps
+                                                    if (globalThis.checkoutConfig?.quoteData) {
+                                                        // Store original value to restore later
+                                                        globalThis.originalIsVirtual = globalThis.checkoutConfig.quoteData.is_virtual;
+                                                        globalThis.checkoutConfig.quoteData.is_virtual = false;
+                                                    }
+
+                                                    // Monitor for hash changes with interval as backup
+                                                    const hashMonitor = setInterval(function() {
+                                                        if (is3DSVerificationInProgress && globalThis.location.hash !== originalHash) {
+                                                            globalThis.history.replaceState(null, null, originalHash);
+                                                        }
+                                                    }, 100);
+
+                                                    // Store the interval ID so we can clear it later
+                                                    globalThis.threeDSHashMonitor = hashMonitor;
+                                                }
+
                                                 verify3DS(urlEncodedToJson(message));
+                                                // Don't process any further error handling - wait for 3DS completion
+                                                return;
                                             }
                                             self.isPlaceOrderActionAllowed(true);
-                                            var error = response.responseJSON.message;
-                                            if (error == 'Duplicate Transaction') {
+                                            const error = response.responseJSON?.message;
+                                            if (error === 'Duplicate Transaction') {
                                                 self.isAllowDuplicateTransaction(true);
                                             } else {
                                                 self.isAllowDuplicateTransaction(false);
