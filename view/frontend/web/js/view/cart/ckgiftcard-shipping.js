@@ -52,23 +52,65 @@ define([
 
         updateGiftCard: function (newShippingMethod, selectedShippingMethod) {
             const self = this;
+            const url = urlBuilder.build('cardknox/giftcard/validategiftcard');
 
-            $.ajax({
-                url: urlBuilder.build('cardknox/giftcard/validategiftcard'),
-                type: 'POST',
-                data: {
-                    quote_data: newShippingMethod,
-                    selected_shipping_method: selectedShippingMethod
-                },
-                success: function (data) {
-                    if (data.success) {
-                        self.handleSuccessfulValidation();
+            // Use native XMLHttpRequest to avoid jQuery mixin recursion issues
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.success) {
+                            self.handleSuccessfulValidation();
+                        }
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
                     }
-                },
-                error: function (xhr) {
+                } else {
                     console.error('Error validating gift card:', xhr.statusText, xhr.responseText);
                 }
+            };
+
+            xhr.onerror = function () {
+                console.error('Error validating gift card:', xhr.statusText, xhr.responseText);
+            };
+
+            // Serialize nested object data for PHP to parse as array
+            const formData = this.serializeObject({
+                quote_data: newShippingMethod,
+                selected_shipping_method: selectedShippingMethod
             });
+
+            xhr.send(formData);
+        },
+
+        /**
+         * Serialize nested objects into application/x-www-form-urlencoded format
+         * that PHP can parse into nested arrays
+         */
+        serializeObject: function (obj, prefix) {
+            const params = [];
+
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const paramKey = prefix ? prefix + '[' + key + ']' : key;
+                    const value = obj[key];
+
+                    if (value !== null && typeof value === 'object') {
+                        // Recursively serialize nested objects
+                        params.push(this.serializeObject(value, paramKey));
+                    } else {
+                        // Encode simple values
+                        params.push(encodeURIComponent(paramKey) + '=' + encodeURIComponent(value));
+                    }
+                }
+            }
+
+            return params.join('&');
         },
 
         handleSuccessfulValidation: function () {
