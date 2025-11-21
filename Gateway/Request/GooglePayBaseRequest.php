@@ -68,7 +68,7 @@ class GooglePayBaseRequest implements BuilderInterface
         return [
             'xVersion' => '5.0.0',
             'xSoftwareName' => $xSoftwareName,
-            'xSoftwareVersion' => '1.2.81',
+            'xSoftwareVersion' => '1.2.82',
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',
                 $order->getStoreId()
