@@ -1,7 +1,9 @@
-1.2.81
+1.2.82
 - Updated Cardknox references to Sola for consistency across the platform.
-- Fixed an issue with 3DS where the system was sending an incorrect IP field.
 - Fixed issue causing subscription renewals to fail with “payment method not available.”
+- Updated to latest iFields version 3.1.2508.1401.
+- Fixed infinite recursion error in gift card validation AJAX call.
+- Fixed 3DS issues, handling and validation of 3DS responses.
 
 1.2.78
 - Integrated 3D Secure to enhance payment security.
