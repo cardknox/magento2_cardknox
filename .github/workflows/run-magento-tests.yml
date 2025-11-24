@@ -56,15 +56,11 @@ jobs:
 
     - name: Create Directories for Cardknox Module
       run: |
-        cd magento
-        cd app
-        sudo mkdir code
-        cd code
-        sudo mkdir CardknoxDevelopment
+        mkdir -p magento/app/code/CardknoxDevelopment
 
     - name: Move Cardknox Module
       run: |
-        sudo mv Cardknox magento/app/code/CardknoxDevelopment
+        mv Cardknox magento/app/code/CardknoxDevelopment
 
     - name: Enable Cardknox module
       run: |
