@@ -46,7 +46,7 @@ jobs:
       uses: MAD-I-T/magento-actions@v3.33
       with:
         process: 'install-mage-os'
-        magento_version: 2.4.8
+        magento_version: 2.4.7
         no_push: 1
 
     - name: Install Dependencies
