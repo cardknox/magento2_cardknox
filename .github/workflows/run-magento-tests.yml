@@ -42,17 +42,17 @@ jobs:
         extensions: mbstring, intl, gd, xml, soap, zip, bcmath, opcache, pdo_mysql, curl, dom, hash, iconv, json, simplexml, xsl, xmlreader, xmlwriter, session
         tools: composer:v2
 
-    - name: Install Magento
-      uses: MAD-I-T/magento-actions@v3.33
-      with:
-        process: 'install-mage-os'
-        magento_version: 2.4.7
-        no_push: 1
+    - name: Download Magento Directly
+      run: |
+        # Download Magento 2.4.8-p3 from GitHub
+        wget https://github.com/magento/magento2/archive/2.4.8-p3.zip
+        unzip 2.4.8-p3.zip
+        mv magento2-2.4.8-p3 magento
 
     - name: Install Dependencies
       run: |
         cd magento
-        sudo composer install
+        composer install --no-interaction --prefer-dist
 
     - name: Create Directories for Cardknox Module
       run: |
