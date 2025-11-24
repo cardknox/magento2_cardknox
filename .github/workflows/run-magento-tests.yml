@@ -43,7 +43,7 @@ jobs:
         tools: composer:v2
 
     - name: Install Magento
-      uses: MAD-I-T/magento-actions@v3.20
+      uses: MAD-I-T/magento-actions@v3.33
       with:
         process: 'install-mage-os'
         magento_version: 2.4.8
