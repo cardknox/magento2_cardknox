@@ -72,5 +72,6 @@ jobs:
     - name: Run Unit Tests
       run: |
         cd magento
-        sudo sed -i "/<string>allure.*/c\<directory>allure/allure.config.php</directory>" dev/tests/unit/phpunit.xml.dist
-        sudo php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
+        # Remove Allure bootstrap to avoid config file warning
+        sed -i '/<bootstrap class="Qameta\\Allure\\PHPUnit\\AllureExtension">/,/<\/bootstrap>/d' dev/tests/unit/phpunit.xml.dist
+        php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
