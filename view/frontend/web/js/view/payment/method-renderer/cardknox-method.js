@@ -520,7 +520,7 @@ define(
                                             }
                                             self.isPlaceOrderActionAllowed(true);
                                             const error = response.responseJSON?.message;
-                                            if (error === 'Duplicate Transaction') {
+                                            if (error && error.startsWith('Duplicate Transaction')) {
                                                 self.isAllowDuplicateTransaction(true);
                                             } else {
                                                 self.isAllowDuplicateTransaction(false);

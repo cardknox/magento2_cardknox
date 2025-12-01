@@ -401,13 +401,14 @@
     </virtualType>
 
      <!-- Authorize command -->
-    <virtualType name="CardknoxGpayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+    <virtualType name="CardknoxGpayAuthorizeCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand">
         <arguments>
             <argument name="requestBuilder" xsi:type="object">CardknoxGpayAuthorizationRequest</argument>
             <argument name="handler" xsi:type="object">CardknoxGpayVaultResponseHandler</argument>
             <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
             <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
             <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+            <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
 
@@ -423,7 +424,7 @@
     </virtualType>
 
     <!-- Capture command -->
-    <virtualType name="CardknoxGpayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+    <virtualType name="CardknoxGpayCaptureCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand">
         <arguments>
             <argument name="requestBuilder" xsi:type="object">CardknoxGPayCaptureRequest</argument>
             <argument name="handler" xsi:type="object">CardknoxVaultResponseHandler</argument>
@@ -526,13 +527,14 @@
     </virtualType>
 
      <!-- Authorize command -->
-    <virtualType name="CardknoxApplePayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+    <virtualType name="CardknoxApplePayAuthorizeCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand">
         <arguments>
             <argument name="requestBuilder" xsi:type="object">CardknoxApplePayAuthorizationRequest</argument>
             <argument name="handler" xsi:type="object">CardknoxApplePayVaultResponseHandler</argument>
             <argument name="transferFactory" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\TransferFactory</argument>
             <argument name="validator" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Validator\ResponseCodeValidator</argument>
             <argument name="client" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\Http\Client\Client</argument>
+            <argument name="errorMessageMapper" xsi:type="object">CardknoxDevelopment\Cardknox\Gateway\ErrorMapper\VirtualErrorMessageMapper</argument>
         </arguments>
     </virtualType>
 
@@ -548,7 +550,7 @@
     </virtualType>
 
     <!-- Capture command -->
-    <virtualType name="CardknoxApplePayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+    <virtualType name="CardknoxApplePayCaptureCommand" type="CardknoxDevelopment\Cardknox\Gateway\Command\GatewayCommand">
         <arguments>
             <argument name="requestBuilder" xsi:type="object">CardknoxApplePayCaptureRequest</argument>
             <argument name="handler" xsi:type="object">CardknoxVaultResponseHandler</argument>
