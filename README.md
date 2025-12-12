@@ -3,7 +3,7 @@ Sola Payments Gateway for Adobe Commerce (Magento 2)
 
 - Adobe Commerce (Magento 2) extension to allow payments using the Sola Payments Gateway (formerly Cardknox).
 
-- Supports Magento 21., 2.2, 2.3, 2.4
+- Supports Magento 2.1, 2.2, 2.3, 2.4
 
 - For Magento 2.1.0-2.1.3 use [releases/magento-2.1.0-3](https://github.com/Cardknox/magento2_cardknox/tree/releases/magento-2.1.0-3)
 
