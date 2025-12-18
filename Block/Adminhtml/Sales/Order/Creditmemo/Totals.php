@@ -89,7 +89,7 @@ class Totals extends Template
         $total = new DataObject([
             'code'  => 'ckgiftcardamount',
             'value' => -$giftCardAmount,
-            'label' => __('Cardknox Giftcard Amount'),
+            'label' => __('Sola Giftcard Amount'),
         ]);
 
         $this->getParentBlock()->addTotalBefore($total, 'grand_total');

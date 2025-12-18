@@ -77,7 +77,7 @@ class Totals extends Template
             [
                 'code' => 'ckgiftcardamount',
                 'value' => -$this->_order->getCkgiftcardAmount(),
-                'label' => "Cardknox Giftcard Amount",
+                'label' => "Sola Giftcard Amount",
             ]
         );
         $this->getParentBlock()->addTotalBefore($total, 'grand_total');

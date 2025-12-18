@@ -92,7 +92,7 @@ class Order extends Template
                     'code' => 'ckgiftcardAmount',
                     'strong' => false,
                     'value' => -$this->_order->getCkgiftcardAmount(),
-                    'label' => "Cardknox Giftcard Amount",
+                    'label' => "Sola Giftcard Amount",
                 ]
             );
 
