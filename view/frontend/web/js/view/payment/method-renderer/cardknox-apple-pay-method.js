@@ -157,8 +157,8 @@ define([
                             if (response?.responseJSON?.message) {
                                 errorMessage = response.responseJSON.message;
                             }
-                            self.showPaymentError(errorMessage);
-                            if (errorMessage == 'Duplicate Transaction') {
+
+                            if (errorMessage.startsWith('Duplicate Transaction')) {
                                 self.isAllowDuplicateTransaction(true);
                             } else {
                                 self.isAllowDuplicateTransaction(false);

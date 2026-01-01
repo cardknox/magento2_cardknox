@@ -392,7 +392,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $newParams = [
             'xVersion' => '5.0.0',
             'xSoftwareName' => 'Magento ' . $edition . " ". $version,
-            'xSoftwareVersion' => '1.2.81',
+            'xSoftwareVersion' => '1.2.83',
             'xAllowDuplicate' => 1,
             'xKey' => $this->config->getValue(
                 'cardknox_transaction_key',

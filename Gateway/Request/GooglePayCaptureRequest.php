@@ -69,7 +69,7 @@ class GooglePayCaptureRequest implements BuilderInterface
         }
         $isAllowDuplicateTransactionGpCapture = $payment->getAdditionalInformation("isAllowDuplicateTransaction");
         if ($payment->getLastTransId() == '') {
-            return [
+            $result = [
                 'xCommand' => 'cc:sale',
                 'xAmount'   => $amount,
                 'xInvoice' => $order->getOrderIncrementId(),
@@ -77,8 +77,13 @@ class GooglePayCaptureRequest implements BuilderInterface
                 'xCardNum' => $payment->getAdditionalInformation("xCardNum"),
                 'xIgnoreInvoice' => true,
                 'xTimeoutSeconds' => 55,
-                'xAllowDuplicate' => $isAllowDuplicateTransactionGpCapture
             ];
+
+            if ($isAllowDuplicateTransactionGpCapture) {
+                $result['xAllowDuplicate'] = true;
+            }
+
+            return $result;
         }
         // phpcs:disable
         $gPayPaymentAction = $payment->getAdditionalInformation("xPaymentAction") ? $payment->getAdditionalInformation("xPaymentAction") : $this->config->getGPayPaymentAction();
