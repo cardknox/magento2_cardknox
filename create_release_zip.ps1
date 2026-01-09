@@ -23,6 +23,9 @@ Write-Host "Excluding: .git, .vs, .github, and this script"
 $excludeDirs = @('.git', '.vs', '.github')
 $excludeFiles = @($scriptName, 'create_release_zip.bat', '*.zip')
 
+# 7-Zip executable path
+$7Zip = 'C:\"Program Files"\7-Zip\7zG.exe'
+
 # Create a temporary directory
 $tempBase = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
 $tempDir = Join-Path $tempBase ("zip_temp_" + [guid]::NewGuid().ToString())
@@ -43,16 +46,21 @@ try {
     }
 
     # Create the zip file with all contents at root level
-    Compress-Archive -Path (Join-Path $tempDir '*') -DestinationPath $zipFile -Force
+    # 7-Zip is needed because Compress-Archive does not pass the validation script due to Windows path separators used
+    $tempFiles = Join-Path $tempDir '*'
+    Invoke-Expression "$7Zip a `"$zipFile`" `"$tempFiles`""
 
     Write-Host ""
-    Write-Host "Done! Zip file created at: $zipFile" -ForegroundColor Green
+    Write-Host "Zip file created at: $zipFile" -ForegroundColor Green
 }
 catch {
     Write-Host ""
     Write-Host "Error creating zip file: $_" -ForegroundColor Red
 }
 finally {
+    # Prompt to ensure 7-Zip releases file handles before cleanup
+    Read-Host "Press Enter to continue"
+    
     # Clean up temp directory
     if (Test-Path $tempDir) {
         Remove-Item -Path $tempDir -Recurse -Force
