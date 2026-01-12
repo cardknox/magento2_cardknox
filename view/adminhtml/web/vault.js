@@ -26,7 +26,7 @@ define([
         },
 
         initVault: function () {
-            var self = this;
+            const self = this;
 
             // Wait for DOM to be ready
             $(function () {
@@ -48,8 +48,8 @@ define([
         },
 
         initEventHandlers: function () {
-            var self = this;
-            var radioButton = this.$container.find('[name="payment[token_switcher]"]');
+            const self = this;
+            const radioButton = this.$container.find('[name="payment[token_switcher]"]');
 
             radioButton.on('click', function () {
                 self.setPaymentDetails();
@@ -60,7 +60,7 @@ define([
          * Set payment details on initial load if this vault token is selected
          */
         setInitialPaymentDetails: function () {
-            var radioButton = this.$container.find('[name="payment[token_switcher]"]');
+            const radioButton = this.$container.find('[name="payment[token_switcher]"]');
 
             // If this radio button is checked on load, set the public_hash
             if (radioButton.is(':checked')) {
@@ -72,7 +72,7 @@ define([
          * Set public hash value to the hidden input field
          */
         setPaymentDetails: function () {
-            var publicHashInput = $('[name="payment[public_hash]"]');
+            const publicHashInput = $('[name="payment[public_hash]"]');
 
             if (publicHashInput.length && this.publicHash) {
                 publicHashInput.val(this.publicHash);
