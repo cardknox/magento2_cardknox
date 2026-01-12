@@ -98,7 +98,6 @@ class GiftCard extends Template
         return $this->helper->isCardknoxGiftcardEnabled();
     }
 
-
     /**
      * CardknoxGiftcardText function
      *

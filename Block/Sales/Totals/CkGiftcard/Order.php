@@ -5,21 +5,15 @@ use Magento\Framework\View\Element\Template;
 
 class Order extends Template
 {
+    /**
+     * @var \Magento\Sales\Model\Order|null
+     */
     protected $_order;
-    protected $_source;
 
     /**
-     * __construct function
-     *
-     * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param array $data
+     * @var \Magento\Framework\DataObject|null
      */
-    public function __construct(
-        \Magento\Framework\View\Element\Template\Context $context,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-    }
+    protected $_source;
 
     /**
      * Get data (totals) source model

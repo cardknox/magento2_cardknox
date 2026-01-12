@@ -51,7 +51,11 @@ class GooglePayConfigProviderTest extends \PHPUnit\Framework\TestCase
         $this->resolverInterface = $this->getMockBuilder(ResolverInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->gPayConfigProvider = new GooglePayConfigProvider($this->config, $this->gpayConfig, $this->resolverInterface);
+        $this->gPayConfigProvider = new GooglePayConfigProvider(
+            $this->config,
+            $this->gpayConfig,
+            $this->resolverInterface
+        );
     }
 
     public function testGetConfig()

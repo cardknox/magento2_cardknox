@@ -20,17 +20,6 @@ class Totals extends Template
     protected $_source;
 
     /**
-     * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param array $data
-     */
-    public function __construct(
-        Template\Context $context,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-    }
-
-    /**
      * Get data (totals) source model
      *
      * @return \Magento\Framework\DataObject
