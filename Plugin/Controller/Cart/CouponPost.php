@@ -77,7 +77,7 @@ class CouponPost
 
         // Apply coupon and handle gift card logic after execute
         if ($couponCode && $coupon->getId()) {
-            $this->applyCouponAndHandleGiftCard( $cartQuote, $grandTotal);
+            $this->applyCouponAndHandleGiftCard($cartQuote, $grandTotal);
         }
 
         return $result;

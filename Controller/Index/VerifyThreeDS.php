@@ -231,6 +231,7 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      */
     private function parseResponse($response)
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction -- Required for URL-encoded response parsing
         parse_str($response, $parsedResponse);
         return $parsedResponse;
     }
@@ -330,7 +331,6 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
             ->setTransactionId($response['xRefNum'])
             ->setFailSafe(true)
             ->build($transactionType);
-
 
         $order->save();
         $transaction->save();
