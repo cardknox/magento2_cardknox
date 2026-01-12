@@ -4,9 +4,12 @@
  * See LICENSE for license details.
  */
 
-/** @var CardknoxDevelopment\Cardknox\Block\Payment $block */
+/**
+ * @var CardknoxDevelopment\Cardknox\Block\Payment $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
 
-$code = $block->escapeHtml($block->getCode());?>
+$code = $escaper->escapeHtml($block->getCode());?>
 <script>
     //<![CDATA[
     require(
