@@ -72,21 +72,21 @@
 .gpay-logo {
     background: url('@{baseDir}CardknoxDevelopment_Cardknox/images/google-pay-mark.png');
     background-repeat: no-repeat, no-repeat, no-repeat;
-    width: auto;
-    padding-left: 10rem;
-    display: inline-block;
-    vertical-align: middle;
-    padding-top: 0;
-    margin: 0 0 0 10px;
-    height: 50px;
     background-size: 80px;
+    display: inline-block;
+    height: 50px;
+    margin: 0 0 0 10px;
+    padding-left: 10rem;
+    padding-top: 0;
+    vertical-align: middle;
+    width: auto;
 }
 
 #cardknox_google_pay_container {
     .actions-toolbar {
         display: block;
         text-align: center;
-    .primary {
+        .primary {
             float: none !important;
         }
     }
@@ -98,16 +98,16 @@
     }
 }
 .ck-allow-duplicate-transaction {
-    margin-top: 20px;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 .checkout-cart-index {
     #applepay-btn-cart-summary {
-        .actions-toolbar  {
+        .actions-toolbar {
             .primary {
-                width: 100%;
-                max-width: 300px;
                 margin: 0 auto;
+                max-width: 300px;
+                width: 100%;
                 .apple-pay-button.visible {
                     width: 100%;
                 }
@@ -117,26 +117,26 @@
 }
 .cardknox-credit-card-logo {
     background: url('@{baseDir}CardknoxDevelopment_Cardknox/images/credit-card-logo.png');
-    background-repeat: no-repeat;
-    width: auto;
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 0 0 10px;
-    height: 24px;
-    overflow: inherit;
-    flex: 1;
     background-position: right;
+    background-repeat: no-repeat;
+    display: inline-block;
+    flex: 1;
+    height: 24px;
+    margin: 0 0 0 10px;
+    overflow: inherit;
+    vertical-align: middle;
+    width: auto;
 }
 
 .checkout-payment-method .payment-method.ck-credit-card-payment .payment-method-title {
-    display: flex;
     align-items: center;
-    border-top: 1px solid #cccccc;
+    border-top: 1px solid #ccc;
+    display: flex;
     label {
         display: inline-flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        span.cardknox-credit-card-title{
+        span.cardknox-credit-card-title {
             margin-left: 5px;
             margin-top: 3px;
         }
@@ -146,39 +146,39 @@
 
 /* For gift card */
 .checkout-payment-method {
-	.payment-option-content {
-		.form-ckgiftcard {
-			display: table;
-			width: 100%;
-			.actions-toolbar {
-				display: table-cell;
-				vertical-align: top;
-				width: 1%;
-				.primary {
-					margin-bottom: 10px;
-					float: left;
-					.action {
-						border-bottom-left-radius: 0;
-						border-top-left-radius: 0;
-						margin: 0 0 0 -2px;
-						white-space: nowrap;
-						width: 129px;
-					}
-				}
-				.secondary {
-					float: left;
-					.action {
-						margin: 0 0 0 -2px;
-						white-space: nowrap;
-						width: 129px;
-					}
-				}
-			}
-		}
-	}
+    .payment-option-content {
+        .form-ckgiftcard {
+            display: table;
+            width: 100%;
+            .actions-toolbar {
+                display: table-cell;
+                vertical-align: top;
+                width: 1%;
+                .primary {
+                    float: left;
+                    margin-bottom: 10px;
+                    .action {
+                        border-bottom-left-radius: 0;
+                        border-top-left-radius: 0;
+                        margin: 0 0 0 -2px;
+                        white-space: nowrap;
+                        width: 129px;
+                    }
+                }
+                .secondary {
+                    float: left;
+                    .action {
+                        margin: 0 0 0 -2px;
+                        white-space: nowrap;
+                        width: 129px;
+                    }
+                }
+            }
+        }
+    }
 }
 .opc-wrapper {
-	.form-ckgiftcard {
-		max-width: 500px;
-	}
+    .form-ckgiftcard {
+        max-width: 500px;
+    }
 }

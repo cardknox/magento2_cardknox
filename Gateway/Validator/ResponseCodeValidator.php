@@ -86,7 +86,6 @@ class ResponseCodeValidator extends AbstractValidator
         }
     }
 
-
     /**
      * IsSuccessfulTransaction
      *
@@ -136,10 +135,12 @@ class ResponseCodeValidator extends AbstractValidator
         $fails = [];
 
         // Check if verification is required or there are generic errors
-        if (
-            (isset($response['xStatus'], $response['xResult']) && $response['xStatus'] === 'Verify' && $response['xResult'] === 'V') ||
-            (isset($response['xErrorCode']) && $response['xErrorCode'] !== '00000')
-        ) {
+        $isVerifyRequired = isset($response['xStatus'], $response['xResult'])
+            && $response['xStatus'] === 'Verify'
+            && $response['xResult'] === 'V';
+        $hasErrorCode = isset($response['xErrorCode']) && $response['xErrorCode'] !== '00000';
+
+        if ($isVerifyRequired || $hasErrorCode) {
             $fails['requires_verification'] = $response;
             $isValid = false;
         }

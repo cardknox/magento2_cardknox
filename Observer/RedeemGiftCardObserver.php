@@ -15,20 +15,17 @@ use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
 class RedeemGiftCardObserver implements ObserverInterface
 {
     /**
-     *
-     * @var Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     *
-     * @var \CardknoxDevelopment\Cardknox\Helper\Giftcard
+     * @var Giftcard
      */
     protected $_giftcardHelper;
 
     /**
-     *
-     * @var Magento\Sales\Api\OrderRepositoryInterface
+     * @var OrderRepositoryInterface
      */
     protected $orderRepository;
 
@@ -48,7 +45,7 @@ class RedeemGiftCardObserver implements ObserverInterface
     protected $helper;
 
     /**
-     * __construct function
+     * Constructor
      *
      * @param LoggerInterface $logger
      * @param Giftcard $giftcardHelper
@@ -82,10 +79,6 @@ class RedeemGiftCardObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/CKGiftcard_Redeem.log');
-        $logger = new \Zend_Log();
-        $logger->addWriter($writer);
-
         try {
             $order = $observer->getEvent()->getOrder();
             $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
@@ -137,7 +130,9 @@ class RedeemGiftCardObserver implements ObserverInterface
                 }
             }
         } catch (\Exception $e) {
-            $logger->error('Gift card redemption failed: ' . $e->getMessage());
+            $this->logger->error('Gift card redemption failed', [
+                'exception' => $e->getMessage()
+            ]);
         }
     }
 
@@ -147,40 +142,45 @@ class RedeemGiftCardObserver implements ObserverInterface
      * @param mixed|string $ckGiftCardCode
      * @param mixed|int|float $ckGiftCardAmount
      * @param mixed|string $order
-     * @return void
+     * @return array
      * @throws LocalizedException
      */
     private function redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order)
     {
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/CKGiftcard_Redeem.log');
-        $logger = new \Zend_Log();
-        $logger->addWriter($writer);
         $orderIncrementId = $order->getIncrementId();
         $apiResponse = [];
         try {
             $apiResponse = $this->_giftcardHelper->redeemGiftCard($ckGiftCardCode, $ckGiftCardAmount, $order);
-            $logger->info(print_r($apiResponse, true));
+
+            $this->logger->info('Gift card redemption API response', [
+                'order_id' => $orderIncrementId,
+                'status' => $apiResponse['xStatus'] ?? 'unknown',
+                'response' => $apiResponse
+            ]);
+
             if ($apiResponse['xStatus'] == "Approved") {
-                $logger->info("SUCCESS:: Gift card amount redeem for order #".$orderIncrementId);
-                $apiResponseData = [
-                    "order_increment_id" => $orderIncrementId,
-                    "giftcard_code" => $ckGiftCardCode,
-                    "giftcard_amount" => $this->_giftcardHelper->getFormattedAmount($apiResponse['xAuthAmount'])
-                ];
-                $logger->info(print_r($apiResponseData, true));
+                $this->logger->info('Gift card redemption successful', [
+                    'order_id' => $orderIncrementId,
+                    'gift_card_code' => $ckGiftCardCode,
+                    'amount_redeemed' => $this->_giftcardHelper->getFormattedAmount($apiResponse['xAuthAmount'])
+                ]);
             } elseif ($apiResponse['xStatus'] == "Error") {
-                $logger->info("FAILED:: Gift card amount redeem for order #".$orderIncrementId);
-                $logger->info("ERROR:: ".print_r($apiResponse['xError'], true));
-                $apiResponseData = [
-                    "order_increment_id" => $orderIncrementId,
-                    "giftcard_code" => $ckGiftCardCode,
-                    "giftcard_amount" => $this->_giftcardHelper->getFormattedAmount($apiResponse['xAuthAmount'])
-                ];
-                $logger->info(print_r($apiResponseData, true));
+                $this->logger->error('Gift card redemption failed', [
+                    'order_id' => $orderIncrementId,
+                    'gift_card_code' => $ckGiftCardCode,
+                    'error' => $apiResponse['xError'] ?? 'Unknown error',
+                    'amount_attempted' => $this->_giftcardHelper->getFormattedAmount(
+                        $apiResponse['xAuthAmount'] ?? 0
+                    )
+                ]);
             }
+
             return $apiResponse;
         } catch (LocalizedException $e) {
-            $logger->info(print_r($e->getMessage(), true));
+            $this->logger->error('Gift card redemption exception', [
+                'order_id' => $orderIncrementId,
+                'exception' => $e->getMessage()
+            ]);
             return $apiResponse;
         }
     }

@@ -6,23 +6,41 @@
 /*global define*/
 define([
     'jquery',
-    'uiComponent'
+    'uiComponent',
+    'domReady!'
 ], function ($, Class) {
     'use strict';
     return Class.extend({
         defaults: {
             $selector: null,
             selector: 'edit_form',
-            $container: null
+            $container: null,
+            publicHash: '',
+            container: ''
         },
 
-        initObservable: function () {
-            var self = this;
-            self.$container = $('#' + self.container);
-            self.$selector = $('#' + self.selector);
+        initialize: function () {
             this._super();
-            this.initEventHandlers();
+            this.initVault();
             return this;
+        },
+
+        initVault: function () {
+            var self = this;
+
+            // Wait for DOM to be ready
+            $(function () {
+                self.$container = $('#' + self.container);
+                self.$selector = $('#' + self.selector);
+
+                if (self.$container.length === 0) {
+                    console.warn('Cardknox Vault: Container not found:', self.container);
+                    return;
+                }
+
+                self.initEventHandlers();
+                self.setInitialPaymentDetails();
+            });
         },
 
         getCode: function () {
@@ -30,12 +48,35 @@ define([
         },
 
         initEventHandlers: function () {
-            $('#' + this.container).find('[name="payment[token_switcher]"]')
-                .on('click', this.setPaymentDetails.bind(this));
+            var self = this;
+            var radioButton = this.$container.find('[name="payment[token_switcher]"]');
+
+            radioButton.on('click', function () {
+                self.setPaymentDetails();
+            });
         },
 
+        /**
+         * Set payment details on initial load if this vault token is selected
+         */
+        setInitialPaymentDetails: function () {
+            var radioButton = this.$container.find('[name="payment[token_switcher]"]');
+
+            // If this radio button is checked on load, set the public_hash
+            if (radioButton.is(':checked')) {
+                this.setPaymentDetails();
+            }
+        },
+
+        /**
+         * Set public hash value to the hidden input field
+         */
         setPaymentDetails: function () {
-            this.$selector.find('[name="payment[public_hash]"]').val(this.publicHash);
+            var publicHashInput = $('[name="payment[public_hash]"]');
+
+            if (publicHashInput.length && this.publicHash) {
+                publicHashInput.val(this.publicHash);
+            }
         }
     });
 });

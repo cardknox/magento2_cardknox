@@ -48,6 +48,11 @@ class CheckBalanceStatus extends Action
         parent::__construct($context);
     }
 
+    /**
+     * Execute controller action to check gift card balance status
+     *
+     * @return \Magento\Framework\Controller\Result\Json
+     */
     public function execute()
     {
         $result = $this->resultJsonFactory->create();
@@ -76,7 +81,8 @@ class CheckBalanceStatus extends Action
                     "xActivationStatus" => $xActivationStatus
                 ];
                 $xRemainingBalanceWithCurrency = $this->_giftcardHelper->getFormattedAmount($xRemainingBalance);
-                $message = 'Giftcard status is '.$xActivationStatus.'. Your giftcard remaining balance is '.$xRemainingBalanceWithCurrency;
+                $message = 'Giftcard status is ' . $xActivationStatus
+                    . '. Your giftcard remaining balance is ' . $xRemainingBalanceWithCurrency;
                 return $result->setData([
                     'success' => true,
                     'message' => $message,

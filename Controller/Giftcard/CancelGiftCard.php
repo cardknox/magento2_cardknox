@@ -66,6 +66,11 @@ class CancelGiftCard extends Action
         parent::__construct($context);
     }
 
+    /**
+     * Execute controller action to cancel gift card
+     *
+     * @return \Magento\Framework\Controller\Result\Json
+     */
     public function execute()
     {
         $result = $this->resultJsonFactory->create();

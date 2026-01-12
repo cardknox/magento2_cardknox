@@ -220,6 +220,7 @@ class AddGiftCard extends Action
      */
     private function jsonResponse($success, $message, $data = [])
     {
-        return $this->resultJsonFactory->create()->setData(array_merge(['success' => $success, 'message' => $message], $data));
+        $responseData = array_merge(['success' => $success, 'message' => $message], $data);
+        return $this->resultJsonFactory->create()->setData($responseData);
     }
 }
