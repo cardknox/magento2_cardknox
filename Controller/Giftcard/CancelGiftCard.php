@@ -2,29 +2,16 @@
 
 namespace CardknoxDevelopment\Cardknox\Controller\Giftcard;
 
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
 use CardknoxDevelopment\Cardknox\Helper\Giftcard;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Api\CartRepositoryInterface;
-use CardknoxDevelopment\Cardknox\Helper\Data as Helper;
+use CardknoxDevelopment\Cardknox\Helper\Data as DataHelper;
 
-class CancelGiftCard extends Action
+class CancelGiftCard extends AbstractGiftcardAction
 {
-    /**
-     *
-     * @var ResultJsonFactory
-     */
-    protected $resultJsonFactory;
-
-    /**
-     *
-     * @var \CardknoxDevelopment\Cardknox\Helper\Giftcard
-     */
-    protected $_giftcardHelper;
-
     /**
      * @var CheckoutSession
      */
@@ -36,54 +23,43 @@ class CancelGiftCard extends Action
     protected $quoteRepository;
 
     /**
-     * @var Helper
-     */
-    protected $helper;
-
-    /**
-     * __construct function
-     *
      * @param Context $context
-     * @param ResultJsonFactory $resultJsonFactory
+     * @param JsonFactory $resultJsonFactory
      * @param Giftcard $giftcardHelper
      * @param CheckoutSession $checkoutSession
      * @param CartRepositoryInterface $quoteRepository
-     * @param Helper $helper
+     * @param DataHelper $helper
      */
     public function __construct(
         Context $context,
-        ResultJsonFactory $resultJsonFactory,
+        JsonFactory $resultJsonFactory,
         Giftcard $giftcardHelper,
         CheckoutSession $checkoutSession,
         CartRepositoryInterface $quoteRepository,
-        Helper $helper
+        DataHelper $helper
     ) {
-        $this->resultJsonFactory = $resultJsonFactory;
-        $this->_giftcardHelper = $giftcardHelper;
         $this->checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;
-        $this->helper = $helper;
-        parent::__construct($context);
+        parent::__construct($context, $resultJsonFactory, $giftcardHelper, $helper);
     }
 
+    /**
+     * Execute controller action to cancel gift card
+     *
+     * @return \Magento\Framework\Controller\Result\Json
+     */
     public function execute()
     {
-        $result = $this->resultJsonFactory->create();
-        $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
-        if (!$isCardknoxGiftcardEnabled) {
-            return $result->setData([
-                'success' => false,
-                'message' => __('Please enable Sola Gift.'),
-            ]);
+        $errorResponse = $this->validateGiftcardEnabled();
+        if ($errorResponse) {
+            return $errorResponse;
         }
 
-        $giftCardCode = $this->getRequest()->getParam('giftcard_code');
+        $giftCardCode = $this->getGiftCardCode();
         if (!$giftCardCode) {
-            return $result->setData([
-                'success' => false,
-                'message' => __('Gift Card code is missing.'),
-            ]);
+            return $this->createJsonResponse(false, __('Gift Card code is missing.'));
         }
+
         try {
             $quote = $this->checkoutSession->getQuote();
 
@@ -104,17 +80,9 @@ class CancelGiftCard extends Action
 
             $this->quoteRepository->save($quote);
 
-            $message = "Gift card has been cancelled successfully.";
-            return $result->setData([
-                'success' => true,
-                'message' => $message
-            ]);
-
+            return $this->createJsonResponse(true, __('Gift card has been cancelled successfully.'));
         } catch (LocalizedException $e) {
-            return $result->setData([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->createJsonResponse(false, $e->getMessage());
         }
     }
 }

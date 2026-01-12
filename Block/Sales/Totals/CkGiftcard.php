@@ -7,13 +7,26 @@ use Magento\Framework\App\RequestInterface;
 
 class CkGiftcard extends Template
 {
+    /**
+     * @var \Magento\Sales\Model\Order|null
+     */
     protected $order;
+
+    /**
+     * @var \Magento\Framework\DataObject|null
+     */
     protected $source;
 
+    /**
+     * @var RequestInterface
+     */
     protected RequestInterface $request;
 
     /**
+     * Constructor
+     *
      * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param RequestInterface $request
      * @param array $data
      */
     public function __construct(

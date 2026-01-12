@@ -83,9 +83,9 @@ class GatewayCommand implements CommandInterface
         LoggerInterface $logger,
         SystemConfig $systemConfig,
         Session $checkoutSession,
-        HandlerInterface $handler = null,
-        ValidatorInterface $validator = null,
-        ErrorMessageMapperInterface $errorMessageMapper = null,
+        ?HandlerInterface $handler = null,
+        ?ValidatorInterface $validator = null,
+        ?ErrorMessageMapperInterface $errorMessageMapper = null,
     ) {
         $this->requestBuilder = $requestBuilder;
         $this->transferFactory = $transferFactory;
@@ -138,7 +138,8 @@ class GatewayCommand implements CommandInterface
     }
 
     /**
-     * Tries to map error messages from validation result and logs processed message.
+     * Tries to map error messages from validation result and logs processed message
+     *
      * Throws an exception with mapped message or default error.
      *
      * @param ResultInterface $result

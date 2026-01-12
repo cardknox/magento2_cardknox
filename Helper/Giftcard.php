@@ -10,6 +10,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class Giftcard extends AbstractHelper
 {
@@ -50,6 +51,11 @@ class Giftcard extends AbstractHelper
     protected $orderRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Framework\HTTP\Client\Curl $curl
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
@@ -57,6 +63,7 @@ class Giftcard extends AbstractHelper
      * @param \CardknoxDevelopment\Cardknox\Helper\Data $helper
      * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
@@ -65,7 +72,8 @@ class Giftcard extends AbstractHelper
         PriceHelper $priceHelper,
         CardknoxDataHelper $helper,
         CartRepositoryInterface $quoteRepository,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        LoggerInterface $logger
     ) {
         $this->curl = $curl;
         $this->productMetadata = $productMetadata;
@@ -73,6 +81,7 @@ class Giftcard extends AbstractHelper
         $this->helper = $helper;
         $this->quoteRepository = $quoteRepository;
         $this->orderRepository = $orderRepository;
+        $this->logger = $logger;
         parent::__construct($context);
     }
 
@@ -310,11 +319,9 @@ class Giftcard extends AbstractHelper
      */
     public function giftAmountReIssue($ckGiftCardAmount, $order)
     {
-
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/CKGiftcard_ReIssue.log');
-        $logger = new \Zend_Log();
-        $logger->addWriter($writer);
         $response = [];
+        $orderIncrementId = $order->getIncrementId();
+
         try {
             $billing = $order->getBillingAddress();
             $shipping = $order->getShippingAddress();
@@ -322,20 +329,6 @@ class Giftcard extends AbstractHelper
             $ckGiftCardCode = $order->getCkgiftcardCode();
             $headers = ["Content-Type" => self::CONTENT_TYPE];
             $this->curl->setHeaders($headers);
-            $xTimeoutSeconds = "10";
-
-            // Billing Params
-            $xBillFirstName = $billing->getFirstname();
-            $xBillLastName = $billing->getLastname();
-            $xBillCompany = $billing->getCompany();
-            $xBillStreet = $billing->getStreetLine1();
-            $xBillStreet2 = $billing->getStreetLine2();
-            $xBillCity = $billing->getCity();
-            $xBillState = $billing->getRegionCode();
-            $xBillZip = $billing->getPostcode();
-            $xBillCountry= $billing->getCountryId();
-            $xBillPhone = $billing->getTelephone();
-            $xEmail = $billing->getEmail();
 
             $params = [
                 "xCardNum" => $ckGiftCardCode,
@@ -346,45 +339,34 @@ class Giftcard extends AbstractHelper
                 'xIP' => $ipAddress ? $ipAddress : $order->getRemoteIp(),
                 'xSupports64BitRefnum' => true,
                 "xCommand" => "gift:issue",
-                "xAmount" =>  $ckGiftCardAmount,
-                "xInvoice" =>  $order->getIncrementId(),
+                "xAmount" => $ckGiftCardAmount,
+                "xInvoice" => $orderIncrementId,
                 "xExistingCustomer" => "TRUE",
-                "xTimeoutSeconds" => $xTimeoutSeconds,
-                'xBillFirstName' => $xBillFirstName,
-                'xBillLastName' => $xBillLastName,
-                'xBillCompany' => $xBillCompany,
-                'xBillStreet' => $xBillStreet,
-                'xBillStreet2' => $xBillStreet2,
-                'xBillCity' => $xBillCity,
-                'xBillState' => $xBillState,
-                'xBillZip' => $xBillZip,
-                'xBillCountry'=> $xBillCountry,
-                'xBillPhone' => $xBillPhone,
-                'xEmail' => $xEmail,
+                "xTimeoutSeconds" => "10",
+                'xBillFirstName' => $billing->getFirstname(),
+                'xBillLastName' => $billing->getLastname(),
+                'xBillCompany' => $billing->getCompany(),
+                'xBillStreet' => $billing->getStreetLine1(),
+                'xBillStreet2' => $billing->getStreetLine2(),
+                'xBillCity' => $billing->getCity(),
+                'xBillState' => $billing->getRegionCode(),
+                'xBillZip' => $billing->getPostcode(),
+                'xBillCountry' => $billing->getCountryId(),
+                'xBillPhone' => $billing->getTelephone(),
+                'xEmail' => $billing->getEmail(),
             ];
 
             if ($shipping != "") {
-                // Shipping Params
-                $xShipFirstName = $shipping->getFirstname();
-                $xShipLastName = $shipping->getLastname();
-                $xShipCompany = $shipping->getCompany();
-                $xShipStreet = $shipping->getStreetLine1();
-                $xShipStreet2= $shipping->getStreetLine2();
-                $xShipCity = $shipping->getCity();
-                $xShipState = $shipping->getRegionCode();
-                $xShipZip = $shipping->getPostcode();
-                $xShipCountry = $shipping->getCountryId();
-
                 $shippingParams = [
-                    'xShipFirstName' => $xShipFirstName,
-                    'xShipLastName' => $xShipLastName,
-                    'xShipCompany' => $xShipCompany,
-                    'xShipStreet' => $xShipStreet,
-                    'xShipStreet2'=> $xShipStreet2,
-                    'xShipCity' => $xShipCity,
-                    'xShipState' => $xShipState,
-                    'xShipZip' => $xShipZip,
-                    'xShipCountry' => $xShipCountry,
+                    'xShipFirstName' => $shipping->getFirstname(),
+                    'xShipLastName' => $shipping->getLastname(),
+                    'xShipCompany' => $shipping->getCompany(),
+                    'xShipStreet' => $shipping->getStreetLine1(),
+                    'xShipStreet2' => $shipping->getStreetLine2(),
+                    'xShipCity' => $shipping->getCity(),
+                    'xShipState' => $shipping->getRegionCode(),
+                    'xShipZip' => $shipping->getPostcode(),
+                    'xShipCountry' => $shipping->getCountryId(),
                 ];
             } else {
                 $shippingParams = [];
@@ -396,11 +378,24 @@ class Giftcard extends AbstractHelper
             $this->curl->post(self::CARDKNOX_API_URL, $giftcardIssueParams);
 
             $response = $this->curl->getBody();
-            $logger->info('Gift reissue sucessfully: ' . $response);
+            $responseData = json_decode($response, true);
+
+            $this->logger->info('Gift card reissue API response', [
+                'order_id' => $orderIncrementId,
+                'gift_card_code' => $ckGiftCardCode,
+                'amount' => $ckGiftCardAmount,
+                'status' => $responseData['xStatus'] ?? 'unknown',
+                'response' => $responseData
+            ]);
+
+            return $responseData;
         } catch (\Exception $e) {
-            $logger->info('Gift reissue failed: ' . $e->getMessage());
+            $this->logger->error('Gift card reissue failed', [
+                'order_id' => $orderIncrementId,
+                'exception' => $e->getMessage()
+            ]);
+            return json_decode($response, true);
         }
-        return json_decode($response, true);
     }
 
     /**

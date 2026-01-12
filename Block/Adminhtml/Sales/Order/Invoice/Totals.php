@@ -7,19 +7,15 @@ use Magento\Framework\DataObject;
 
 class Totals extends Template
 {
+    /**
+     * @var \Magento\Sales\Model\Order\Invoice|null
+     */
     protected $_invoice = null;
-    protected $_order;
 
     /**
-     * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param array $data
+     * @var \Magento\Sales\Model\Order|null
      */
-    public function __construct(
-        Template\Context $context,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-    }
+    protected $_order;
 
     /**
      * Get data (totals) source model.
