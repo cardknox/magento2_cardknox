@@ -30,10 +30,11 @@ $code = $block->getData('code');
         <img src="<?= $escaper->escapeUrl($icon['url']) ?>"
              width="<?= $escaper->escapeHtmlAttr($icon['width']) ?>"
              height="<?= $escaper->escapeHtmlAttr($icon['height']) ?>"
+             alt="<?= $escaper->escapeHtmlAttr($details['type']) ?>"
              class="payment-icon">
         <span><?= $escaper->escapeHtml(__('ending')) ?></span>
         <span><?= $escaper->escapeHtml($details['maskedCC']) ?></span>
-        <span><?= $escaper->escapeHtml(__('expires')) ?></span>:
-        <span><?= $escaper->escapeHtml($details['expirationDate']) ?></span>)
+        ( <span><?= $escaper->escapeHtml(__('expires')) ?></span>:
+        <span><?= $escaper->escapeHtml($details['expirationDate']) ?></span> )
     </div>
 </div>
