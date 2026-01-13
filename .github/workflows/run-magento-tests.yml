@@ -1,4 +1,4 @@
-name: Magento2 Build & Run Unit Tests
+name: Magento2 Build, PHPUnit Tests & PHP CodeSniffer
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 jobs:
   magento2-build:
     runs-on: ubuntu-latest
-    name: Magento2 Build & Run Unit Tests
+    name: Magento2 Build, PHPUnit Tests & PHP CodeSniffer
 
     services:
       mysql:
@@ -38,7 +38,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
+        php-version: '8.4'
         extensions: mbstring, intl, gd, xml, soap, zip, bcmath, opcache, pdo_mysql, curl, dom, hash, iconv, json, simplexml, xsl, xmlreader, xmlwriter, session
         tools: composer:v2
 
@@ -53,6 +53,8 @@ jobs:
       run: |
         cd magento
         composer install --no-interaction --prefer-dist
+        # Install Magento2 Coding Standard for PHPCS
+        composer require --dev magento/magento-coding-standard --no-interaction
 
     - name: Create Directories for Cardknox Module
       run: |
@@ -75,3 +77,11 @@ jobs:
         # Remove Allure bootstrap to avoid config file warning
         sed -i '/<bootstrap class="Qameta\\Allure\\PHPUnit\\AllureExtension">/,/<\/bootstrap>/d' dev/tests/unit/phpunit.xml.dist
         php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CardknoxDevelopment/Cardknox/Test/
+
+    - name: Run PHP CodeSniffer (PHPCS)
+      run: |
+        cd magento
+        vendor/bin/phpcs --standard=Magento2 \
+          --extensions=php,phtml \
+          --report=full \
+          app/code/CardknoxDevelopment/Cardknox/

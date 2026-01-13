@@ -11,21 +11,6 @@ use CardknoxDevelopment\Cardknox\Helper\Data as DataHelper;
 class CheckBalanceStatus extends AbstractGiftcardAction
 {
     /**
-     * @param Context $context
-     * @param JsonFactory $resultJsonFactory
-     * @param Giftcard $giftcardHelper
-     * @param DataHelper $helper
-     */
-    public function __construct(
-        Context $context,
-        JsonFactory $resultJsonFactory,
-        Giftcard $giftcardHelper,
-        DataHelper $helper
-    ) {
-        parent::__construct($context, $resultJsonFactory, $giftcardHelper, $helper);
-    }
-
-    /**
      * Execute controller action to check gift card balance status
      *
      * @return \Magento\Framework\Controller\Result\Json
