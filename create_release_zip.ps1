@@ -23,8 +23,32 @@ Write-Host "Excluding: .git, .vs, .github, and this script"
 $excludeDirs = @('.git', '.vs', '.github')
 $excludeFiles = @($scriptName, 'create_release_zip.bat', '*.zip')
 
-# 7-Zip executable path
-$7Zip = 'C:\"Program Files"\7-Zip\7zG.exe'
+# 7-Zip executable path - configurable via environment variable or auto-detected
+$SevenZip = if ($env:SEVENZIP_PATH) {
+    $env:SEVENZIP_PATH
+} elseif ($IsWindows -or $env:OS -like '*Windows*') {
+    # Try common Windows installation paths
+    $possiblePaths = @(
+        'C:\Program Files\7-Zip\7zG.exe',
+        'C:\Program Files (x86)\7-Zip\7zG.exe',
+        "${env:ProgramFiles}\7-Zip\7zG.exe",
+        "${env:ProgramFiles(x86)}\7-Zip\7zG.exe"
+    )
+    $foundPath = $possiblePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if ($foundPath) {
+        $foundPath
+    } else {
+        throw "7-Zip not found. Please install 7-Zip or set SEVENZIP_PATH environment variable."
+    }
+} else {
+    # For non-Windows systems, try '7z' command
+    $sevenZCommand = Get-Command -Name '7z' -ErrorAction SilentlyContinue
+    if ($sevenZCommand) {
+        $sevenZCommand.Path
+    } else {
+        throw "7-Zip not found. Please install 7-Zip or set SEVENZIP_PATH environment variable."
+    }
+}
 
 # Create a temporary directory
 $tempBase = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
@@ -45,10 +69,32 @@ try {
         }
     }
 
+    # Normalize line endings to LF for text files
+    Write-Host "Normalizing line endings to LF..."
+    $textExtensions = @('.php', '.js', '.json', '.xml', '.css', '.html', '.txt', '.md', '.yml', '.yaml', '.ini', '.conf', '.sh', '.bat', '.ps1', '.sql', '.phtml', '.less', '.scss', '.xsd', '.wsdl', '.xslt')
+    $fileCount = 0
+    Get-ChildItem -Path $tempDir -Recurse -File | Where-Object {
+        $ext = [System.IO.Path]::GetExtension($_.FullName).ToLower()
+        $textExtensions -contains $ext
+    } | ForEach-Object {
+        try {
+            $content = [System.IO.File]::ReadAllText($_.FullName)
+            $normalized = $content -replace "`r`n", "`n" -replace "`r", "`n"
+            if ($content -ne $normalized) {
+                [System.IO.File]::WriteAllText($_.FullName, $normalized, [System.Text.UTF8Encoding]::new($false))
+                $fileCount++
+            }
+        }
+        catch {
+            # Skip binary files or files that can't be read as text
+        }
+    }
+    Write-Host "Normalized line endings in $fileCount file(s)" -ForegroundColor Cyan
+
     # Create the zip file with all contents at root level
     # 7-Zip is needed because Compress-Archive does not pass the validation script due to Windows path separators used
     $tempFiles = Join-Path $tempDir '*'
-    Invoke-Expression "$7Zip a `"$zipFile`" `"$tempFiles`""
+    & $SevenZip a "$zipFile" "$tempFiles"
 
     Write-Host ""
     Write-Host "Zip file created at: $zipFile" -ForegroundColor Green
