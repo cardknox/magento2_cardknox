@@ -78,6 +78,7 @@ For support, please contact [Sola support](gatewaysupport@solapayments.com)
 
 ---
 
-Copyright © 2025 Sola Payments Inc. All rights reserved.
+Copyright © 2026 Sola Payments Inc. All rights reserved.
 
 See LICENSE for license details.
+
