@@ -5,9 +5,9 @@
  */
 /**
  * @var \CardknoxDevelopment\Cardknox\Block\GiftCard $block
- * @see \CardknoxDevelopment\Cardknox\Block\GiftCard
- *
+ * @var \Magento\Framework\Escaper $escaper
  * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ * @see \CardknoxDevelopment\Cardknox\Block\GiftCard
  */
 $isCardknoxGiftcardEnabled = $block->isCardknoxGiftcardEnabled();
 $cardknoxGiftText = $block->cardknoxGiftcardText();
@@ -27,14 +27,14 @@ if ($isCardknoxGiftcardEnabled) {
             data-mage-init='{"collapsible":{"active": true, "openedState": "active", "saveState": false}}'>
         <div data-role="title" class="title">
             <strong id="block-giftcard-heading" role="heading" aria-level="2">
-                <?= $block->escapeHtml(__($cardknoxGiftText)) ?>
+                <?= $escaper->escapeHtml(__($cardknoxGiftText)) ?>
             </strong>
         </div>
         <div data-role="content" class="content" aria-labelledby="block-giftcard-heading">
             <div id="giftcard-balance-lookup"></div>
             <span id="gc-please-wait" class="please-wait load indicator"
-                data-text="<?= $block->escapeHtml(__('This won\'t take long . . .')) ?>">
-                <span><?= $block->escapeHtml(__('This won\'t take long . . .')) ?></span>
+                data-text="<?= $escaper->escapeHtmlAttr(__('This won\'t take long . . .')) ?>">
+                <span><?= $escaper->escapeHtml(__('This won\'t take long . . .')) ?></span>
             </span>
             <?= /* @noEscape */ $secureRenderer->renderTag(
                 'style',
@@ -48,17 +48,11 @@ if ($isCardknoxGiftcardEnabled) {
                     "giftCardCodeSelector": "#giftcard-code",
                     "giftCardFormSelector": "#giftcard-form",
                     "checkStatus": "#ck-giftcard-balance-check",
-                    "giftCardStatusUrl": "<?= $block->escapeHtml(
-                        $block->getCheckGiftCardBalanceUrl()
-                    ) ?>",
+                    "giftCardStatusUrl": "<?= $escaper->escapeUrl($block->getCheckGiftCardBalanceUrl()) ?>",
                     "addGiftcardCodeBtn":"#giftcard-code-btn",
-                    "addGiftCardUrl": "<?= $block->escapeHtml(
-                        $block->getAddGiftCardUrl()
-                    ) ?>",
+                    "addGiftCardUrl": "<?= $escaper->escapeUrl($block->getAddGiftCardUrl()) ?>",
                     "cancelGiftcardCodeBtn": "#giftcard-code-cancel-btn",
-                    "cancelGiftCardUrl": "<?= $block->escapeHtml(
-                        $block->getCancelGiftCardUrl()
-                    ) ?>",
+                    "cancelGiftCardUrl": "<?= $escaper->escapeUrl($block->getCancelGiftCardUrl()) ?>",
                     "giftCardStatusId": "#giftcard-balance-lookup",
                     "giftCardSpinnerId": "#gc-please-wait",
                     "messages": ".page.messages .messages"
@@ -66,12 +60,13 @@ if ($isCardknoxGiftcardEnabled) {
                 <div class="fieldset">
                     <div class="field">
                         <label class="label" for="giftcard-code">
-                            <span><?= $block->escapeHtml(__('Enter the gift card code')) ?></span>
+                            <span><?= $escaper->escapeHtml(__('Enter the gift card code')) ?></span>
                         </label>
                         <div class="control">
                             <input class="input-text" type="text" id="giftcard-code" name="giftcard_code"
-                                    data-validate="{'required-entry':true}" value="<?= $giftcardCode; ?>"
-                                    <?= $disableField ?>/>
+                                    data-validate="{'required-entry':true}"
+                                    value="<?= $escaper->escapeHtmlAttr($giftcardCode) ?>"
+                                    <?= /* @noEscape */ $disableField ?>/>
                         </div>
                     </div>
                     <div class="actions-toolbar">
@@ -79,27 +74,28 @@ if ($isCardknoxGiftcardEnabled) {
                             <button class="action add primary"
                                     id="giftcard-code-btn"
                                     type="submit"
-                                    value="<?= $block->escapeHtml(__('Add Gift Card')) ?>"
+                                    value="<?= $escaper->escapeHtmlAttr(__('Add Gift Card')) ?>"
                                     style="<?= $isAppliedGiftcardCode ? 'display:none;' : 'display:block;' ?>">
-                                <span><?= $block->escapeHtml(__('Add Gift Card')) ?></span>
+                                <span><?= $escaper->escapeHtml(__('Add Gift Card')) ?></span>
                             </button>
                             <?php if ($isAppliedGiftcardCode == true):?>
-                                <input class="input-text" type="hidden" name="giftcard_code" value="<?= $giftcardCode; ?>"/>
+                                <input class="input-text" type="hidden" name="giftcard_code"
+                                    value="<?= $escaper->escapeHtmlAttr($giftcardCode) ?>"/>
                             <?php endif;?>
                             <button class="action add primary"
                                     id="giftcard-code-cancel-btn"
                                     type="submit"
-                                    value="<?= $block->escapeHtml(__('Cancel')) ?>"
+                                    value="<?= $escaper->escapeHtmlAttr(__('Cancel')) ?>"
                                     style="<?= !$isAppliedGiftcardCode ? 'display:none;' : 'display:block;' ?>">
-                                <span><?= $block->escapeHtml(__('Cancel')) ?></span>
+                                <span><?= $escaper->escapeHtml(__('Cancel')) ?></span>
                             </button>
                         </div>
                         <div class="secondary">
                             <button class="action check"
                                     id="ck-giftcard-balance-check"
                                     type="button"
-                                    value="<?= $block->escapeHtml(__('Check Gift Card status and balance')) ?>">
-                                <span><?= $block->escapeHtml(__('Check Gift Card status and balance')) ?></span>
+                                    value="<?= $escaper->escapeHtmlAttr(__('Check Gift Card status and balance')) ?>">
+                                <span><?= $escaper->escapeHtml(__('Check Gift Card status and balance')) ?></span>
                             </button>
                         </div>
                     </div>

@@ -74,10 +74,10 @@ class OrderManagement
                         $method = $methodInstance->getCode();
                     }
                 } catch (\Exception $e) {
-                    $this->logger->error('Cardknox OrderManagement beforePlace getMethodInstance Exception: ' . $e->getMessage(), [
-                        'exception' => $e,
-                        'quote_id' => $quoteId
-                    ]);
+                    $this->logger->error(
+                        'Cardknox OrderManagement beforePlace getMethodInstance Exception: ' . $e->getMessage(),
+                        ['exception' => $e, 'quote_id' => $quoteId]
+                    );
                     // Skip plugin processing if payment method is not available
                     return [$order];
                 }
@@ -154,10 +154,10 @@ class OrderManagement
                         $method = $methodInstance->getCode();
                     }
                 } catch (\Exception $e) {
-                    $this->logger->error('Cardknox OrderManagement afterPlace getMethodInstance Exception: ' . $e->getMessage(), [
-                        'exception' => $e,
-                        'order_id' => $result->getIncrementId()
-                    ]);
+                    $this->logger->error(
+                        'Cardknox OrderManagement afterPlace getMethodInstance Exception: ' . $e->getMessage(),
+                        ['exception' => $e, 'order_id' => $result->getIncrementId()]
+                    );
                     return $result; // Skip plugin processing if payment method is not available
                 }
             }
@@ -333,10 +333,10 @@ class OrderManagement
             $shippingAddress->save();
             // @codingStandardsIgnoreEnd
         } catch (\Exception $e) {
-            $this->logger->error('Cardknox OrderManagement updateShippingAddressNameData Exception: ' . $e->getMessage(), [
-                'exception' => $e,
-                'name' => $name
-            ]);
+            $this->logger->error(
+                'Cardknox OrderManagement updateShippingAddressNameData Exception: ' . $e->getMessage(),
+                ['exception' => $e, 'name' => $name]
+            );
         }
     }
 
@@ -371,10 +371,10 @@ class OrderManagement
             $billingAddress->save();
             // @codingStandardsIgnoreEnd
         } catch (\Exception $e) {
-            $this->logger->error('Cardknox OrderManagement updateBillingAddressNameData Exception: ' . $e->getMessage(), [
-                'exception' => $e,
-                'name' => $name
-            ]);
+            $this->logger->error(
+                'Cardknox OrderManagement updateBillingAddressNameData Exception: ' . $e->getMessage(),
+                ['exception' => $e, 'name' => $name]
+            );
         }
     }
 

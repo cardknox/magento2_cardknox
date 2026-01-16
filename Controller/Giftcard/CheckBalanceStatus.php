@@ -2,71 +2,34 @@
 
 namespace CardknoxDevelopment\Cardknox\Controller\Giftcard;
 
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
 use CardknoxDevelopment\Cardknox\Helper\Giftcard;
 use CardknoxDevelopment\Cardknox\Helper\Data as DataHelper;
 
-class CheckBalanceStatus extends Action
+class CheckBalanceStatus extends AbstractGiftcardAction
 {
     /**
+     * Execute controller action to check gift card balance status
      *
-     * @var JsonFactory
+     * @return \Magento\Framework\Controller\Result\Json
      */
-    protected $resultJsonFactory;
-
-    /**
-     *
-     * @var \CardknoxDevelopment\Cardknox\Helper\Giftcard
-     */
-    protected $_giftcardHelper;
-
-    /**
-     * @var DataHelper
-     */
-    protected $helper;
-
-    /**
-     * __construct function
-     *
-     * @param Context $context
-     * @param JsonFactory $resultJsonFactory
-     * @param Giftcard $giftcardHelper
-     * @param DataHelper $helper
-     */
-    public function __construct(
-        Context $context,
-        JsonFactory $resultJsonFactory,
-        Giftcard $giftcardHelper,
-        DataHelper $helper
-    ) {
-        $this->resultJsonFactory = $resultJsonFactory;
-        $this->_giftcardHelper = $giftcardHelper;
-        $this->helper = $helper;
-        parent::__construct($context);
-    }
-
     public function execute()
     {
-        $result = $this->resultJsonFactory->create();
-        $isCardknoxGiftcardEnabled = $this->helper->isCardknoxGiftcardEnabled();
-        if (!$isCardknoxGiftcardEnabled) {
-            return $result->setData([
-                'success' => false,
-                'message' => __('Please enable Sola Gift.'),
-            ]);
+        $errorResponse = $this->validateGiftcardEnabled();
+        if ($errorResponse) {
+            return $errorResponse;
         }
-        $giftCardCode = $this->getRequest()->getParam('giftcard_code');
-        if (!$giftCardCode) {
-            return $result->setData([
-                'success' => false,
-                'message' => __('Gift Card code is required.'),
-            ]);
+
+        $giftCardCode = $this->getGiftCardCode();
+        $errorResponse = $this->validateGiftCardCode($giftCardCode);
+        if ($errorResponse) {
+            return $errorResponse;
         }
+
         try {
-            $apiResponse = $this->_giftcardHelper->checkGiftCardBalanceStatus($giftCardCode);
+            $apiResponse = $this->giftcardHelper->checkGiftCardBalanceStatus($giftCardCode);
 
             if ($apiResponse['xStatus'] == "Approved") {
                 $xRemainingBalance = $apiResponse['xRemainingBalance'];
@@ -75,24 +38,15 @@ class CheckBalanceStatus extends Action
                     "xRemainingBalance" => $xRemainingBalance,
                     "xActivationStatus" => $xActivationStatus
                 ];
-                $xRemainingBalanceWithCurrency = $this->_giftcardHelper->getFormattedAmount($xRemainingBalance);
-                $message = 'Giftcard status is '.$xActivationStatus.'. Your giftcard remaining balance is '.$xRemainingBalanceWithCurrency;
-                return $result->setData([
-                    'success' => true,
-                    'message' => $message,
-                    'data' => $apiResponseData
-                ]);
+                $xRemainingBalanceWithCurrency = $this->giftcardHelper->getFormattedAmount($xRemainingBalance);
+                $message = 'Giftcard status is ' . $xActivationStatus
+                    . '. Your giftcard remaining balance is ' . $xRemainingBalanceWithCurrency;
+                return $this->createJsonResponse(true, $message, ['data' => $apiResponseData]);
             } elseif ($apiResponse['xStatus'] == "Error") {
-                return $result->setData([
-                    'success' => false,
-                    'message' => $apiResponse['xError'],
-                ]);
+                return $this->createJsonResponse(false, $apiResponse['xError']);
             }
         } catch (LocalizedException $e) {
-            return $result->setData([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->createJsonResponse(false, $e->getMessage());
         }
     }
 }

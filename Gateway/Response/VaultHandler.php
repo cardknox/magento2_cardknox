@@ -74,7 +74,7 @@ class VaultHandler implements HandlerInterface
         Config $config,
         Logger $logger,
         EncryptorInterface $encryptor,
-        Json $serializer = null
+        ?Json $serializer = null
     ) {
         $this->paymentTokenFactory = $paymentTokenFactory;
         $this->paymentExtensionFactory = $paymentExtensionFactory;
