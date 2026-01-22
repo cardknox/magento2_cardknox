@@ -9,6 +9,7 @@ define([
     'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/action/redirect-on-success',
     'Magento_Checkout/js/action/place-order',
+    'CardknoxDevelopment_Cardknox/js/view/payment/cardknox-payment-helper'
 ], function (
     Component,
     quote,
@@ -19,7 +20,8 @@ define([
     koForAP,
     fullScreenLoaderAP,
     redirectOnSuccessActionAP,
-    placeOrderActionAP
+    placeOrderActionAP,
+    cardknoxPaymentHelper
 ) {
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
@@ -121,7 +123,7 @@ define([
             );
         },
         /**
-         * Place order.
+         * Place order with duplicate transaction protection
          */
         placeOrder: function (data, event) {
             let self = this;
@@ -129,6 +131,9 @@ define([
             if (event) {
                 event.preventDefault();
             }
+
+            // Save shipping method before placing order
+            cardknoxPaymentHelper.saveShippingMethod();
 
             if (this.validate() &&
                 additionalValidators.validate() &&
@@ -160,11 +165,12 @@ define([
 
                             if (errorMessage.startsWith('Duplicate Transaction')) {
                                 self.isAllowDuplicateTransaction(true);
+                                cardknoxPaymentHelper.forceStayOnPayment();
                             } else {
                                 self.isAllowDuplicateTransaction(false);
                             }
                         }
-                    );;
+                    );
 
                 return true;
             }
@@ -173,10 +179,10 @@ define([
         },
         showPaymentError: function (message) {
             $(".applepay-error").html("<div> "+message+" </div>").show();
-            setTimeout(function () { 
+            setTimeout(function () {
                 $(".applepay-error").html("").hide();
             }, 5000);
-            
+
             fullScreenLoaderAP.stopLoader();
             $('.checkout-cart-index .loading-mask').attr('style','display:none');
         }

@@ -7,7 +7,8 @@ define([
     "jquery",
     'Magento_Checkout/js/action/redirect-on-success',
     "ko",
-    'Magento_Checkout/js/action/place-order'
+    'Magento_Checkout/js/action/place-order',
+    'CardknoxDevelopment_Cardknox/js/view/payment/cardknox-payment-helper'
 ], function (
     Component,
     quote,
@@ -17,7 +18,8 @@ define([
     $,
     redirectOnSuccessActionGP,
     koForGP,
-    placeOrderActionGP
+    placeOrderActionGP,
+    cardknoxPaymentHelper
 ) {
     'use strict';
     window.checkoutConfig.reloadOnBillingAddress = true;
@@ -82,7 +84,7 @@ define([
             return data;
         },
 
-        initFrame: function () {        
+        initFrame: function () {
             if (/[?&](is)?debug/i.test(window.location.search)){
                 setDebugEnv(true);
             }
@@ -95,7 +97,7 @@ define([
          validate: function () {
             return true;
         },
-        
+
         additionalValidator: function () {
             return additionalValidators.validate();
         },
@@ -116,8 +118,18 @@ define([
                 placeOrderActionGP(this.getData(), this.messageContainer)
             );
         },
+        showPaymentError: function (message) {
+            $(".gpay-error").html("<div> "+message+" </div>").show();
+            setTimeout(function () {
+                $(".gpay-error").html("").hide();
+            }, 5000);
+
+            fullScreenLoader.stopLoader();
+            $('.checkout-cart-index .loading-mask').attr('style','display:none');
+        },
+
         /**
-         * Place order.
+         * Place order with duplicate transaction protection
          */
         placeOrder: function (data, event) {
             let self = this;
@@ -125,6 +137,9 @@ define([
             if (event) {
                 event.preventDefault();
             }
+
+            // Save shipping method before placing order
+            cardknoxPaymentHelper.saveShippingMethod();
 
             if (this.validate() &&
                 additionalValidators.validate() &&
@@ -156,25 +171,17 @@ define([
 
                             if (error_message.startsWith('Duplicate Transaction')) {
                                 self.isAllowDuplicateTransaction(true);
+                                cardknoxPaymentHelper.forceStayOnPayment();
                             } else {
                                 self.isAllowDuplicateTransaction(false);
                             }
                         }
-                    );;
+                    );
 
                 return true;
             }
 
             return false;
-        },
-        showPaymentError: function (message) {
-            $(".gpay-error").html("<div> "+message+" </div>").show();
-            setTimeout(function () { 
-                $(".gpay-error").html("").hide();
-            }, 5000);
-            
-            fullScreenLoader.stopLoader();
-            $('.checkout-cart-index .loading-mask').attr('style','display:none');
         }
     });
 });

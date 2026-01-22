@@ -9,8 +9,9 @@ define([
     "ko",
     'Magento_Checkout/js/action/redirect-on-success',
     'Magento_Checkout/js/model/full-screen-loader',
-    'Magento_Checkout/js/action/place-order'
-], function (VaultComponent,additionalValidators,$,knockout,redirectOnSuccessActionVault,fullScreenLoaderVault,placeOrderActionVault) {
+    'Magento_Checkout/js/action/place-order',
+    'CardknoxDevelopment_Cardknox/js/view/payment/cardknox-payment-helper'
+], function (VaultComponent, additionalValidators, $, knockout, redirectOnSuccessActionVault, fullScreenLoaderVault, placeOrderActionVault, cardknoxPaymentHelper) {
     'use strict';
 
     return VaultComponent.extend({
@@ -91,7 +92,7 @@ define([
             );
         },
         /**
-         * Place order.
+         * Place order with duplicate transaction protection
          */
         placeOrder: function (data, event) {
             let self = this;
@@ -99,6 +100,9 @@ define([
             if (event) {
                 event.preventDefault();
             }
+
+            // Save shipping method before placing order
+            cardknoxPaymentHelper.saveShippingMethod();
 
             if (this.validate() &&
                 additionalValidators.validate() &&
@@ -128,13 +132,14 @@ define([
                                 error_message = response.responseJSON.message;
                             }
                             self.showPaymentError(error_message);
-                            if (error_message == 'Duplicate Transaction') {
+                            if (error_message.startsWith('Duplicate Transaction')) {
                                 self.isAllowDuplicateTransactionVault(true);
+                                cardknoxPaymentHelper.forceStayOnPayment();
                             } else {
                                 self.isAllowDuplicateTransactionVault(false);
                             }
                         }
-                    );;
+                    );
 
                 return true;
             }
@@ -143,7 +148,7 @@ define([
         },
         showPaymentError: function (message) {
             $(".ck-vault-error").html("<div> "+message+" </div>").show();
-            setTimeout(function () { 
+            setTimeout(function () {
                 $(".ck-vault-error").html("").hide();
             }, 5000);
 
@@ -155,8 +160,6 @@ define([
              */
         getIdAllowDuplicateTransaction: function () {
             return "is_allow_duplicate_transaction_"+this.index;
-        },
+        }
     });
 });
-
-

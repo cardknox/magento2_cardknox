@@ -17,7 +17,8 @@ define(
         'ko',
         'Magento_Checkout/js/action/redirect-on-success',
         'Magento_Checkout/js/model/payment/additional-validators',
-        'mage/url'
+        'mage/url',
+        'CardknoxDevelopment_Cardknox/js/view/payment/cardknox-payment-helper'
     ],
     function (
         Component,
@@ -31,7 +32,8 @@ define(
         ko,
         redirectOnSuccessAction,
         additionalValidators,
-        urlBuilder
+        urlBuilder,
+        cardknoxPaymentHelper
     ) {
         'use strict';
 
@@ -380,6 +382,10 @@ define(
                     event.preventDefault();
                 }
                 var self = this;
+
+                // Save shipping method before placing order
+                cardknoxPaymentHelper.saveShippingMethod();
+
                 var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
                 if (isEnabledGoogleReCaptcha == true){
                     var captchResponse = $('#cardknox_recaptcha .g-recaptcha-response').val();
@@ -522,6 +528,7 @@ define(
                                             const error = response.responseJSON?.message;
                                             if (error && error.startsWith('Duplicate Transaction')) {
                                                 self.isAllowDuplicateTransaction(true);
+                                                cardknoxPaymentHelper.forceStayOnPayment();
                                             } else {
                                                 self.isAllowDuplicateTransaction(false);
                                             }
