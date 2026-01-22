@@ -15,12 +15,11 @@ define([
          * Check if cart has only virtual products
          * @returns {boolean}
          */
-        var isVirtualQuote = function () {
-            return window.checkoutConfig &&
-                   window.checkoutConfig.quoteData &&
-                   (window.checkoutConfig.quoteData.is_virtual === '1' ||
-                    window.checkoutConfig.quoteData.is_virtual === 1 ||
-                    window.checkoutConfig.quoteData.is_virtual === true);
+        const isVirtualQuote = function () {
+            const quoteData = globalThis.checkoutConfig?.quoteData;
+            return quoteData?.is_virtual === '1' ||
+                   quoteData?.is_virtual === 1 ||
+                   quoteData?.is_virtual === true;
         };
 
         /**
@@ -38,16 +37,14 @@ define([
         /**
          * Override handleHash to prevent redirect to noroute for virtual products
          */
-        var originalHandleHash = stepNavigator.handleHash;
+        const originalHandleHash = stepNavigator.handleHash;
         stepNavigator.handleHash = function () {
-            var hashString = window.location.hash.replace('#', '');
+            const hashString = globalThis.location.hash.replace('#', '');
 
             // For virtual products, if hash is 'shipping', clear it and stay on current page
             if (isVirtualQuote() && hashString === 'shipping') {
                 // Remove the invalid hash without triggering navigation
-                if (window.history && window.history.replaceState) {
-                    window.history.replaceState(null, null, window.location.pathname + window.location.search);
-                }
+                globalThis.history?.replaceState(null, null, globalThis.location.pathname + globalThis.location.search);
                 return false;
             }
 
