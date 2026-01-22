@@ -17,7 +17,8 @@ define(
         'ko',
         'Magento_Checkout/js/action/redirect-on-success',
         'Magento_Checkout/js/model/payment/additional-validators',
-        'mage/url'
+        'mage/url',
+        'Magento_Checkout/js/model/step-navigator'
     ],
     function (
         Component,
@@ -31,7 +32,8 @@ define(
         ko,
         redirectOnSuccessAction,
         additionalValidators,
-        urlBuilder
+        urlBuilder,
+        stepNavigator
     ) {
         'use strict';
 
@@ -380,6 +382,23 @@ define(
                     event.preventDefault();
                 }
                 var self = this;
+
+                // Save shipping method before placing order
+                if (window.checkoutConfig.selectedShippingMethod) {
+                    window.cardknoxSavedShippingMethod = window.checkoutConfig.selectedShippingMethod;
+                }
+
+                // For virtual products, set a dummy shipping method to prevent redirect to shipping step on error
+                // This is needed because Magento's payment.js navigate() checks hasShippingMethod()
+                var isVirtual = window.checkoutConfig.quoteData &&
+                               (window.checkoutConfig.quoteData.is_virtual === '1' ||
+                                window.checkoutConfig.quoteData.is_virtual === 1 ||
+                                window.checkoutConfig.quoteData.is_virtual === true);
+
+                if (isVirtual && !window.checkoutConfig.selectedShippingMethod) {
+                    window.checkoutConfig.selectedShippingMethod = 'virtual';
+                }
+
                 var isEnabledGoogleReCaptcha = this.isEnabledReCaptcha();
                 if (isEnabledGoogleReCaptcha == true){
                     var captchResponse = $('#cardknox_recaptcha .g-recaptcha-response').val();
@@ -522,6 +541,9 @@ define(
                                             const error = response.responseJSON?.message;
                                             if (error && error.startsWith('Duplicate Transaction')) {
                                                 self.isAllowDuplicateTransaction(true);
+                                                // Prevent redirect to shipping section on duplicate transaction error
+                                                // Force payment step to be visible and stay on payment
+                                                self.forceStayOnPayment();
                                             } else {
                                                 self.isAllowDuplicateTransaction(false);
                                             }
@@ -586,6 +608,78 @@ define(
                     }
                 }
                 return isAllowDuplicateTransactionCC;
+            },
+
+            /**
+             * Force stay on payment step after duplicate transaction error
+             * This prevents Magento from redirecting to shipping step
+             */
+            forceStayOnPayment: function () {
+                var self = this;
+                var isVirtual = window.checkoutConfig.quoteData &&
+                               (window.checkoutConfig.quoteData.is_virtual === '1' ||
+                                window.checkoutConfig.quoteData.is_virtual === 1 ||
+                                window.checkoutConfig.quoteData.is_virtual === true);
+
+                // Store the current shipping method to prevent hasShippingMethod() from returning false
+                if (!window.checkoutConfig.selectedShippingMethod && window.cardknoxSavedShippingMethod) {
+                    window.checkoutConfig.selectedShippingMethod = window.cardknoxSavedShippingMethod;
+                }
+
+                // Find the payment step and force it to be visible
+                var steps = stepNavigator.steps();
+                steps.forEach(function(step) {
+                    if (step.code === 'payment') {
+                        step.isVisible(true);
+                    } else {
+                        step.isVisible(false);
+                    }
+                });
+
+                // For virtual products, don't change the hash - just keep payment visible
+                // For non-virtual products, set hash to payment
+                if (!isVirtual) {
+                    var baseUrl = window.location.origin + window.location.pathname;
+                    var targetUrl = baseUrl + '#payment';
+
+                    if (window.location.hash !== '#payment') {
+                        window.history.replaceState(null, null, targetUrl);
+                    }
+
+                    // Monitor and prevent any navigation away from payment for 3 seconds (non-virtual only)
+                    var protectionInterval = setInterval(function() {
+                        var currentHash = window.location.hash.replace('#', '');
+                        if (currentHash !== 'payment') {
+                            steps.forEach(function(step) {
+                                if (step.code === 'payment') {
+                                    step.isVisible(true);
+                                } else {
+                                    step.isVisible(false);
+                                }
+                            });
+                            window.history.replaceState(null, null, targetUrl);
+                        }
+                    }, 50);
+
+                    setTimeout(function() {
+                        clearInterval(protectionInterval);
+                    }, 3000);
+                } else {
+                    // For virtual products, just ensure payment is visible and prevent any navigation
+                    var protectionInterval = setInterval(function() {
+                        steps.forEach(function(step) {
+                            if (step.code === 'payment') {
+                                step.isVisible(true);
+                            } else {
+                                step.isVisible(false);
+                            }
+                        });
+                    }, 50);
+
+                    setTimeout(function() {
+                        clearInterval(protectionInterval);
+                    }, 3000);
+                }
             }
         });
     }
