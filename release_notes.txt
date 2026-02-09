@@ -1,8 +1,8 @@
 1.2.84
 - Create create_release_zip.ps1
-- PLGN-202: Fix PHP CodeSniffer issues for cardknox plugin version 1.2.83
-- PLGN-204 Magento - Update GitHub Actions Workflow: Add PHPCS, Upgrade to PHP 8.4
-- PLGN-200 Enhance release script with dynamic naming from composer.json and cross-platform support
+- Fix PHP CodeSniffer issues for cardknox plugin version 1.2.83
+- Magento - Update GitHub Actions Workflow: Add PHPCS, Upgrade to PHP 8.4
+- Enhance release script with dynamic naming from composer.json and cross-platform support
 - Update README.md
 
 1.2.83
