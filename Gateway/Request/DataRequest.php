@@ -113,16 +113,34 @@ class DataRequest implements BuilderInterface
             return [];
         }
 
+        $payment = $paymentDO->getPayment();
         /** @var \Magento\Sales\Model\Order $salesOrder */
-        $salesOrder = $paymentDO->getPayment()->getOrder();
+        $salesOrder = $payment->getOrder();
 
-        // Order-level fields
-        $result = [
-            'xPONum'      => $salesOrder->getIncrementId(),
-            'xTax'        => $this->helper->formatPrice($salesOrder->getTaxAmount()),
-            'xDiscount'   => $this->helper->formatPrice(abs((float) $salesOrder->getDiscountAmount())),
-            'xShipAmount' => $this->helper->formatPrice($salesOrder->getShippingAmount()),
-        ];
+        // Check if this is a capture (split capture / regular capture)
+        $isCapture = ($payment->getLastTransId() != '');
+        $invoice = null;
+
+        if ($isCapture) {
+            $invoice = $this->getCurrentInvoice($salesOrder);
+        }
+
+        // Order-level fields — use invoice totals for capture, order totals for auth/sale
+        if ($invoice) {
+            $result = [
+                'xPONum'      => $salesOrder->getIncrementId(),
+                'xTax'        => $this->helper->formatPrice($invoice->getTaxAmount()),
+                'xDiscount'   => $this->helper->formatPrice(abs((float) $invoice->getDiscountAmount())),
+                'xShipAmount' => $this->helper->formatPrice($invoice->getShippingAmount()),
+            ];
+        } else {
+            $result = [
+                'xPONum'      => $salesOrder->getIncrementId(),
+                'xTax'        => $this->helper->formatPrice($salesOrder->getTaxAmount()),
+                'xDiscount'   => $this->helper->formatPrice(abs((float) $salesOrder->getDiscountAmount())),
+                'xShipAmount' => $this->helper->formatPrice($salesOrder->getShippingAmount()),
+            ];
+        }
 
         // Ship-from ZIP — only when MSI is NOT enabled
         if (!$this->helper->isMsiEnabled()) {
@@ -133,10 +151,69 @@ class DataRequest implements BuilderInterface
         }
 
         // Line-item fields
-        $items = $salesOrder->getAllItems();
+        if ($invoice) {
+            $this->addInvoiceLineItems($result, $invoice);
+        } else {
+            $this->addOrderLineItems($result, $salesOrder);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Add line items from invoice (for capture/split capture)
+     * Only includes items with qty > 0 in the invoice
+     *
+     * @param array &$result
+     * @param \Magento\Sales\Model\Order\Invoice $invoice
+     * @return void
+     */
+    private function addInvoiceLineItems(array &$result, $invoice): void
+    {
         $index = 1;
 
-        foreach ($items as $item) {
+        foreach ($invoice->getAllItems() as $invoiceItem) {
+            $qty = (int) $invoiceItem->getQty();
+
+            // Skip items not being invoiced
+            if ($qty <= 0) {
+                continue;
+            }
+
+            $orderItem = $invoiceItem->getOrderItem();
+
+            // Skip parent items — only pass child items
+            if ($orderItem->getChildrenItems()) {
+                continue;
+            }
+
+            // For child items with price=0, get price from parent
+            $price = $orderItem->getPrice();
+            if ($price == 0 && $orderItem->getParentItem()) {
+                $price = $orderItem->getParentItem()->getPrice();
+            }
+
+            $result['x' . $index . 'Sku']         = (string) $invoiceItem->getSku();
+            $result['x' . $index . 'Description'] = (string) $invoiceItem->getName();
+            $result['x' . $index . 'Qty']         = (string) $qty;
+            $result['x' . $index . 'UnitPrice']   = $this->helper->formatPrice($price);
+
+            $index++;
+        }
+    }
+
+    /**
+     * Add line items from order (for authorize/sale)
+     *
+     * @param array &$result
+     * @param \Magento\Sales\Model\Order $salesOrder
+     * @return void
+     */
+    private function addOrderLineItems(array &$result, $salesOrder): void
+    {
+        $index = 1;
+
+        foreach ($salesOrder->getAllItems() as $item) {
             // Skip parent items — only pass child items
             if ($item->getChildrenItems()) {
                 continue;
@@ -157,7 +234,25 @@ class DataRequest implements BuilderInterface
 
             $index++;
         }
+    }
 
-        return $result;
+    /**
+     * Get the current invoice being captured
+     * Returns the latest unpaid invoice from the order
+     *
+     * @param \Magento\Sales\Model\Order $salesOrder
+     * @return \Magento\Sales\Model\Order\Invoice|null
+     */
+    private function getCurrentInvoice($salesOrder)
+    {
+        $invoice = null;
+        foreach ($salesOrder->getInvoiceCollection() as $inv) {
+            if ($inv->getState() == \Magento\Sales\Model\Order\Invoice::STATE_OPEN
+                || !$inv->getEntityId()
+            ) {
+                $invoice = $inv;
+            }
+        }
+        return $invoice;
     }
 }
