@@ -152,24 +152,25 @@ class DataRequest implements BuilderInterface
 
         // Line-item fields
         if ($invoice) {
-            $this->addInvoiceLineItems($result, $invoice);
+            $lineItems = $this->getInvoiceLineItems($invoice);
         } else {
-            $this->addOrderLineItems($result, $salesOrder);
+            $lineItems = $this->getOrderLineItems($salesOrder);
         }
 
-        return $result;
+        return array_merge($result, $lineItems);
     }
 
     /**
-     * Add line items from invoice (for capture/split capture)
+     * Get line items from invoice (for capture/split capture)
+     *
      * Only includes items with qty > 0 in the invoice
      *
-     * @param array &$result
      * @param \Magento\Sales\Model\Order\Invoice $invoice
-     * @return void
+     * @return array
      */
-    private function addInvoiceLineItems(array &$result, $invoice): void
+    private function getInvoiceLineItems($invoice): array
     {
+        $lineItems = [];
         $index = 1;
 
         foreach ($invoice->getAllItems() as $invoiceItem) {
@@ -193,24 +194,26 @@ class DataRequest implements BuilderInterface
                 $price = $orderItem->getParentItem()->getPrice();
             }
 
-            $result['x' . $index . 'Sku']         = (string) $invoiceItem->getSku();
-            $result['x' . $index . 'Description'] = (string) $invoiceItem->getName();
-            $result['x' . $index . 'Qty']         = (string) $qty;
-            $result['x' . $index . 'UnitPrice']   = $this->helper->formatPrice($price);
+            $lineItems['x' . $index . 'Sku']         = (string) $invoiceItem->getSku();
+            $lineItems['x' . $index . 'Description'] = (string) $invoiceItem->getName();
+            $lineItems['x' . $index . 'Qty']         = (string) $qty;
+            $lineItems['x' . $index . 'UnitPrice']   = $this->helper->formatPrice($price);
 
             $index++;
         }
+
+        return $lineItems;
     }
 
     /**
-     * Add line items from order (for authorize/sale)
+     * Get line items from order (for authorize/sale)
      *
-     * @param array &$result
      * @param \Magento\Sales\Model\Order $salesOrder
-     * @return void
+     * @return array
      */
-    private function addOrderLineItems(array &$result, $salesOrder): void
+    private function getOrderLineItems($salesOrder): array
     {
+        $lineItems = [];
         $index = 1;
 
         foreach ($salesOrder->getAllItems() as $item) {
@@ -227,20 +230,23 @@ class DataRequest implements BuilderInterface
                 $price = $item->getParentItem()->getPrice();
             }
 
-            $result['x' . $index . 'Sku']         = (string) $item->getSku();
-            $result['x' . $index . 'Description'] = (string) $item->getName();
-            $result['x' . $index . 'Qty']         = (string) $qty;
-            $result['x' . $index . 'UnitPrice']   = $this->helper->formatPrice($price);
+            $lineItems['x' . $index . 'Sku']         = (string) $item->getSku();
+            $lineItems['x' . $index . 'Description'] = (string) $item->getName();
+            $lineItems['x' . $index . 'Qty']         = (string) $qty;
+            $lineItems['x' . $index . 'UnitPrice']   = $this->helper->formatPrice($price);
 
             $index++;
         }
+
+        return $lineItems;
     }
 
     /**
      * Get the current invoice being captured
+     *
      * Returns the latest unpaid invoice from the order
      *
-     * @param \Magento\Sales\Model\Order $salesOrder
+     * @param  \Magento\Sales\Model\Order $salesOrder
      * @return \Magento\Sales\Model\Order\Invoice|null
      */
     private function getCurrentInvoice($salesOrder)
