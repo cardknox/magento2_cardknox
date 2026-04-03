@@ -56,6 +56,14 @@ jobs:
         # Install Magento2 Coding Standard for PHPCS
         composer require --dev magento/magento-coding-standard --no-interaction
 
+    - name: Install MSI (Multi-Source Inventory) Modules
+      run: |
+        wget https://github.com/magento/inventory/archive/refs/tags/1.2.8-p4.tar.gz -O inventory.tar.gz
+        tar -xzf inventory.tar.gz
+        mkdir -p magento/app/code/Magento
+        cp -r inventory-1.2.8-p4/Inventory* magento/app/code/Magento/
+        rm -rf inventory.tar.gz inventory-1.2.8-p4
+
     - name: Create Directories for Cardknox Module
       run: |
         mkdir -p magento/app/code/CardknoxDevelopment
