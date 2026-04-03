@@ -4,6 +4,7 @@ namespace CardknoxDevelopment\Cardknox\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\InventoryCatalogApi\Model\IsSingleSourceModeInterface;
 
 class Data extends AbstractHelper
 {
@@ -18,15 +19,23 @@ class Data extends AbstractHelper
     private $remoteAddress;
 
     /**
+     * @var IsSingleSourceModeInterface
+     */
+    private $isSingleSourceMode;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param RemoteAddress $remoteAddress
+     * @param IsSingleSourceModeInterface $isSingleSourceMode
      * phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        RemoteAddress $remoteAddress
+        RemoteAddress $remoteAddress,
+        IsSingleSourceModeInterface $isSingleSourceMode
     ) {
         $this->remoteAddress = $remoteAddress;
+        $this->isSingleSourceMode = $isSingleSourceMode;
         parent::__construct($context);
     }
 
@@ -115,6 +124,33 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue(
             $key,
             $storeId
+        );
+    }
+
+    /**
+     * Check if Magento MSI (Multi-Source Inventory) is actively used
+     *
+     * Uses IsSingleSourceModeInterface which queries the inventory_source table.
+     * - 0 or 1 enabled source → single-source mode → returns false (MSI not active)
+     * - 2+ enabled sources → multi-source mode → returns true (MSI active)
+     *
+     * @return bool
+     */
+    public function isMsiEnabled(): bool
+    {
+        return !$this->isSingleSourceMode->execute();
+    }
+
+    /**
+     * Get shipping origin ZIP/Postal Code from store config
+     *
+     * @return string|null
+     */
+    public function getShippingOriginZip(): ?string
+    {
+        return $this->scopeConfig->getValue(
+            'shipping/origin/postcode',
+            \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE
         );
     }
 }

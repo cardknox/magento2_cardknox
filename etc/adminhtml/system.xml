@@ -44,6 +44,14 @@
                     <label>Payment Action</label>
                     <source_model>CardknoxDevelopment\Cardknox\Model\Adminhtml\Source\PaymentAction</source_model>
                 </field>
+                <field id="level3_enabled" translate="label comment" type="select" sortOrder="114" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Level 3 Data</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When enabled, sends order-level and line-item Level 3 fields to the gateway.]]></comment>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
                 <field id="cardknox_cc_split_capture_enabled" translate="label" type="select" sortOrder="111" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable Split Capture For Credit Card</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
