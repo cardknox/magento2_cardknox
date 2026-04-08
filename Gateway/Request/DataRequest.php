@@ -183,16 +183,12 @@ class DataRequest implements BuilderInterface
 
             $orderItem = $invoiceItem->getOrderItem();
 
-            // Skip parent items — only pass child items
-            if ($orderItem->getChildrenItems()) {
+            // Skip child items — parent holds the correct price
+            if ($orderItem->getParentItem()) {
                 continue;
             }
 
-            // For child items with price=0, get price from parent
             $price = $orderItem->getPrice();
-            if ($price == 0 && $orderItem->getParentItem()) {
-                $price = $orderItem->getParentItem()->getPrice();
-            }
 
             $lineItems['x' . $index . 'Sku']         = (string) $invoiceItem->getSku();
             $lineItems['x' . $index . 'Description'] = (string) $invoiceItem->getName();
@@ -217,18 +213,13 @@ class DataRequest implements BuilderInterface
         $index = 1;
 
         foreach ($salesOrder->getAllItems() as $item) {
-            // Skip parent items — only pass child items
-            if ($item->getChildrenItems()) {
+            // Skip child items — parent holds the correct price
+            if ($item->getParentItem()) {
                 continue;
             }
 
             $qty = (int) $item->getQtyOrdered();
-
-            // For child items with price=0, get price from parent
             $price = $item->getPrice();
-            if ($price == 0 && $item->getParentItem()) {
-                $price = $item->getParentItem()->getPrice();
-            }
 
             $lineItems['x' . $index . 'Sku']         = (string) $item->getSku();
             $lineItems['x' . $index . 'Description'] = (string) $item->getName();
