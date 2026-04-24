@@ -56,6 +56,17 @@ jobs:
         # Install Magento2 Coding Standard for PHPCS
         composer require --dev magento/magento-coding-standard --no-interaction
 
+    - name: Install MSI (Multi-Source Inventory) Modules
+      run: |
+        set -e
+        EXPECTED_SHA="13e28a00337e6918d1b1653258540c148e1557dfa6b801534f0b4976b3535215f7b28ef6131f7d333272eb5061df68f7279bb7c53457662a77b7158f15315898"
+        wget https://github.com/magento/inventory/archive/refs/tags/1.2.8-p4.tar.gz -O inventory.tar.gz
+        echo "$EXPECTED_SHA  inventory.tar.gz" | sha512sum -c -
+        tar -xzf inventory.tar.gz
+        mkdir -p magento/app/code/Magento
+        cp -r inventory-1.2.8-p4/Inventory* magento/app/code/Magento/
+        rm -rf inventory.tar.gz inventory-1.2.8-p4
+
     - name: Create Directories for Cardknox Module
       run: |
         mkdir -p magento/app/code/CardknoxDevelopment

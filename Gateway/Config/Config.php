@@ -24,6 +24,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public const CARDKNOX_ENABLE_THREE_D_SECURE = "cardknox_enable_three_d_secure";
     public const CARDKNOX_THREE_D_SECURE_ENVIRONMENT = "cardknox_three_d_secure_environment";
     public const CARDKNOX_THREE_D_SECURE_VERIFY_URL = "three_ds_verify_url";
+    public const LEVEL3_ENABLED = "level3_enabled";
     /**
      * IsActive function
      *
@@ -177,5 +178,15 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function getThreeDSVerifyUrl()
     {
         return $this->getValue(self::CARDKNOX_THREE_D_SECURE_VERIFY_URL);
+    }
+
+    /**
+     * Check if Level 3 data is enabled
+     *
+     * @return bool
+     */
+    public function isLevel3Enabled(): bool
+    {
+        return (bool) $this->getValue(self::LEVEL3_ENABLED);
     }
 }
