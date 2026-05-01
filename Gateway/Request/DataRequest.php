@@ -5,10 +5,12 @@
  */
 namespace CardknoxDevelopment\Cardknox\Gateway\Request;
 
-use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
-use Magento\Payment\Gateway\Request\BuilderInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use CardknoxDevelopment\Cardknox\Helper\Data;
+use InvalidArgumentException;
+use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
+use Magento\Payment\Gateway\Request\BuilderInterface;
+use Magento\Sales\Model\Order\Invoice;
 
 class DataRequest implements BuilderInterface
 {
@@ -51,7 +53,7 @@ class DataRequest implements BuilderInterface
         if (!isset($buildSubject['payment'])
             || !$buildSubject['payment'] instanceof PaymentDataObjectInterface
         ) {
-            throw new \InvalidArgumentException('Payment data object should be provided');
+            throw new InvalidArgumentException('Payment data object should be provided');
         }
 
         /** @var PaymentDataObjectInterface $paymentDO */
@@ -68,6 +70,7 @@ class DataRequest implements BuilderInterface
         if ($payment->getLastTransId() != '') {
             return $level3Data;
         }
+
         //its a authorize and capture
         $result = [
             'xBillFirstName' => $billing->getFirstname(),
@@ -78,17 +81,18 @@ class DataRequest implements BuilderInterface
             'xBillCity' => $billing->getCity(),
             'xBillState' => $billing->getRegionCode(),
             'xBillZip' => $billing->getPostcode(),
-            'xBillCountry'=> $billing->getCountryId(),
+            'xBillCountry' => $billing->getCountryId(),
             'xBillPhone' => $billing->getTelephone(),
             'xEmail' => $billing->getEmail(),
         ];
+
         if ($shipping != "") {
             $result2 = [
                 'xShipFirstName' => $shipping->getFirstname(),
                 'xShipLastName' => $shipping->getLastname(),
                 'xShipCompany' => $shipping->getCompany(),
                 'xShipStreet' => $shipping->getStreetLine1(),
-                'xShipStreet2'=> $shipping->getStreetLine2(),
+                'xShipStreet2' => $shipping->getStreetLine2(),
                 'xShipCity' => $shipping->getCity(),
                 'xShipState' => $shipping->getRegionCode(),
                 'xShipZip' => $shipping->getPostcode(),
@@ -152,10 +156,17 @@ class DataRequest implements BuilderInterface
 
         // Line-item fields
         if ($invoice) {
-            $lineItems = $this->getInvoiceLineItems($invoice);
+            $invoiceLineData = $this->getInvoiceLineItems($invoice);
+            $lineItems = $invoiceLineData['lineItems'];
+            $anyLineHasTax = $invoiceLineData['anyLineHasTax'];
         } else {
-            $lineItems = $this->getOrderLineItems($salesOrder);
+            $orderLineData = $this->getOrderLineItems($salesOrder);
+            $lineItems = $orderLineData['lineItems'];
+            $anyLineHasTax = $orderLineData['anyLineHasTax'];
         }
+
+        // shipping tax is intentionally excluded from this signal — kept independent from xTax
+        $result['xNonTaxable'] = $anyLineHasTax ? 'false' : 'true';
 
         return array_merge($result, $lineItems);
     }
@@ -163,7 +174,7 @@ class DataRequest implements BuilderInterface
     /**
      * Get line items from invoice (for capture/split capture)
      *
-     * Only includes items with qty > 0 in the invoice
+     * Returns array{lineItems: array<string,string>, anyLineHasTax: bool}.
      *
      * @param \Magento\Sales\Model\Order\Invoice $invoice
      * @return array
@@ -171,6 +182,7 @@ class DataRequest implements BuilderInterface
     private function getInvoiceLineItems($invoice): array
     {
         $lineItems = [];
+        $anyLineHasTax = false;
         $index = 1;
 
         foreach ($invoice->getAllItems() as $invoiceItem) {
@@ -194,15 +206,26 @@ class DataRequest implements BuilderInterface
             $lineItems['x' . $index . 'Description'] = (string) $invoiceItem->getName();
             $lineItems['x' . $index . 'Qty']         = (string) $qty;
             $lineItems['x' . $index . 'UnitPrice']   = $this->helper->formatPrice($price);
+            $lineItems['x' . $index . 'TaxRate']     = $this->helper->formatPrice($orderItem->getTaxPercent() ?? 0);
+            $lineItems['x' . $index . 'TaxAmount']   = $this->helper->formatPrice($invoiceItem->getTaxAmount() ?? 0);
+
+            if ((float) $invoiceItem->getTaxAmount() > 0) {
+                $anyLineHasTax = true;
+            }
 
             $index++;
         }
 
-        return $lineItems;
+        return [
+            'lineItems'     => $lineItems,
+            'anyLineHasTax' => $anyLineHasTax,
+        ];
     }
 
     /**
      * Get line items from order (for authorize/sale)
+     *
+     * Returns array{lineItems: array<string,string>, anyLineHasTax: bool}.
      *
      * @param \Magento\Sales\Model\Order $salesOrder
      * @return array
@@ -210,6 +233,7 @@ class DataRequest implements BuilderInterface
     private function getOrderLineItems($salesOrder): array
     {
         $lineItems = [];
+        $anyLineHasTax = false;
         $index = 1;
 
         foreach ($salesOrder->getAllItems() as $item) {
@@ -225,11 +249,20 @@ class DataRequest implements BuilderInterface
             $lineItems['x' . $index . 'Description'] = (string) $item->getName();
             $lineItems['x' . $index . 'Qty']         = (string) $qty;
             $lineItems['x' . $index . 'UnitPrice']   = $this->helper->formatPrice($price);
+            $lineItems['x' . $index . 'TaxRate']     = $this->helper->formatPrice($item->getTaxPercent() ?? 0);
+            $lineItems['x' . $index . 'TaxAmount']   = $this->helper->formatPrice($item->getTaxAmount() ?? 0);
+
+            if ((float) $item->getTaxAmount() > 0) {
+                $anyLineHasTax = true;
+            }
 
             $index++;
         }
 
-        return $lineItems;
+        return [
+            'lineItems'    => $lineItems,
+            'anyLineHasTax' => $anyLineHasTax,
+        ];
     }
 
     /**
@@ -237,19 +270,20 @@ class DataRequest implements BuilderInterface
      *
      * Returns the latest unpaid invoice from the order
      *
-     * @param  \Magento\Sales\Model\Order $salesOrder
+     * @param \Magento\Sales\Model\Order $salesOrder
      * @return \Magento\Sales\Model\Order\Invoice|null
      */
     private function getCurrentInvoice($salesOrder)
     {
         $invoice = null;
         foreach ($salesOrder->getInvoiceCollection() as $inv) {
-            if ($inv->getState() == \Magento\Sales\Model\Order\Invoice::STATE_OPEN
+            if ($inv->getState() == Invoice::STATE_OPEN
                 || !$inv->getEntityId()
             ) {
                 $invoice = $inv;
             }
         }
+
         return $invoice;
     }
 }
