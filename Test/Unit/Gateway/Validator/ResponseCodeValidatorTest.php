@@ -10,9 +10,11 @@ use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 use Magento\Payment\Model\Method\Logger;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
+#[AllowMockObjectsWithoutExpectations]
 class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**

@@ -10,9 +10,11 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use CardknoxDevelopment\Cardknox\Model\Ui\ApplePayConfigProvider;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
+#[AllowMockObjectsWithoutExpectations]
 class ApplePayConfigProviderTest extends TestCase
 {
     /**
