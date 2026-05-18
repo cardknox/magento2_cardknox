@@ -10,6 +10,7 @@ use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 use Magento\Payment\Model\Method\Logger;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
@@ -64,9 +65,8 @@ class ResponseCodeValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param array $response
      * @param array $expectationToResultCreation
-     *
-     * @dataProvider validateDataProvider
      */
+    #[DataProvider('validateDataProvider')]
     public function testValidate(array $response, array $expectationToResultCreation)
     {
         $this->resultFactory->expects($this->once())

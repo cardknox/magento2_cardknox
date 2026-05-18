@@ -61,30 +61,20 @@ class DataTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->scopeInterfaceMock = $this->getMockBuilder(ScopeInterface::class)
-            ->addMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeInterfaceMock = $this->createMock(ScopeInterface::class);
 
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->onlyMethods(['getScopeConfig'])
-            ->addMethods(['getValue'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
-        $this->remoteAddress = $this->getMockBuilder(RemoteAddress::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->remoteAddress = $this->createMock(RemoteAddress::class);
 
-        $this->isSingleSourceMode = $this->getMockBuilder(IsSingleSourceModeInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->isSingleSourceMode = $this->createMock(IsSingleSourceModeInterface::class);
 
-        $this->_outputConfig = $this->getMockForAbstractClass(ConfigInterface::class);
+        $this->_outputConfig = $this->createMock(ConfigInterface::class);
 
         $this->contextMock->expects($this->any())
             ->method('getScopeConfig')

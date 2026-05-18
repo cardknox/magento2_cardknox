@@ -38,16 +38,16 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.4'
+        php-version: '8.5'
         extensions: mbstring, intl, gd, xml, soap, zip, bcmath, opcache, pdo_mysql, curl, dom, hash, iconv, json, simplexml, xsl, xmlreader, xmlwriter, session
         tools: composer:v2
 
     - name: Download Magento Directly
       run: |
-        # Download Magento 2.4.8-p3 from GitHub
-        wget https://github.com/magento/magento2/archive/2.4.8-p3.zip
-        unzip 2.4.8-p3.zip
-        mv magento2-2.4.8-p3 magento
+        # Download Magento 2.4.9 from GitHub
+        wget https://github.com/magento/magento2/archive/2.4.9.zip
+        unzip 2.4.9.zip
+        mv magento2-2.4.9 magento
 
     - name: Install Dependencies
       run: |
@@ -59,13 +59,13 @@ jobs:
     - name: Install MSI (Multi-Source Inventory) Modules
       run: |
         set -e
-        EXPECTED_SHA="13e28a00337e6918d1b1653258540c148e1557dfa6b801534f0b4976b3535215f7b28ef6131f7d333272eb5061df68f7279bb7c53457662a77b7158f15315898"
-        wget https://github.com/magento/inventory/archive/refs/tags/1.2.8-p4.tar.gz -O inventory.tar.gz
+        EXPECTED_SHA="b121d7ce6067ca297e313c1b71981275cb01bd0c6f8a3e9fc00250d8b9354a46dccafd500a15c5246d2f60194392a2f7e9c6f8786fec59762e3d44a12601a1af"
+        wget https://github.com/magento/inventory/archive/refs/tags/1.2.9.tar.gz -O inventory.tar.gz
         echo "$EXPECTED_SHA  inventory.tar.gz" | sha512sum -c -
         tar -xzf inventory.tar.gz
         mkdir -p magento/app/code/Magento
-        cp -r inventory-1.2.8-p4/Inventory* magento/app/code/Magento/
-        rm -rf inventory.tar.gz inventory-1.2.8-p4
+        cp -r inventory-1.2.9/Inventory* magento/app/code/Magento/
+        rm -rf inventory.tar.gz inventory-1.2.9
 
     - name: Create Directories for Cardknox Module
       run: |

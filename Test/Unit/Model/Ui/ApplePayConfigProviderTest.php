@@ -55,8 +55,7 @@ class ApplePayConfigProviderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
             
-        $this->localeResolver = $this->getMockBuilder(ResolverInterface::class)
-            ->getMockForAbstractClass();
+        $this->localeResolver = $this->createMock(ResolverInterface::class);
             
         $this->configProvider = $this->objectManager->getObject(
             ApplePayConfigProvider::class,
