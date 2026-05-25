@@ -1,3 +1,6 @@
+1.2.88
+- Added support for Level 3 field mapping,
+
 1.2.85
 - Fixed duplicate transaction redirect issue that was routing users to a “No Route” error page.
 - Updated iField to the latest stable version 3.3.2601.2901.

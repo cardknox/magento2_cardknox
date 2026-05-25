@@ -115,7 +115,7 @@ define([
             var self = this;
             try {
                 enableLogging();
-                setAccount(this.tokenKey, "Magento2", "1.2.85");
+                setAccount(this.tokenKey, "Magento2", "1.2.88");
                 enableAutoFormatting();
                 setIfieldStyle('card-number', self.defaultStyle);
                 setIfieldStyle('cvv', self.defaultStyle);

@@ -11,6 +11,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\InventoryCatalogApi\Model\IsSingleSourceModeInterface;
 
 class DataTest extends TestCase
 {
@@ -50,6 +51,11 @@ class DataTest extends TestCase
     private $remoteAddress;
 
     /**
+     * @var IsSingleSourceModeInterface&MockObject
+     */
+    private $isSingleSourceMode;
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -74,13 +80,17 @@ class DataTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->isSingleSourceMode = $this->getMockBuilder(IsSingleSourceModeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->_outputConfig = $this->getMockForAbstractClass(ConfigInterface::class);
 
         $this->contextMock->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfig);
 
-        $this->helper = new Data($this->contextMock, $this->remoteAddress);
+        $this->helper = new Data($this->contextMock, $this->remoteAddress, $this->isSingleSourceMode);
     }
 
     public function testFormatPrice()
