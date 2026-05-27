@@ -12,7 +12,9 @@ use Magento\Sales\Model\Order\Payment;
 use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
 use CardknoxDevelopment\Cardknox\Helper\Data;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class AuthorizeRequestTest extends \PHPUnit\Framework\TestCase
 {
     /**

@@ -7,9 +7,11 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Model\Methods;
 
 use CardknoxDevelopment\Cardknox\Model\Methods\GooglePayMethod;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Magento\Payment\Model\Method\AbstractMethod;
 
+#[AllowMockObjectsWithoutExpectations]
 class GooglePayMethodTest extends TestCase
 {
     /**
