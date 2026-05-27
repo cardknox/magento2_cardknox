@@ -9,7 +9,9 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Model\Ui;
 use CardknoxDevelopment\Cardknox\Model\Ui\ConfigProvider;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Framework\Locale\ResolverInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
