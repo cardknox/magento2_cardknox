@@ -1,3 +1,6 @@
+1.2.89
+- Updated iFields to version 3.5.2607.1401 to support 3DS Fix.
+
 1.2.88
 - Added support for Level 3 field mapping,
 

@@ -3,8 +3,8 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="cardknox-ifields-script" type="host">https://cdn.cardknox.com/ifields/3.3.2601.2901/ifields.min.js</value>
-                <value id="cardknox-3ds-script" type="host">https://cdn.cardknox.com/sdk-3ds/1.1.2601.0701/cardknox-3ds.min.js</value>
+                <value id="cardknox-ifields-script" type="host">https://cdn.cardknox.com/ifields/3.5.2607.1401/ifields.min.js</value>
+                <value id="cardknox-3ds-script" type="host">https://cdn.cardknox.com/sdk-3ds/1.2.2606.2901/cardknox-3ds.min.js</value>
                 <value id="fue-source" type="host">*.googleapis.com</value>
                 <value id="google-source" type="host">*.google.com</value>
                 <value id="gstatic-source" type="host">*.gstatic.com</value>
