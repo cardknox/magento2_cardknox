@@ -10,7 +10,9 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class VoidRequestTest extends \PHPUnit\Framework\TestCase
 {
     /**

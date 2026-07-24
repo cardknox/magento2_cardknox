@@ -12,7 +12,9 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order\Payment;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class RefundRequestTest extends \PHPUnit\Framework\TestCase
 {
     /**

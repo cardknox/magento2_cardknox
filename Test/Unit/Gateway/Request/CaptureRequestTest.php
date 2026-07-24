@@ -14,7 +14,9 @@ use Magento\Sales\Model\Order\Payment;
 use CardknoxDevelopment\Cardknox\Helper\Data;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class CaptureRequestTest extends \PHPUnit\Framework\TestCase
 {
     public const XCARDNUM = '4sdfssdfsdfdsf1111';

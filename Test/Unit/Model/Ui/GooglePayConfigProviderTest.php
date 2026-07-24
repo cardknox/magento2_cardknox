@@ -11,7 +11,9 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Checkout\Model\ConfigProviderInterface;
 use CardknoxDevelopment\Cardknox\Gateway\Config\GpayConfig;
 use Magento\Framework\Locale\ResolverInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class GooglePayConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     public const CODE = 'cardknox_google_pay';

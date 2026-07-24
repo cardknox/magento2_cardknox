@@ -26,7 +26,7 @@ class DataTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->viewModel = new Data($this->scopeConfig);
     }
 

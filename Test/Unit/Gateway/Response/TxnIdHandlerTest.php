@@ -14,8 +14,10 @@ use Magento\Sales\Model\Order\Payment;
 use Magento\Vault\Model\CreditCardTokenFactory;
 use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use Magento\Payment\Gateway\Data\PaymentDataObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 
+#[AllowMockObjectsWithoutExpectations]
 class TxnIdHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
