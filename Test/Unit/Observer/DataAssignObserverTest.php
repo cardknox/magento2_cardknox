@@ -11,8 +11,10 @@ use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Observer\AbstractDataAssignObserver;
 use CardknoxDevelopment\Cardknox\Observer\DataAssignObserver;
 use Magento\Quote\Api\Data\PaymentInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 
+#[AllowMockObjectsWithoutExpectations]
 class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
 {
     public const XCARDNUM = '4444333322221111';
