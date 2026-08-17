@@ -127,23 +127,51 @@ class DataRequest implements BuilderInterface
 
         if ($isCapture) {
             $invoice = $this->getCurrentInvoice($salesOrder);
+
+            // Drop Level 3 when this invoice does not carry the order's tax, shipping,
+            // discount and gift card. On a capture the gateway ignores the order-level
+            // amounts in the request and re-adds the ones held on the authorization, so it
+            // reconciles line items + authorization tax + authorization shipping −
+            // authorization discount against this capture's amount. That balances only for
+            // an invoice carrying the order's full set of them — which Magento puts on the
+            // first invoice, leaving later ones with nothing but their line items. Sending
+            // those amounts as zero or leaving them out makes no difference; both were
+            // rejected. The authorization already carried the full Level 3 record.
+            //
+            // Deliberately keyed on the totals rather than on the split capture setting:
+            // Apple Pay has no such setting yet still reaches this path through a partially
+            // invoiced cc:capture, as does a credit card order with split capture switched
+            // off. An order with no tax, shipping, discount or gift card matches on every
+            // invoice, so its partial captures all keep their Level 3 line items.
+            if ($invoice && $this->hasOrderLevelMismatch($salesOrder, $invoice)) {
+                return [];
+            }
         }
 
         // Order-level fields — use invoice totals for capture, order totals for auth/sale
+        // The gateway validates line items + tax + shipping − discount against the amount. A
+        // Cardknox gift card is settled outside the card transaction and already lowered that
+        // amount, so it is folded into xDiscount on top of the Magento core discount.
         if ($invoice) {
+            $discount = abs((float) $invoice->getDiscountAmount())
+                + $this->getGiftCardAmount($invoice);
             $result = [
                 'xPONum'      => $salesOrder->getIncrementId(),
                 'xTax'        => $this->helper->formatPrice($invoice->getTaxAmount()),
-                'xDiscount'   => $this->helper->formatPrice(abs((float) $invoice->getDiscountAmount())),
+                'xDiscount'   => $this->helper->formatPrice($discount),
                 'xShipAmount' => $this->helper->formatPrice($invoice->getShippingAmount()),
             ];
+            $lineData = $this->getInvoiceLineItems($invoice);
         } else {
+            $discount = abs((float) $salesOrder->getDiscountAmount())
+                + $this->getGiftCardAmount($salesOrder);
             $result = [
                 'xPONum'      => $salesOrder->getIncrementId(),
                 'xTax'        => $this->helper->formatPrice($salesOrder->getTaxAmount()),
-                'xDiscount'   => $this->helper->formatPrice(abs((float) $salesOrder->getDiscountAmount())),
+                'xDiscount'   => $this->helper->formatPrice($discount),
                 'xShipAmount' => $this->helper->formatPrice($salesOrder->getShippingAmount()),
             ];
+            $lineData = $this->getOrderLineItems($salesOrder);
         }
 
         // Ship-from ZIP — only when MSI is NOT enabled
@@ -154,25 +182,70 @@ class DataRequest implements BuilderInterface
             }
         }
 
-        // Line-item fields
-        if ($invoice) {
-            $invoiceLineData = $this->getInvoiceLineItems($invoice);
-            $lineItems = $invoiceLineData['lineItems'];
-            $anyLineHasTax = $invoiceLineData['anyLineHasTax'];
-        } else {
-            $orderLineData = $this->getOrderLineItems($salesOrder);
-            $lineItems = $orderLineData['lineItems'];
-            $anyLineHasTax = $orderLineData['anyLineHasTax'];
-        }
-
         // shipping tax is intentionally excluded from this signal — kept independent from xTax
-        $result['xNonTaxable'] = $anyLineHasTax ? 'false' : 'true';
+        $result['xNonTaxable'] = $lineData['anyLineHasTax'] ? 'false' : 'true';
 
-        return array_merge($result, $lineItems);
+        return array_merge($result, $lineData['lineItems']);
     }
 
     /**
-     * Get line items from invoice (for capture/split capture)
+     * Get the Cardknox gift card amount applied to the given order or invoice
+     *
+     * Returns 0.0 when the gift card feature is disabled or no gift card was applied.
+     * For an invoice this is the gift card portion consumed by that invoice only, so
+     * split captures each report their own share.
+     *
+     * @param \Magento\Sales\Model\Order|\Magento\Sales\Model\Order\Invoice $entity
+     * @return float
+     */
+    private function getGiftCardAmount($entity): float
+    {
+        if (!$this->helper->isCardknoxGiftcardEnabled()) {
+            return 0.0;
+        }
+
+        return abs((float) $entity->getCkgiftcardAmount());
+    }
+
+    /**
+     * Check whether the invoice carries the order's tax, shipping, discount and gift card
+     *
+     * The line items sent with a capture describe just that invoice, but the gateway
+     * reconciles them against the order-level amounts held on the authorization. The two
+     * sides agree only when this invoice carries the order's full tax, shipping, discount
+     * and gift card.
+     *
+     * @param \Magento\Sales\Model\Order $salesOrder
+     * @param \Magento\Sales\Model\Order\Invoice $invoice
+     * @return bool
+     */
+    private function hasOrderLevelMismatch($salesOrder, $invoice): bool
+    {
+        $difference = $this->getOrderLevelAdjustment($invoice)
+            - $this->getOrderLevelAdjustment($salesOrder);
+
+        return abs($difference) > 0.009;
+    }
+
+    /**
+     * Get the amount an order or invoice adds on top of its line items
+     *
+     * Mirrors what the gateway adds to the line item total: tax plus shipping less the
+     * discount, gift card included exactly as xDiscount reports it.
+     *
+     * @param \Magento\Sales\Model\Order|\Magento\Sales\Model\Order\Invoice $entity
+     * @return float
+     */
+    private function getOrderLevelAdjustment($entity): float
+    {
+        return (float) $entity->getTaxAmount()
+            + (float) $entity->getShippingAmount()
+            - abs((float) $entity->getDiscountAmount())
+            - $this->getGiftCardAmount($entity);
+    }
+
+    /**
+     * Get line items from invoice (for capture)
      *
      * Returns array{lineItems: array<string,string>, anyLineHasTax: bool}.
      *
