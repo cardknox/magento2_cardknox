@@ -56,8 +56,6 @@ class RefundRequest implements BuilderInterface
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $buildSubject['payment'];
 
-        $order = $paymentDO->getOrder();
-
         /** @var Payment $payment */
         $payment = $paymentDO->getPayment();
 
@@ -65,12 +63,18 @@ class RefundRequest implements BuilderInterface
             throw new \LogicException('Order payment should be provided.');
         }
 
+        // Read the total from the order itself rather than from $paymentDO->getOrder(): the
+        // order adapter is a global preference that another module can replace with one
+        // declaring a float return while still handing back the string the database gives,
+        // which is a TypeError under strict types.
+        $grandTotal = $this->helper->formatPrice($payment->getOrder()->getBaseGrandTotal());
+
         $command = "cc:voidrefund";
         $amount = $this->helper->formatPrice($buildSubject['amount']);
-        if ($amount != $order->getGrandTotalAmount()) {
+        if ($amount != $grandTotal) {
             $command = "cc:refund";
         }
-        $log['GrandTotalAmount'] = $order->getGrandTotalAmount();
+        $log['GrandTotalAmount'] = $grandTotal;
         $log['command'] = $command;
         $this->logger->debug($log);
 
