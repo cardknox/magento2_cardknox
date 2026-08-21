@@ -6,11 +6,11 @@ use CardknoxDevelopment\Cardknox\Gateway\Config\Config;
 use CardknoxDevelopment\Cardknox\Gateway\Request\RefundRequest;
 use CardknoxDevelopment\Cardknox\Helper\Data;
 use Magento\Payment\Gateway\ConfigInterface;
-use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
@@ -32,11 +32,6 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
     private $configMock;
 
     /**
-     * @var OrderAdapterInterface
-     */
-    private $orderMock;
-
-    /**
      * @var PaymentDataObjectInterface
      */
     private $paymentDO;
@@ -54,7 +49,6 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->configMock = $this->createMock(ConfigInterface::class);
-        $this->orderMock = $this->createMock(OrderAdapterInterface::class);
         $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
         $this->paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
@@ -63,6 +57,10 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
         $this->helper = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->helper->method('formatPrice')
+            ->willReturnCallback(static function ($price) {
+                return sprintf('%.2F', $price);
+            });
         $this->logger = $this->getMockBuilder(Logger::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -90,9 +88,8 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
             ->method('getPayment')
             ->willReturn($this->paymentModel);
 
-        $this->paymentDO->expects($this->once())
-            ->method('getOrder')
-            ->willReturn($this->orderMock);
+        // Refunding the full order total voids rather than refunds
+        $this->stubOrderGrandTotal($amount);
 
         $this->assertEquals(
             $expectation,
@@ -120,18 +117,29 @@ class RefundRequestTest extends \PHPUnit\Framework\TestCase
             ->method('getPayment')
             ->willReturn($this->paymentModel);
 
-        $this->paymentDO->expects($this->once())
-            ->method('getOrder')
-            ->willReturn($this->orderMock);
-
-        $this->orderMock->expects($this->any())
-            ->method('getGrandTotalAmount')
-            ->willReturn($amount);
+        // Refunding less than the order total issues a refund rather than a void
+        $this->stubOrderGrandTotal('20.00');
 
         $this->assertEquals(
             $expectation,
             $this->refundRequest->build($buildSubject)
         );
+    }
+
+    /**
+     * Stub the order the payment belongs to so it reports the given base grand total
+     *
+     * @param string $grandTotal
+     * @return void
+     */
+    private function stubOrderGrandTotal($grandTotal)
+    {
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $order->method('getBaseGrandTotal')->willReturn($grandTotal);
+
+        $this->paymentModel->method('getOrder')->willReturn($order);
     }
 
     public function testBuildException()
