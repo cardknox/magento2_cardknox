@@ -290,7 +290,7 @@ define(
                  * [Required]
                  * Set your account data using setAccount(ifieldKey, yourSoftwareName, yourSoftwareVersion).
                  */
-                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.2.90");
+                setAccount(window.checkoutConfig.payment.cardknox.tokenKey, "Magento2", "1.2.92");
 
                 /*
                  * [Optional]
