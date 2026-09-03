@@ -1,3 +1,6 @@
+1.2.92
+- Fixed gift card line-item calculations in Magento.
+
 1.2.90
 - Updated PHP Unit tests for Magento 2.4.9 compatibility.
 
