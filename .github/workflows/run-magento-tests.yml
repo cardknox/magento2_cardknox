@@ -33,10 +33,15 @@ jobs:
     - uses: actions/checkout@v3
       with:
         path: Cardknox
+        # This workflow never pushes back to the repository, so the
+        # GITHUB_TOKEN must not be left in the runner's git config where
+        # later steps and third-party actions could read it.
+        persist-credentials: false
 
     # Add PHP setup step
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      # Pinned to a commit SHA rather than the mutable v2 tag.
+      uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
       with:
         php-version: '8.5'
         extensions: mbstring, intl, gd, xml, soap, zip, bcmath, opcache, pdo_mysql, curl, dom, hash, iconv, json, simplexml, xsl, xmlreader, xmlwriter, session
@@ -44,10 +49,19 @@ jobs:
 
     - name: Download Magento Directly
       run: |
-        # Download Magento 2.4.9 from GitHub
-        wget https://github.com/magento/magento2/archive/2.4.9.zip
-        unzip 2.4.9.zip
-        mv magento2-2.4.9 magento
+        set -e
+        # Fetch Magento 2.4.9 and verify the commit the tag resolves to.
+        # A commit SHA is cryptographically stable, whereas GitHub's
+        # generated archives are not guaranteed to stay byte-identical,
+        # so a checksum over the zip would be brittle here.
+        EXPECTED_COMMIT="755e34dd689021c5165db9d35ecff74f7dc51527"
+        git clone --depth 1 --branch 2.4.9 https://github.com/magento/magento2.git magento
+        ACTUAL_COMMIT="$(git -C magento rev-parse HEAD)"
+        if [ "$ACTUAL_COMMIT" != "$EXPECTED_COMMIT" ]; then
+          echo "Magento commit mismatch: expected $EXPECTED_COMMIT, got $ACTUAL_COMMIT" >&2
+          exit 1
+        fi
+        rm -rf magento/.git
 
     - name: Install Dependencies
       run: |
