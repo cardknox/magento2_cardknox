@@ -586,7 +586,7 @@ define(
              */
             showError: function (errorMessage) {
                 let statusElement = document.getElementById('transaction-status');
-                statusElement.innerHTML = errorMessage;
+                statusElement.textContent = errorMessage;
                 statusElement.style.color = "red";
                 statusElement.focus();
             },
