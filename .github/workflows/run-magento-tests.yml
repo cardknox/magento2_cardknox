@@ -36,7 +36,7 @@ jobs:
 
     # Add PHP setup step
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@2.37.1
       with:
         php-version: '8.5'
         extensions: mbstring, intl, gd, xml, soap, zip, bcmath, opcache, pdo_mysql, curl, dom, hash, iconv, json, simplexml, xsl, xmlreader, xmlwriter, session
