@@ -336,7 +336,7 @@
                         <config_path>payment/cardknox_apple_pay/ap_enable_show_summary</config_path>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <depends>
-                            <field id="cardknox_gpay_active">1</field>
+                            <field id="cardknox_applepay_active">1</field>
                         </depends>
                     </field>
                     <field id="allowspecific" translate="label" type="allowspecific" showInDefault="9"
