@@ -14,6 +14,8 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Payment\Model\Method\Logger;
+use CardknoxDevelopment\Cardknox\Model\ThreeDSecure\AmountMismatchHandler;
+use CardknoxDevelopment\Cardknox\Model\ThreeDSecure\AuthorizedAmountValidator;
 
 class VerifyThreeDS extends Action implements HttpPostActionInterface
 {
@@ -78,6 +80,16 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
     protected $transactionBuilder;
 
     /**
+     * @var AuthorizedAmountValidator
+     */
+    private $authorizedAmountValidator;
+
+    /**
+     * @var AmountMismatchHandler
+     */
+    private $amountMismatchHandler;
+
+    /**
      * AdditionalInformationMapping variable
      *
      * @var array
@@ -111,6 +123,8 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      * @param \Magento\Quote\Api\CartManagementInterface $cartManagementInterface
      * @param \Magento\Payment\Model\Method\Logger $logger
      * @param \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder
+     * @param AuthorizedAmountValidator $authorizedAmountValidator
+     * @param AmountMismatchHandler $amountMismatchHandler
      */
     public function __construct(
         Context $context,
@@ -125,7 +139,9 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         QuoteManagement $quoteManagement,
         \Magento\Quote\Api\CartManagementInterface $cartManagementInterface,
         Logger $logger,
-        \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder
+        \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder,
+        AuthorizedAmountValidator $authorizedAmountValidator,
+        AmountMismatchHandler $amountMismatchHandler
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
@@ -140,6 +156,8 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
         $this->cartManagementInterface = $cartManagementInterface;
         $this->logger = $logger;
         $this->transactionBuilder = $transactionBuilder;
+        $this->authorizedAmountValidator = $authorizedAmountValidator;
+        $this->amountMismatchHandler = $amountMismatchHandler;
     }
 
     /**
@@ -267,8 +285,26 @@ class VerifyThreeDS extends Action implements HttpPostActionInterface
      */
     private function processApprovedResponse($response)
     {
-        $this->_checkoutSession->setSkipValidation(true);
         $quote = $this->_checkoutSession->getQuote();
+
+        if (!$this->authorizedAmountValidator->isMatch($response, $quote)) {
+            $this->amountMismatchHandler->handle(
+                $response,
+                $this->authorizedAmountValidator->getCartAmount($quote),
+                (int) $quote->getId(),
+                (int) $quote->getStoreId()
+            );
+
+            return $this->createErrorResponse(
+                __(
+                    'Your cart changed while your card was being verified, so the order was not placed. '
+                    . 'Please review your cart and place the order again.'
+                ),
+                'checkout/cart'
+            );
+        }
+
+        $this->_checkoutSession->setSkipValidation(true);
 
         // Set the custom reserved order ID and save the quote
         $quote->setReservedOrderId($response['xInvoice']);
