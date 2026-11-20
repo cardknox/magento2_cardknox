@@ -11,10 +11,13 @@ use CardknoxDevelopment\Cardknox\Model\ThreeDSecure\AuthorizationVoider;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Gateway\Http\TransferInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AuthorizationVoiderTest extends TestCase
 {
     private const STORE_ID = 3;
@@ -110,9 +113,7 @@ class AuthorizationVoiderTest extends TestCase
         $this->assertTrue($this->voider->void('12345', self::STORE_ID));
     }
 
-    /**
-     * @dataProvider failedResponses
-     */
+    #[DataProvider('failedResponses')]
     public function testItReturnsFalseWhenTheGatewayDeclinesOrErrorsTheVoid($response): void
     {
         $this->expectRequest(static function (array $request): void {

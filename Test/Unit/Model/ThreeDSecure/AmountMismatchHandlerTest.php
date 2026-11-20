@@ -7,10 +7,12 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Model\ThreeDSecure;
 use CardknoxDevelopment\Cardknox\Model\ThreeDSecure\AmountMismatchHandler;
 use CardknoxDevelopment\Cardknox\Model\ThreeDSecure\AuthorizationVoider;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class AmountMismatchHandlerTest extends TestCase
 {
     private const STORE_ID = 3;

@@ -7,9 +7,11 @@ namespace CardknoxDevelopment\Cardknox\Test\Unit\Model\ThreeDSecure;
 use CardknoxDevelopment\Cardknox\Model\ThreeDSecure\AuthorizedAmountValidator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class AuthorizedAmountValidatorTest extends TestCase
 {
     /**

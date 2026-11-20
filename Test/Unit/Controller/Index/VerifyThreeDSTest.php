@@ -28,9 +28,11 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Store\Api\Data\StoreInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class VerifyThreeDSTest extends TestCase
 {
     private const QUOTE_ID = 77;
@@ -61,6 +63,9 @@ class VerifyThreeDSTest extends TestCase
 
     /** @var array */
     private $jsonData = [];
+
+    /** @var string[] */
+    private $sessionCalls = [];
 
     protected function setUp(): void
     {
@@ -142,12 +147,13 @@ class VerifyThreeDSTest extends TestCase
     public function testItDoesNotSetTheSkipValidationFlagOrModifyTheQuoteOnMismatch(): void
     {
         $this->validator->method('isMatch')->willReturn(false);
-        $this->session->expects($this->never())->method('setSkipValidation');
         $this->quote->expects($this->never())->method('setReservedOrderId');
         $this->quote->expects($this->never())->method('save');
         $this->payment->expects($this->never())->method('save');
 
         $this->controller->execute();
+
+        $this->assertNotContains('setSkipValidation', $this->sessionCalls);
     }
 
     public function testItDoesNotCallTheMismatchHandlerWhenAmountsMatch(): void
@@ -161,11 +167,15 @@ class VerifyThreeDSTest extends TestCase
 
     private function createPaymentMock(): Payment&MockObject
     {
-        return $this->getMockBuilder(Payment::class)
+        // Magic setters (setTransactionId, setLastTransId, setIsTransactionClosed) go through
+        // DataObject::__call, which is mocked instead of addMethods() (removed in PHPUnit 12).
+        $payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['setAdditionalInformation', 'save'])
-            ->addMethods(['setTransactionId', 'setLastTransId', 'setIsTransactionClosed'])
+            ->onlyMethods(['setAdditionalInformation', 'save', '__call'])
             ->getMock();
+        $payment->method('__call')->willReturnSelf();
+
+        return $payment;
     }
 
     private function createQuoteMock(): Quote&MockObject
@@ -183,21 +193,21 @@ class VerifyThreeDSTest extends TestCase
 
     private function createSessionMock(): Session&MockObject
     {
+        // Magic setters (setSkipValidation, setLastOrderId, ...) go through SessionManager::__call,
+        // which is mocked instead of addMethods() (removed in PHPUnit 12). Calls are recorded so
+        // tests can assert which setters ran.
         $session = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->addMethods([
-                'setSkipValidation',
-                'setLastSuccessQuoteId',
-                'setLastQuoteId',
-                'setLastOrderId',
-                'setLastRealOrderId',
-                'setLastOrderStatus',
-            ])
+            ->onlyMethods(['getQuote', '__call'])
             ->getMock();
         $session->method('getQuote')->willReturn($this->quote);
-        $session->method('setLastOrderId')->willReturnSelf();
-        $session->method('setLastRealOrderId')->willReturnSelf();
+        $session->method('__call')->willReturnCallback(
+            function (string $name) use (&$session) {
+                $this->sessionCalls[] = $name;
+
+                return $session;
+            }
+        );
 
         return $session;
     }
